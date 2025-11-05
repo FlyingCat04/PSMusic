@@ -1,0 +1,17 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PSMusic.Server.Models.DTO.User
+{
+    public class CreateUserDTO
+    {
+        [Required]
+        public string Username { get; set; } = string.Empty;
+        [Required, MinLength(8)]
+        public string Password { get; set; } = string.Empty;
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        [Required, MaxLength(30)]
+        public string Name { get; set; } = string.Empty;
+        public string? AvatarURL { get; set; }
+    }
+}
