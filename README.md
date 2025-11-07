@@ -33,11 +33,8 @@ PSMusic là một nền tảng streaming nhạc hiện đại được xây dự
 - **ESLint** - Code linting
 - **HTTPS** - Bảo mật kết nối
 
-```
-
 ## 📁 Cấu trúc dự án
 
-```
 PSMusic/
 ├── PSMusic.Server/              # Backend API
 │   ├── Controllers/            # API Controllers
@@ -54,7 +51,6 @@ PSMusic/
 │   │   └── assets/             # Static assets
 │   └── public/                 # Public files
 └── README.md
-```
 
 ## 🔧 Scripts có sẵn
 
