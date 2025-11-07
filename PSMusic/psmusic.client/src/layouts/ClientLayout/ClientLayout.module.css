@@ -14,11 +14,39 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  margin-left: 240px;
 }
 
 .mainContent {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--background-main);
   padding: 0px 24px 16px 24px;
+}
+
+@media (max-width: 1030px) {
+  .appBody {
+    margin-left: 62px;
+  }
+}
+
+@media (max-width: 768px) {
+  .appLayout {
+    flex-direction: column;
+  }
+
+  .appBody {
+    margin-left: 0;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  
+  .mainContent {
+    padding: 0px 12px 8px 12px;
+  }
 }
