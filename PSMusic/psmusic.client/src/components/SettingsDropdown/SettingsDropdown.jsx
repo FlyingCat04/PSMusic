@@ -4,7 +4,7 @@ import './SettingsDropdown.css';
 
 const SettingsDropdown = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [currentTheme, setCurrentTheme] = useState('ruby'); // Default theme
+    const [currentTheme, setCurrentTheme] = useState('ruby');
     const dropdownRef = useRef(null);
 
     const themes = {
