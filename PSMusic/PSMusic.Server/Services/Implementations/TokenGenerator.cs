@@ -22,9 +22,9 @@ namespace PSMusic.Server.Services.Implementations
             var claims = new List<Claim>
             {
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Name, user.Name),
+                new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Name, user.DisplayName),
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Type)
+                //new Claim(ClaimTypes.Role, user.Type)
             };
 
             var issuer = _configuration.GetValue<string>("Jwt:Issuer");

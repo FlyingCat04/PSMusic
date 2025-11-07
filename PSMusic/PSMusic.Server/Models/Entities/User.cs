@@ -11,9 +11,11 @@ namespace PSMusic.Server.Models.Entities
         public string Password { get; private set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         [MaxLength(30)]
-        public string Name { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
         public string? AvatarURL { get; set; }
-        public string Type { get; set; } = "customer";
+        //public string Type { get; set; } = "customer";
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+        public ICollection<Playlist> Playlists { get; set; } = new List<Playlist>();
 
         public void SetPassword(string password)
         {

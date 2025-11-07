@@ -5,7 +5,7 @@ using PSMusic.Server.Services.Interfaces;
 
 namespace PSMusic.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {

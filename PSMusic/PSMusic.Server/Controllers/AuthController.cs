@@ -6,7 +6,7 @@ using PSMusic.Server.Services.Interfaces;
 
 namespace PSMusic.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -18,7 +18,7 @@ namespace PSMusic.Server.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Register([FromBody] CreateUserDTO user)
         {
             var result = await _authService.Register(user);

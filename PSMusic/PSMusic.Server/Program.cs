@@ -6,7 +6,6 @@ using PSMusic.Server.Repositories.Implementations;
 using PSMusic.Server.Repositories.Interfaces;
 using PSMusic.Server.Services.Implementations;
 using PSMusic.Server.Services.Interfaces;
-using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +23,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false,
         ValidateAudience = false,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!)),
         ValidateLifetime = true
     };
 

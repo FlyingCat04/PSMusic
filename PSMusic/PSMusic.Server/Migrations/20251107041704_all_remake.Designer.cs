@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PSMusic.Server.Data;
@@ -11,9 +12,11 @@ using PSMusic.Server.Data;
 namespace PSMusic.Server.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20251107041704_all_remake")]
+    partial class all_remake
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,21 +88,11 @@ namespace PSMusic.Server.Migrations
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("SongId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("SongId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Playlist");
                 });
@@ -252,25 +245,6 @@ namespace PSMusic.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PSMusic.Server.Models.Entities.Playlist", b =>
-                {
-                    b.HasOne("PSMusic.Server.Models.Entities.Song", "Song")
-                        .WithMany()
-                        .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PSMusic.Server.Models.Entities.User", "User")
-                        .WithMany("Playlists")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Song");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("PSMusic.Server.Models.Entities.Rating", b =>
                 {
                     b.HasOne("PSMusic.Server.Models.Entities.Song", "Song")
@@ -349,8 +323,6 @@ namespace PSMusic.Server.Migrations
             modelBuilder.Entity("PSMusic.Server.Models.Entities.User", b =>
                 {
                     b.Navigation("Favorites");
-
-                    b.Navigation("Playlists");
                 });
 #pragma warning restore 612, 618
         }
