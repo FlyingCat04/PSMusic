@@ -33,7 +33,7 @@ PSMusic là một nền tảng streaming nhạc hiện đại được xây dự
 - **ESLint** - Code linting
 - **HTTPS** - Bảo mật kết nối
 
-## 🔧 Scripts có sẵn
+## Scripts có sẵn
 
 ### Frontend
 - `npm run dev` - Chạy development server
