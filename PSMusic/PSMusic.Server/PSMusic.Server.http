@@ -1,0 +1,6 @@
+@PSMusic.Server_HostAddress = http://localhost:5006
+
+GET {{PSMusic.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
