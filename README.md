@@ -1,8 +1,8 @@
-# 🎵 PSMusic
+# PSMusic
 
 PSMusic là một nền tảng streaming nhạc hiện đại được xây dựng bằng React.js và ASP.NET Core, mang đến trải nghiệm nghe nhạc tuyệt vời với giao diện thân thiện và các tính năng đa dạng.
 
-## ✨ Tính năng chính
+## Tính năng chính
 
 - Streaming nhạc chất lượng cao
 - Hệ thống xác thực và quản lý người dùng
@@ -10,7 +10,7 @@ PSMusic là một nền tảng streaming nhạc hiện đại được xây dự
 - Bảo mật với JWT Authentication
 - Phân loại nhạc theo thể loại
 
-## 🛠️ Công nghệ sử dụng
+## Công nghệ sử dụng
 
 ### Frontend
 - **React 19.1.1** - Thư viện JavaScript cho UI
@@ -33,25 +33,6 @@ PSMusic là một nền tảng streaming nhạc hiện đại được xây dự
 - **ESLint** - Code linting
 - **HTTPS** - Bảo mật kết nối
 
-## 📁 Cấu trúc dự án
-
-PSMusic/
-├── PSMusic.Server/              # Backend API
-│   ├── Controllers/            # API Controllers
-│   ├── Models/                 # Data models & DTOs
-│   ├── Services/               # Business logic
-│   ├── Repositories/           # Data access layer
-│   ├── Data/                   # Database context
-│   └── Migrations/             # Database migrations
-├── psmusic.client/             # Frontend React app
-│   ├── src/
-│   │   ├── components/         # Reusable components
-│   │   ├── pages/              # Page components
-│   │   ├── layouts/            # Layout components
-│   │   └── assets/             # Static assets
-│   └── public/                 # Public files
-└── README.md
-
 ## 🔧 Scripts có sẵn
 
 ### Frontend
@@ -66,13 +47,13 @@ PSMusic/
 - `dotnet ef database update` - Update database
 - `dotnet ef migrations add <name>` - Tạo migration mới
 
-## 🔒 Xác thực
+## Xác thực
 
 Dự án sử dụng JWT Authentication với các endpoint:
 - `POST /api/auth/login` - Đăng nhập
 - `POST /api/auth/register` - Đăng ký
 - `GET /api/user/profile` - Lấy thông tin người dùng (cần token)
 
-## 📊 API Documentation
+## API Documentation
 
 Khi chạy server, truy cập Swagger UI tại: `https://localhost:7120/swagger`
