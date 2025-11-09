@@ -12,8 +12,8 @@ using PSMusic.Server.Data;
 namespace PSMusic.Server.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20251108041841_add_artist_name_1")]
-    partial class add_artist_name_1
+    [Migration("20251109055510_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,19 +169,9 @@ namespace PSMusic.Server.Migrations
                     b.Property<int>("ArtistId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ArtistId1")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SongId1")
-                        .HasColumnType("integer");
-
                     b.HasKey("SongId", "ArtistId");
 
                     b.HasIndex("ArtistId");
-
-                    b.HasIndex("ArtistId1");
-
-                    b.HasIndex("SongId1");
 
                     b.ToTable("SongArtist");
                 });
@@ -320,24 +310,16 @@ namespace PSMusic.Server.Migrations
             modelBuilder.Entity("PSMusic.Server.Models.Entities.SongArtist", b =>
                 {
                     b.HasOne("PSMusic.Server.Models.Entities.Artist", "Artist")
-                        .WithMany()
+                        .WithMany("SongArtists")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PSMusic.Server.Models.Entities.Artist", null)
-                        .WithMany("SongArtists")
-                        .HasForeignKey("ArtistId1");
-
                     b.HasOne("PSMusic.Server.Models.Entities.Song", "Song")
-                        .WithMany()
+                        .WithMany("SongArtists")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PSMusic.Server.Models.Entities.Song", null)
-                        .WithMany("SongArtists")
-                        .HasForeignKey("SongId1");
 
                     b.Navigation("Artist");
 

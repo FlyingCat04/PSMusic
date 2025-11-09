@@ -63,13 +63,13 @@ namespace PSMusic.Server.Data
                 entity.HasKey(sa => new { sa.SongId, sa.ArtistId });
                 entity
                     .HasOne(sa => sa.Song)
-                    .WithMany()
-                    .HasForeignKey(sc => sc.SongId);
+                    .WithMany(s => s.SongArtists)
+                    .HasForeignKey(sa => sa.SongId);
 
                 entity
                     .HasOne(sa => sa.Artist)
-                    .WithMany()
-                    .HasForeignKey(sc => sc.ArtistId);
+                    .WithMany(a => a.SongArtists)
+                    .HasForeignKey(sa => sa.ArtistId);
             });
 
             modelBuilder.Entity<Artist>(entity =>
