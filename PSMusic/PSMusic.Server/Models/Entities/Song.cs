@@ -7,6 +7,8 @@ namespace PSMusic.Server.Models.Entities
         [Key]
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string LrcUrl { get; set; } = string.Empty;
+        public string Mp3Url { get; set; } = string.Empty;
         public ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
         public ICollection<SongCategory> SongCategories { get; set; } = new List<SongCategory>();
         //public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
