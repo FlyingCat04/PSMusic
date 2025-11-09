@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PSMusic.Server.Data;
@@ -11,9 +12,11 @@ using PSMusic.Server.Data;
 namespace PSMusic.Server.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20251108040747_song_artist_remove_artist")]
+    partial class song_artist_remove_artist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,10 +34,6 @@ namespace PSMusic.Server.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AvatarURL")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 

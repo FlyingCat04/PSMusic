@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PSMusic.Server.Data;
@@ -11,9 +12,11 @@ using PSMusic.Server.Data;
 namespace PSMusic.Server.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20251108035854_song_artist")]
+    partial class song_artist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,10 +34,6 @@ namespace PSMusic.Server.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AvatarURL")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -149,11 +148,16 @@ namespace PSMusic.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArtistId");
 
                     b.ToTable("Song");
                 });
@@ -166,19 +170,9 @@ namespace PSMusic.Server.Migrations
                     b.Property<int>("ArtistId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ArtistId1")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SongId1")
-                        .HasColumnType("integer");
-
                     b.HasKey("SongId", "ArtistId");
 
                     b.HasIndex("ArtistId");
-
-                    b.HasIndex("ArtistId1");
-
-                    b.HasIndex("SongId1");
 
                     b.ToTable("SongArtist");
                 });
@@ -260,7 +254,7 @@ namespace PSMusic.Server.Migrations
             modelBuilder.Entity("PSMusic.Server.Models.Entities.Favorite", b =>
                 {
                     b.HasOne("PSMusic.Server.Models.Entities.Song", "Song")
-                        .WithMany()
+                        .WithMany("Favorites")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -314,6 +308,17 @@ namespace PSMusic.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("PSMusic.Server.Models.Entities.Song", b =>
+                {
+                    b.HasOne("PSMusic.Server.Models.Entities.Artist", "Artist")
+                        .WithMany()
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artist");
+                });
+
             modelBuilder.Entity("PSMusic.Server.Models.Entities.SongArtist", b =>
                 {
                     b.HasOne("PSMusic.Server.Models.Entities.Artist", "Artist")
@@ -322,19 +327,11 @@ namespace PSMusic.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PSMusic.Server.Models.Entities.Artist", null)
-                        .WithMany("SongArtists")
-                        .HasForeignKey("ArtistId1");
-
                     b.HasOne("PSMusic.Server.Models.Entities.Song", "Song")
                         .WithMany()
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PSMusic.Server.Models.Entities.Song", null)
-                        .WithMany("SongArtists")
-                        .HasForeignKey("SongId1");
 
                     b.Navigation("Artist");
 
@@ -379,14 +376,9 @@ namespace PSMusic.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PSMusic.Server.Models.Entities.Artist", b =>
-                {
-                    b.Navigation("SongArtists");
-                });
-
             modelBuilder.Entity("PSMusic.Server.Models.Entities.Song", b =>
                 {
-                    b.Navigation("SongArtists");
+                    b.Navigation("Favorites");
 
                     b.Navigation("SongCategories");
                 });

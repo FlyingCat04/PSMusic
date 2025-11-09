@@ -18,6 +18,7 @@ namespace PSMusic.Server.Data
         public DbSet<PSMusic.Server.Models.Entities.Stream> Stream { get; set; } = null!;
         public DbSet<Favorite> Favorite { get; set; }
         public DbSet<SongCategory> SongCategory { get; set; } = null!;
+        public DbSet<SongArtist> SongArtist { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,12 +42,6 @@ namespace PSMusic.Server.Data
             {
                 entity.HasKey(entity => entity.Id);
                 entity.Property(entity => entity.Name).IsRequired();
-                entity.Property(entity => entity.ArtistId).IsRequired();
-                entity
-                    .HasOne(s => s.Artist)
-                    .WithMany()
-                    .HasForeignKey(s => s.ArtistId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<SongCategory>(entity => 
@@ -63,9 +58,24 @@ namespace PSMusic.Server.Data
                     .HasForeignKey(sc => sc.SongId);
             });
 
+            modelBuilder.Entity<SongArtist>(entity =>
+            {
+                entity.HasKey(sa => new { sa.SongId, sa.ArtistId });
+                entity
+                    .HasOne(sa => sa.Song)
+                    .WithMany()
+                    .HasForeignKey(sc => sc.SongId);
+
+                entity
+                    .HasOne(sa => sa.Artist)
+                    .WithMany()
+                    .HasForeignKey(sc => sc.ArtistId);
+            });
+
             modelBuilder.Entity<Artist>(entity =>
             {
                 entity.HasKey(entity => entity.Id);
+                entity.Property(entity => entity.Name).IsRequired();
             });
 
             modelBuilder.Entity<Playlist>(entity =>
@@ -107,7 +117,7 @@ namespace PSMusic.Server.Data
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(e => e.Song)
-                    .WithMany(s => s.Favorites)
+                    .WithMany()
                     .HasForeignKey(f => f.SongId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
