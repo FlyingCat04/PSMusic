@@ -1,5 +1,5 @@
 import React from 'react';
-import './GenreCard.css';
+import styles from './GenreCard.module.css';
 
 const GenreCard = ({ genre, variant = 'default' }) => {
     const gradients = {
@@ -12,11 +12,11 @@ const GenreCard = ({ genre, variant = 'default' }) => {
 
     return (
         <div
-            className="genre-card"
+            className={styles['genre-card']}
             style={{ background: gradients[variant] || gradients.default }}
         >
-            <h3 className="genre-card-title">{genre.title}</h3>
-            <img src={genre.imageUrl} alt={genre.title} className="genre-card-image" />
+            <h3 className={styles['genre-card-title']}>{genre.title}</h3>
+            <img src={genre.imageUrl} alt={genre.title} className={styles['genre-card-image']} />
         </div>
     );
 };

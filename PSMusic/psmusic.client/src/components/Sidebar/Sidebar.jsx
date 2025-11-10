@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Disc3, LayoutGrid, BarChart3, BookHeart, Heart, History, Plus } from 'lucide-react';
 import Logo from '../Logo/Logo';
-import './Sidebar.css';
+import styles from './Sidebar.module.css';
 
 const mainNavItems = [
   { icon: <Disc3 />, label: 'Khám Phá', path: '/discover' },
@@ -27,52 +27,52 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={styles.sidebar}>
       <Logo />
       
-      <nav className="sidebar-nav">
+      <nav className={styles['sidebar-nav']}>
         <ul>
           {mainNavItems.map((item, index) => (
             <li key={index}>
               <Link 
                 to={item.path} 
-                className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+                className={`${styles['nav-item']} ${isActive(item.path) ? styles.active : ''}`}
               >
-                <span className="nav-item-icon">{item.icon}</span>
-                <span className="nav-item-label">{item.label}</span>
+                <span className={styles['nav-item-icon']}>{item.icon}</span>
+                <span className={styles['nav-item-label']}>{item.label}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className="sidebar-nav-title">Thư Viện</div>
+      <div className={styles['sidebar-nav-title']}>Thư Viện</div>
 
-      <nav className="sidebar-nav">
+      <nav className={styles['sidebar-nav']}>
         <ul>
           {secondaryNavItems.map((item, index) => (
              <li key={index}>
               <Link 
                 to={item.path} 
-                className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
+                className={`${styles['nav-item']} ${location.pathname === item.path ? styles.active : ''}`}
               >
-                <span className="nav-item-icon">{item.icon}</span>
-                <span className="nav-item-label">{item.label}</span>
+                <span className={styles['nav-item-icon']}>{item.icon}</span>
+                <span className={styles['nav-item-label']}>{item.label}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className="sidebar-nav-title">Playlist</div>
-      <div className="login-prompt">
+      <div className={styles['sidebar-nav-title']}>Playlist</div>
+      <div className={styles['login-prompt']}>
         <p>Đăng nhập để khám phá playlist dành riêng cho bạn</p>
-        <button className="login-button">
+        <button className={styles['login-button']}>
           ĐĂNG NHẬP
         </button>
       </div>
 
-      {/* <button className="add-playlist-button">
+      {/* <button className={styles['add-playlist-button']}>
         <Plus />
         <span>Tạo playlist mới</span>
       </button> */}

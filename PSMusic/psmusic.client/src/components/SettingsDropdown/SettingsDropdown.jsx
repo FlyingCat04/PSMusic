@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Settings, Globe, Palette } from 'lucide-react';
-import './SettingsDropdown.css';
+import styles from './SettingsDropdown.module.css';
 
 const SettingsDropdown = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -142,30 +142,30 @@ const SettingsDropdown = () => {
     };
 
     return (
-        <div className="settings-dropdown" ref={dropdownRef}>
+        <div className={styles['settings-dropdown']} ref={dropdownRef}>
             <button 
-                className="icon-button"
+                className={styles['icon-button']}
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             >
                 <Settings />
             </button>
         
             {isSettingsOpen && (
-                <div className="dropdown-menu">
-                    <div className="dropdown-section">
-                        <div className="dropdown-header">
+                <div className={styles['dropdown-menu']}>
+                    <div className={styles['dropdown-section']}>
+                        <div className={styles['dropdown-header']}>
                             <Globe size={16} />
                             <span>Ngôn ngữ</span>
                         </div>
-                        <div className="dropdown-options">
+                        <div className={styles['dropdown-options']}>
                             <button 
-                                className="dropdown-option"
+                                className={styles['dropdown-option']}
                                 onClick={() => handleLanguageChange('vi')}
                             >
                                 Tiếng Việt
                             </button>
                             <button 
-                                className="dropdown-option"
+                                className={styles['dropdown-option']}
                                 onClick={() => handleLanguageChange('en')}
                             >
                                 English
@@ -173,54 +173,54 @@ const SettingsDropdown = () => {
                         </div>
                 </div>
                 
-                <div className="dropdown-divider"></div>
+                <div className={styles['dropdown-divider']}></div>
                 
-                <div className="dropdown-section">
-                    <div className="dropdown-header">
+                <div className={styles['dropdown-section']}>
+                    <div className={styles['dropdown-header']}>
                         <Palette size={16} />
                         <span>Màu nền</span>
                     </div>
-                    <div className="dropdown-options">
+                    <div className={styles['dropdown-options']}>
                         <button 
-                            className={`dropdown-option theme-option ${currentTheme === 'ruby' ? 'active' : ''}`}
+                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'ruby' ? styles.active : ''}`}
                             onClick={() => handleThemeChange('ruby')}
                         >
-                            <div className="theme-preview ruby-theme"></div>
+                            <div className={`${styles['theme-preview']} ${styles['ruby-theme']}`}></div>
                             <span>Ruby</span>
                         </button>
                         <button 
-                            className={`dropdown-option theme-option ${currentTheme === 'amethyst' ? 'active' : ''}`}
+                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'amethyst' ? styles.active : ''}`}
                             onClick={() => handleThemeChange('amethyst')}
                         >
-                            <div className="theme-preview amethyst-theme"></div>
+                            <div className={`${styles['theme-preview']} ${styles['amethyst-theme']}`}></div>
                             <span>Amethyst</span>
                         </button>
                         <button 
-                            className={`dropdown-option theme-option ${currentTheme === 'sapphire' ? 'active' : ''}`}
+                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'sapphire' ? styles.active : ''}`}
                             onClick={() => handleThemeChange('sapphire')}
                         >
-                            <div className="theme-preview sapphire-theme"></div>
+                            <div className={`${styles['theme-preview']} ${styles['sapphire-theme']}`}></div>
                             <span>Sapphire</span>
                         </button>
                         <button 
-                            className={`dropdown-option theme-option ${currentTheme === 'emerald' ? 'active' : ''}`}
+                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'emerald' ? styles.active : ''}`}
                             onClick={() => handleThemeChange('emerald')}
                         >
-                            <div className="theme-preview emerald-theme"></div>
+                            <div className={`${styles['theme-preview']} ${styles['emerald-theme']}`}></div>
                             <span>Emerald</span>
                         </button>
                         <button 
-                            className={`dropdown-option theme-option ${currentTheme === 'topaz' ? 'active' : ''}`}
+                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'topaz' ? styles.active : ''}`}
                             onClick={() => handleThemeChange('topaz')}
                         >
-                            <div className="theme-preview topaz-theme"></div>
+                            <div className={`${styles['theme-preview']} ${styles['topaz-theme']}`}></div>
                             <span>Topaz</span>
                         </button>
                         <button 
-                            className={`dropdown-option theme-option ${currentTheme === 'aquamarine' ? 'active' : ''}`}
+                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'aquamarine' ? styles.active : ''}`}
                             onClick={() => handleThemeChange('aquamarine')}
                         >
-                            <div className="theme-preview aquamarine-theme"></div>
+                            <div className={`${styles['theme-preview']} ${styles['aquamarine-theme']}`}></div>
                             <span>Aquamarine</span>
                         </button>
                     </div>

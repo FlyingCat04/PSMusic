@@ -4,7 +4,7 @@ import { ChevronRight, RefreshCcw } from 'lucide-react';
 import GenreCard from '../../components/GenreCard/GenreCard';
 import ItemCardRow from '../../components/ItemCardRow/ItemCardRow';
 import ItemCardColumn from '../../components/ItemCardColumn/ItemCardColumn';
-import './HomePage.css';
+import styles from './HomePage.module.css';
 
 // Mock data
 const SUGGESTED_SONGS = [
@@ -32,48 +32,48 @@ const GENRES = [
 
 const HomePage = () => {
   return (
-    <div className="home-main-content">
-      <div className="section-header">
-            <h2 className="section-title">Khám Phá Qua Thể Loại</h2>
-            <Link to="/genres" className="see-all-link">
+    <div className={styles['home-main-content']}>
+      <div className={styles['section-header']}>
+            <h2 className={styles['section-title']}>Khám Phá Qua Thể Loại</h2>
+            <Link to="/genres" className={styles['see-all-link']}>
               Tất cả
               <ChevronRight />
             </Link>
         </div>
-      <section className="content-section">
-        <div className="genre-grid">
+      <section className={styles['content-section']}>
+        <div className={styles['genre-grid']}>
           {GENRES.map((genre) => (
             <GenreCard key={genre.id} genre={genre} variant="glass" />
           ))}
         </div>
       </section>
 
-      <section className="content-section">
-        <div className="section-header">
-          <h2 className="section-title">Gợi Ý Bài Hát</h2>
-          <button className="refresh-button">
-            <div className="refresh-icon">
+      <section className={styles['content-section']}>
+        <div className={styles['section-header']}>
+          <h2 className={styles['section-title']}>Gợi Ý Bài Hát</h2>
+          <button className={styles['refresh-button']}>
+            <div className={styles['refresh-icon']}>
               <RefreshCcw />
             </div>
             <span>Làm mới</span>
           </button>
         </div>
-        <div className="songs-grid-row">
+        <div className={styles['songs-grid-row']}>
           {SUGGESTED_SONGS.map((song) => (
             <ItemCardRow key={song.id} song={song} />
           ))}
         </div>
       </section>
       
-      <section className="content-section">
-        <div className="section-header">
-            <h2 className="section-title">Bài Hát Thịnh Hành</h2>
-            <Link to="/charts" className="see-all-link">
+      <section className={styles['content-section']}>
+        <div className={styles['section-header']}>
+            <h2 className={styles['section-title']}>Bài Hát Thịnh Hành</h2>
+            <Link to="/charts" className={styles['see-all-link']}>
               Tất cả
               <ChevronRight />
             </Link>
         </div>
-        <div className="songs-grid-column">
+        <div className={styles['songs-grid-column']}>
             {[1,2,3,4,5].map(i => (
                  <ItemCardColumn key={i} />
             ))}

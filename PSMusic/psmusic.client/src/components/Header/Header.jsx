@@ -1,22 +1,22 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, Search, User } from 'lucide-react';
 import SettingsDropdown from '../SettingsDropdown/SettingsDropdown';
-import './Header.css';
+import styles from './Header.module.css';
 
 const Header = () => {
   return (
-    <header className="header">
-      <div className="header-left">
-        <div className="navigation-arrows">
-          <button className="nav-arrow disabled">
+    <header className={styles.header}>
+      <div className={styles['header-left']}>
+        <div className={styles['navigation-arrows']}>
+          <button className={`${styles['nav-arrow']} ${styles.disabled}`}>
             <ChevronLeft />
           </button>
-          <button className="nav-arrow">
+          <button className={styles['nav-arrow']}>
             <ChevronRight />
           </button>
         </div>
-        <div className="search-bar">
-          <div className="search-icon">
+        <div className={styles['search-bar']}>
+          <div className={styles['search-icon']}>
             <Search />
           </div>
           <input
@@ -25,17 +25,17 @@ const Header = () => {
           />
         </div>
       </div>
-      <div className="header-right">
+      <div className={styles['header-right']}>
         <SettingsDropdown />
         
-        {/* <div className="user-avatar">
+        {/* <div className={styles['user-avatar']}>
             <User />
         </div> */}
 
-        <button className="header-button primary">
+        <button className={`${styles['header-button']} ${styles.primary}`}>
           Đăng nhập
         </button>
-        <button className="header-button secondary">
+        <button className={`${styles['header-button']} ${styles.secondary}`}>
           <span>Tạo tài khoản</span>
         </button>
 
