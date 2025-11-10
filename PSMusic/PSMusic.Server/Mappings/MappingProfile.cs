@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using PSMusic.Server.Models.DTO.Artist;
+using PSMusic.Server.Models.DTO.Category;
+using PSMusic.Server.Models.DTO.Song;
 using PSMusic.Server.Models.DTO.User;
 using PSMusic.Server.Models.Entities;
 
@@ -8,8 +11,27 @@ namespace PSMusic.Server.Mapping
     {
         public MappingProfile() 
         {
+            // map user
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<User, CreateUserDTO>().ReverseMap();
+            
+            // map song
+            CreateMap<Song, SongDTO>()
+                .ForMember(dto => dto.ArtistIds,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.ArtistId)))
+                .ForMember(dto => dto.CategoryIds,
+                    opt => opt.MapFrom(e => e.SongCategories.Select(sa => sa.CategoryId)));
+            CreateMap<Song, SongDetailDTO>()
+                .ForMember(dto => dto.Artists,
+                    opt => opt.Ignore())
+                .ForMember(dto => dto.Categories,
+                    opt => opt.Ignore());
+
+            // map artist
+            CreateMap<Artist, ArtistDTO>().ReverseMap();
+
+            // map category
+            CreateMap<Category, CategoryDTO>().ReverseMap();
         }
     }
 }

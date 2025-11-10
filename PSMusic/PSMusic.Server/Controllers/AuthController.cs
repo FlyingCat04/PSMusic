@@ -17,15 +17,17 @@ namespace PSMusic.Server.Controllers
             _authService = authService;
         }
 
+        // POST api/auth/register
         [HttpPost("register")]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         public async Task<IActionResult> Register([FromBody] CreateUserDTO user)
         {
             var result = await _authService.Register(user);
             if (result.IsSuccess) return Ok(result);
             else return BadRequest(result);
         }
-
+        
+        // POST api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthReqDTO req)
         {
