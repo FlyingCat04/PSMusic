@@ -75,14 +75,16 @@
   gap: 8px;
 }
 
-.footer-links li a {
+.footer-links li a,
+.footer-links li a[href] {
   color: var(--text-tertiary);
   text-decoration: none;
   font-size: 14px;
   transition: color 0.3s ease;
 }
 
-.footer-links li a:hover {
+.footer-links li a:hover,
+.footer-links li a[href]:hover {
   color: #ffffff;
 }
 

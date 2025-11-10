@@ -1,10 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { AudioLines } from 'lucide-react'
 import './Logo.css';
 
 const Logo = () => {
     return (
-      <div className="logo">
+      <Link to="/" className="logo">
         <div className="logo-icon">
           <AudioLines />
         </div>
@@ -15,7 +16,7 @@ const Logo = () => {
             </div>
             <p className="logo-text-subtitle">MXH ÂM NHẠC</p>
         </div>
-      </div>
+      </Link>
     );
 };
 

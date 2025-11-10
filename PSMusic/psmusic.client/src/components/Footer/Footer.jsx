@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Facebook, Youtube, Instagram } from 'lucide-react';
 import Logo from '../Logo/Logo';
 import './Footer.css';
@@ -45,7 +46,7 @@ const Footer = () => {
             <ul className="footer-links">
               {footerData.support.map((item, index) => (
                 <li key={index}>
-                  <a href={item.url}>{item.name}</a>
+                  <Link to={item.url}>{item.name}</Link>
                 </li>
               ))}
             </ul>

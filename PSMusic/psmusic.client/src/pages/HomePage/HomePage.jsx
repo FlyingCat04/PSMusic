@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronRight, RefreshCcw } from 'lucide-react';
 import GenreCard from '../../components/GenreCard/GenreCard';
 import ItemCardRow from '../../components/ItemCardRow/ItemCardRow';
@@ -34,10 +35,10 @@ const HomePage = () => {
     <div className="home-main-content">
       <div className="section-header">
             <h2 className="section-title">Khám Phá Qua Thể Loại</h2>
-            <a href="#" className="see-all-link">
+            <Link to="/genres" className="see-all-link">
               Tất cả
               <ChevronRight />
-            </a>
+            </Link>
         </div>
       <section className="content-section">
         <div className="genre-grid">
@@ -67,10 +68,10 @@ const HomePage = () => {
       <section className="content-section">
         <div className="section-header">
             <h2 className="section-title">Bài Hát Thịnh Hành</h2>
-            <a href="#" className="see-all-link">
+            <Link to="/charts" className="see-all-link">
               Tất cả
               <ChevronRight />
-            </a>
+            </Link>
         </div>
         <div className="songs-grid-column">
             {[1,2,3,4,5].map(i => (
