@@ -22,9 +22,19 @@ namespace PSMusic.Server.Repositories.Implementations
 
         public async Task<Song?> GetById(int id)
         {
-            Song? song = await _dbContext
-                .Song.FirstOrDefaultAsync(s => s.Id == id);
+            Song? song = await _dbContext.Song
+                .FirstOrDefaultAsync(s => s.Id == id);
             return song == null ? null : song;
+        }
+
+        public async Task<IEnumerable<Song>?> Search(string keyword)
+        {
+            return await _dbContext.Song
+                .Include(s => s.SongArtists)
+                    .ThenInclude(sa => sa.Artist)
+                .Where(s => EF.Functions.ILike(EF.Functions.Unaccent(s.Name), EF.Functions.Unaccent($"%{keyword}%"))
+                || s.SongArtists.Any(sa => EF.Functions.ILike(EF.Functions.Unaccent(sa.Artist.Name), EF.Functions.Unaccent($"%{keyword}%"))))
+                .ToListAsync();
         }
     }
 }
