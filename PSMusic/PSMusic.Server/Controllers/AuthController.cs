@@ -18,7 +18,7 @@ namespace PSMusic.Server.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> Register([FromBody] CreateUserDTO user)
         {
             var result = await _authService.Register(user);
