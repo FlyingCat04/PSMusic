@@ -30,6 +30,10 @@ namespace PSMusic.Server.Data
                 entity.Property(entity => entity.Password).IsRequired();
                 entity.Property(entity => entity.DisplayName).IsRequired();
                 entity.Property(entity => entity.Email).IsRequired();
+                entity.HasIndex(entity => entity.Email)
+                    .IsUnique();
+                entity.HasIndex(entity => entity.Username)
+                    .IsUnique();
             });
 
             modelBuilder.Entity<Category>(entity =>
