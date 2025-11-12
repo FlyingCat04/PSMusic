@@ -19,7 +19,7 @@ namespace PSMusic.Server.Controllers
 
         // POST api/auth/register
         [HttpPost("register")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Register([FromBody] CreateUserDTO user)
         {
             var result = await _authService.Register(user);
