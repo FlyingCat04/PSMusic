@@ -7,5 +7,6 @@ namespace PSMusic.Server.Repositories.Interfaces
         IQueryable<Song> GetAll();
         Task<Song?> GetById(int id);
         Task<IEnumerable<Song>?> Search(string keyword);
+        IQueryable<Song> GetSongsWithStreamsLast7Days();
     }
 }

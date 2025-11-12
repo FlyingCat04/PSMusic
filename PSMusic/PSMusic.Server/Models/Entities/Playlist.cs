@@ -12,5 +12,6 @@ namespace PSMusic.Server.Models.Entities
         public Song Song { get; set; } = null!;
         public string Title { get; set; } = string.Empty;
         public bool IsPublic { get; set; } = false;
+        public string? AvatarUrl { get; set; }
     }
 }

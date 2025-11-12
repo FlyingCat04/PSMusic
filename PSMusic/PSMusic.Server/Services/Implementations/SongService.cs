@@ -24,20 +24,16 @@ namespace PSMusic.Server.Services.Implementations
             _artistService = artistService;
         }
 
-        public async Task<IEnumerable<SongDTO>> GetAll(int page = 1, int size = 20)
+        public async Task<PagedResult<SongDTO>> GetAll(int page = 1, int size = 10)
         {
             if (page < 1) page = 1;
-            if (size < 20) size = 20;
+            if (size < 10) size = 10;
 
             var query = _songRepository.GetAll();
 
-            var pagedSongs = await query
-                .Skip((page - 1) * size)
-                .Take(size)
-                .ProjectTo<SongDTO>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var songs = query.Select(s => _mapper.Map<SongDTO>(s));
             
-            return pagedSongs;
+            return await songs.PaginateAsync(page, size);
         }
 
         public async Task<SongDetailDTO?> GetById(int id)
@@ -117,6 +113,14 @@ namespace PSMusic.Server.Services.Implementations
                 Results = combinedResults,
                 TopResult = topResult
             };
+        }
+
+        public async Task<PagedResult<SongDTO>> GetPopularSongs(int page, int size)
+        {
+            var query = _songRepository.GetSongsWithStreamsLast7Days();
+
+            var songs = query.Select(s => _mapper.Map<SongDTO>(s));
+            return await songs.PaginateAsync(page, size);
         }
     }
 }

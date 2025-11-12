@@ -11,6 +11,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public string Name { get; set; } = string.Empty;
         public string LrcUrl { get; set; } = string.Empty;
         public string Mp3Url { get; set; } = string.Empty;
+        public string AvatarUrl { get; set; } = string.Empty;
         public List<ArtistDTO> Artists { get; set; } = new List<ArtistDTO>();
         public List<CategoryDTO> Categories { get; set; } = new List<CategoryDTO>();
 

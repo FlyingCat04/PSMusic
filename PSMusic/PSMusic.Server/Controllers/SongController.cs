@@ -17,10 +17,10 @@ namespace PSMusic.Server.Controllers
         }
 
         // GET api/song?page=1&size=20
-        // min size of a page is 20 elements
+        // min size of a page is 10 elements
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetAll(int page = 1, int size = 20)
+        //[Authorize]
+        public async Task<IActionResult> GetAll(int page = 1, int size = 10)
         {
             var result = await _songService.GetAll(page, size);
             return Ok(result);
@@ -32,6 +32,15 @@ namespace PSMusic.Server.Controllers
         public async Task<IActionResult> Search(string keyword, int page = 1, int size = 10)
         {
             var result = await _songService.SearchAll(keyword, page, size);
+            return Ok(result);
+        }
+
+        // GET api/song/home?page=1&size=10
+        [HttpGet("home")]
+        //[Authorize]
+        public async Task<IActionResult> GetHomeData(int page = 1, int size = 10)
+        {
+            var result = await _songService.GetPopularSongs(page, size);
             return Ok(result);
         }
     }
