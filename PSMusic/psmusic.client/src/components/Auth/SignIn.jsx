@@ -1,7 +1,12 @@
-import {React, useState} from "react";
+import { React, useState } from "react";
+import LoadSpinner from "../LoadSpinner/LoadSpinner"
+import { useNavigate } from "react-router-dom";
 function SignInForm() {
   const [state, setState] = useState({name: "", password: ""});
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = evt => {
     const value = evt.target.value;
@@ -17,6 +22,7 @@ function SignInForm() {
     evt.preventDefault();
 
     const { name, password } = state;
+    setLoading(true)
 
     // 🔹 Kiểm tra logic đăng nhập mẫu (bạn có thể thay bằng call API sau này)
     // if (name !== "admin" || password !== "123456") {
@@ -35,14 +41,19 @@ function SignInForm() {
       const data = await response.json();
 
         if (!response.ok) {
+            setLoading(false)
             console.log(data.message)
-        setError(data.message || "Tên đăng nhập hoặc mật khẩu không đúng.");
-        return;
+            setError("Tên đăng nhập hoặc mật khẩu không đúng.");
+            return;
       }
 
       // Đăng nhập thành công
-      alert("Đăng nhập thành công!");
-      console.log("Server response:", data);
+      setSuccess("Đăng nhập thành công")
+      setLoading(false)
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
 
       // Ví dụ lưu token vào localStorage nếu backend trả token
       // localStorage.setItem("token", data.token);
@@ -51,34 +62,39 @@ function SignInForm() {
       setError("");
 
     } catch (err) {
+      setLoading(false)
       console.error(err);
       setError("Lỗi kết nối đến máy chủ.");
     }
   };
 
   return (
-    <div className="formContainer signInContainer">
-      <form className="form" onSubmit={handleOnSubmit}>
-        <h1>Đăng nhập</h1>
-        <input
-          type="name"
-          placeholder="Tên đăng nhập"
-          name="name"
-          value={state.name}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Mật khẩu"
-          value={state.password}
-          onChange={handleChange}
-        />
-        {error && (<small style={{ color: "red", marginTop: "4px", fontSize: "12px" }}>{error}</small>)}
-        <a href="#">Quên mật khẩu?</a>
-        <button className="submit-btn">Đăng nhập</button>
-      </form>
-    </div>
+      <>
+          {loading && <LoadSpinner />}
+          <div className="formContainer signInContainer">
+              <form className="form" onSubmit={handleOnSubmit}>
+                  <h1>Đăng nhập</h1>
+                  <input
+                      type="name"
+                      placeholder="Tên đăng nhập"
+                      name="name"
+                      value={state.name}
+                      onChange={handleChange}
+                  />
+                  <input
+                      type="password"
+                      name="password"
+                      placeholder="Mật khẩu"
+                      value={state.password}
+                      onChange={handleChange}
+                  />
+                  {error && (<small style={{ color: "red", marginTop: "4px", fontSize: "12px" }}>{error}</small>)}
+                  {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
+                  <a href="#">Quên mật khẩu?</a>
+                  <button className="submit-btn">Đăng nhập</button>
+              </form>
+          </div>
+      </>
   );
 }
 
