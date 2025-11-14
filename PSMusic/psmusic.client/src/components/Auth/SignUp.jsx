@@ -1,5 +1,8 @@
 import { React, useState } from "react";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
+import authService from "../../services/authService"
+import emailValidationService from "../../services/emailValidationService";
+
 function SignUpForm() {
   const [state, setState] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
@@ -8,11 +11,12 @@ function SignUpForm() {
 
   const handleChange = evt => {
     const value = evt.target.value;
-    setState({
-      ...state,
-      [evt.target.name]: value
-    });
-  };
+        setState({
+            ...state,
+            [evt.target.name]: value
+        });
+        setError("");
+    };
 
     const handleOnSubmit = async evt => {
         setLoading(true)
@@ -20,36 +24,82 @@ function SignUpForm() {
 
         const { name, email, password } = state;
 
+        if (!name || !email || !password) {
+            setError("Vui lòng điền đầy đủ thông tin");
+            return false;
+        }
+
         if (password.length < 8) {
             setLoading(false)
             setError("Mật khẩu phải có ít nhất 8 ký tự");
             return;
         }
 
-        try {
-            const response = await fetch("https://localhost:7215/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: name, password: password, email: email, displayName: name, avatarURL: null })
-            });
-            const data = await response.json();
+        setLoading(true);
+        setError("");
+        setSuccess("");
 
-            if (!response.ok) {
-                setLoading(false)
-                setError(data.message);
-                return;
-            }
+        const emailValidation = await emailValidationService.validateEmail(email);
+        
 
-            setLoading(false)
-            setSuccess("Đăng ký thành công")
+        if (!emailValidation.isFormatValid) {
+            setLoading(false);
+            setError(emailValidation.message || "Format email không hợp lệ")
+            return;
+        }
+
+        if (!emailValidation.isDeliverable) {
+            setLoading(false);
+            setError(emailValidation.message || "Email không tồn tại hoặc không hợp lệ");
+            return;
+        }
+        
+        if (!emailValidation.isGmail) {
+            setLoading(false);
+            setError("Chỉ chấp nhận mail có đuôi @gmail.com");
+            return;
+        }
+
+        const result = await authService.register({
+            username: name,
+            password: password,
+            email: email,
+            displayName: name,
+            avatarURL: null
+        });
+
+        setLoading(false);
+
+        if (result.isSuccess) {
+            setSuccess("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
             setState({ name: "", email: "", password: "" });
-            setError("");
+        } else {
+            setError(result.message);
+        }
+        // try {
+        //     const response = await fetch("https://localhost:7215/api/auth/register", {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify({ username: name, password: password, email: email, displayName: name, avatarURL: null })
+        //     });
+        //     const data = await response.json();
 
-        } catch (err) {
-            setLoading(false)
-            console.error(err);
-            setError("Lỗi kết nối đến máy chủ.");
-        };
+        //     if (!response.ok) {
+        //         setLoading(false)
+        //         setError(data.message);
+        //         return;
+        //     }
+
+        //     setLoading(false)
+        //     setSuccess("Đăng ký thành công")
+        //     setState({ name: "", email: "", password: "" });
+        //     setError("");
+
+        // } catch (err) {
+        //     setLoading(false)
+        //     console.error(err);
+        //     setError("Lỗi kết nối đến máy chủ.");
+        // };
     }
 
   return (

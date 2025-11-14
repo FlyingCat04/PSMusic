@@ -25,28 +25,28 @@ namespace PSMusic.Server.Services.Implementations
         public async Task<AuthResDTO> Login(AuthReqDTO req)
         {
             User? user = await _userRepository.GetUserByUsername(req.Username);
-            if (user == null) return new AuthResDTO { IsSuccess = false, Message = "Username does not exist" };
+            if (user == null) return new AuthResDTO { IsSuccess = false, Message = "Tài khoản không tồn tại" };
 
             if (user.VerifyPassword(req.Password))
             {
                 var token = _tokenGenerator.GenerateToken(user);
-                return new AuthResDTO { IsSuccess = true, Message = "Login successfully", Token = token }; 
+                return new AuthResDTO { IsSuccess = true, Message = "Đăng nhập thành công", Token = token }; 
             }
-            else return new AuthResDTO { IsSuccess = false, Message = "Wrong password" };
+            else return new AuthResDTO { IsSuccess = false, Message = "Sai mật khẩu" };
         }
 
         public async Task<AuthResDTO> Register(CreateUserDTO user)
         {
             bool emailExistence = await _userRepository.CheckEmailExistence(user.Email);
-            if (emailExistence) return new AuthResDTO { IsSuccess = false, Message = "Email already exists" };
+            if (emailExistence) return new AuthResDTO { IsSuccess = false, Message = "Email đã tồn tại" };
 
             User? userExist = await _userRepository.GetUserByUsername(user.Username);
-            if (userExist != null) return new AuthResDTO { IsSuccess = false, Message = "Username already exists" };
+            if (userExist != null) return new AuthResDTO { IsSuccess = false, Message = "Tài khoản đã tồn tại" };
             
             User userEntity = _mapper.Map<User>(user);
             userEntity.SetPassword(userEntity.Password);
-            if (await _userRepository.Add(userEntity)) return new AuthResDTO { IsSuccess = true, Message = "Register successfully" };
-            else return new AuthResDTO { IsSuccess = false, Message = "Failed in creating a new user"};
+            if (await _userRepository.Add(userEntity)) return new AuthResDTO { IsSuccess = true, Message = "Đăng ký thành công" };
+            else return new AuthResDTO { IsSuccess = false, Message = "Tạo tài khoản thất bại"};
         }
     }
 }
