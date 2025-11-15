@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./AuthPage.css";
+import styles from "./AuthPage.module.css";
 import SignInForm from "../../components/Auth/SignIn";
 import SignUpForm from "../../components/Auth/SignUp";
 
@@ -10,31 +10,31 @@ export default function AuthPage() {
     if (text !== type) setType(text);
   };
 
-  const containerClass = "container " + (type === "signUp" ? "rightPanelActive" : "");
+    const containerClass = `${styles.container} ${type === "signUp" ? styles.rightPanelActive : ""}`;
 
   return (
-    <div className="app">
+    <div className={styles.app}>
       <div className={containerClass}>
         <SignUpForm />
         <SignInForm />
 
-        <div className="overlayContainer">
-          <div className="overlay">
-            <div className="overlayPanel overlayLeft">
+        <div className={styles.overlayContainer}>
+          <div className={styles.overlay}>
+            <div className={`${styles.overlayPanel} ${styles.overlayLeft}`}>
               <h1>Chào mừng!</h1>
               <p>Nhập vào thông tin tài khoản và bắt đầu khám phá</p>
               <button
-                className="ghost"
+                className={styles.ghost}
                 onClick={() => handleOnClick("signIn")}
               >
                 Đăng nhập
               </button>
             </div>
-            <div className="overlayPanel overlayRight">
+            <div className={`${styles.overlayPanel} ${styles.overlayRight}`}>
               <h1>Mừng trở lại!</h1>
               <p>Hãy đăng nhập bằng tài khoản của bạn và tiếp tục hành trình với chúng tôi</p>
               <button
-                className="ghost"
+                className={styles.ghost}
                 onClick={() => handleOnClick("signUp")}
               >
                 Đăng ký

@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
 import { useNavigate } from "react-router-dom";
 import authService from "../../services/authService";
+import styles from "./SignIn.module.css";
 
 function SignInForm() {
   const [state, setState] = useState({name: "", password: ""});
@@ -142,8 +143,8 @@ function SignInForm() {
   return (
       <>
           {loading && <LoadSpinner />}
-          <div className="formContainer signInContainer">
-              <form className="form" onSubmit={handleOnSubmit}>
+          <div className={`${styles.formContainer} ${styles.signInContainer}`}>
+              <form className={styles.inputForm} onSubmit={handleOnSubmit}>
                   <h1>Đăng nhập</h1>
                   <input
                       type="name"
@@ -162,7 +163,7 @@ function SignInForm() {
                   {error && (<small style={{ color: "red", marginTop: "4px", fontSize: "12px" }}>{error}</small>)}
                   {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
                   {/* <a href="#">Quên mật khẩu?</a> */}
-                  <button className="submit-btn">Đăng nhập</button>
+                  <button className={styles['submit-btn']}>Đăng nhập</button>
               </form>
           </div>
       </>

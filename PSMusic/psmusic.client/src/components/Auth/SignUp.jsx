@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
 import authService from "../../services/authService"
 import emailValidationService from "../../services/emailValidationService";
+import styles from "./SignUp.module.css";
 
 function SignUpForm() {
   const [state, setState] = useState({ name: "", email: "", password: "" });
@@ -105,8 +106,8 @@ function SignUpForm() {
   return (
       <>
           {loading && <LoadSpinner />}
-          <div className="formContainer signUpContainer">
-              <form className="form" onSubmit={handleOnSubmit}>
+          <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
+              <form className={styles.inputForm} onSubmit={handleOnSubmit}>
                   <h1>Tạo tài khoản</h1>
                   <input
                       type="text"
@@ -131,7 +132,7 @@ function SignUpForm() {
                   />
                   {error && (<small style={{ color: "red", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{error}</small>)}
                   {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
-                  <button className="submit-btn">Đăng ký</button>
+                  <button className={styles['submit-btn']}>Đăng ký</button>
               </form>
           </div>
       </>
