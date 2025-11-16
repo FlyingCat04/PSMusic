@@ -58,14 +58,7 @@ namespace PSMusic.Server.Services.Implementations
             var songResults = new List<SearchResultDTO>();
             foreach (var song in songs)
             {
-                var artistsForSong = new List<string>();
-
-                foreach (var artistId in song.ArtistIds)
-                {
-                    var artist = await _artistService.GetById(artistId);
-                    if (artist == null) continue;
-                    artistsForSong.Add(artist.Name);
-                }
+                var artistsForSong = song.ArtistNames;
 
                 songResults.Add(new SearchResultDTO
                 {

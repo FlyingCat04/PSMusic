@@ -17,10 +17,10 @@ namespace PSMusic.Server.Mapping
             
             // map song
             CreateMap<Song, SongDTO>()
-                .ForMember(dto => dto.ArtistIds,
-                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.ArtistId)))
-                .ForMember(dto => dto.CategoryIds,
-                    opt => opt.MapFrom(e => e.SongCategories.Select(sa => sa.CategoryId)));
+                .ForMember(dto => dto.ArtistNames,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.Artist.Name)))
+                .ForMember(dto => dto.CategoryNames,
+                    opt => opt.MapFrom(e => e.SongCategories.Select(sa => sa.Category.Name)));
             CreateMap<Song, SongDetailDTO>()
                 .ForMember(dto => dto.Artists,
                     opt => opt.Ignore())

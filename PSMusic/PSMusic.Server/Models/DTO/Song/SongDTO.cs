@@ -10,7 +10,9 @@ namespace PSMusic.Server.Models.DTO.Song
         public string LrcUrl { get; set; } = string.Empty;
         public string Mp3Url { get; set; } = string.Empty;
         public string AvatarUrl { get; set; } = string.Empty;
-        public List<int> ArtistIds { get; set; } = new List<int>();
-        public List<int> CategoryIds { get; set; } = new List<int>();
+        //public List<int> ArtistIds { get; set; } = new List<int>();
+        public List<string> ArtistNames { get; set; } = new List<string>();
+        //public List<int> CategoryIds { get; set; } = new List<int>();
+        public List<string> CategoryNames { get; set; } = new List<string>();
     }
 }
