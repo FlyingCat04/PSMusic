@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSMusic.Server.Data;
-using PSMusic.Server.Models.DTO.Song;
 using PSMusic.Server.Models.Entities;
 using PSMusic.Server.Repositories.Interfaces;
 
@@ -51,12 +50,12 @@ namespace PSMusic.Server.Repositories.Implementations
             var week = DateTime.UtcNow.AddDays(-7);
 
             return _dbContext.Song
-                //.Where(s => _dbContext.Stream
-                //    .Any(st => st.SongId == s.Id && st.StreamedAt >= week))
+                .Where(s => _dbContext.Stream
+                    .Any(st => st.SongId == s.Id && st.StreamedAt >= week))
                 .Include(s => s.SongArtists)
-                .ThenInclude(sa => sa.Artist)
+                    .ThenInclude(sa => sa.Artist)
                 .Include(s => s.SongCategories)
-                .ThenInclude(sc => sc.Category)
+                    .ThenInclude(sc => sc.Category)
                 .OrderByDescending(s => _dbContext.Stream
                     .Count(st => st.SongId == s.Id && st.StreamedAt >= week));
         }

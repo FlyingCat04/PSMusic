@@ -18,7 +18,7 @@ namespace PSMusic.Server.Controllers
 
 
         [HttpGet("{id:int}")]
-        [Authorize(Roles = "customer")]
+        [Authorize]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userService.GetUserById(id);

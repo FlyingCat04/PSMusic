@@ -27,5 +27,24 @@ namespace PSMusic.Server.Repositories.Implementations
                 .FirstOrDefaultAsync(a => a.Id == id);
             return artist == null ? null : artist;
         }
+
+        public IQueryable<Artist> GetArtistsWithStreamsLast7Days()
+        {
+            var week = DateTime.UtcNow.AddDays(-7);
+
+            return _dbContext.Artist
+                .Where(a => a.SongArtists
+                    .Any(sa => sa.Song.Streams.Any(s => s.StreamedAt >= week)))
+                .Select(a => new
+                {
+                    Artist = a,
+                    TotalStream = a.SongArtists
+                        .Select(sa => sa.Song)
+                        .SelectMany(s => s.Streams)
+                        .Count(st => st.StreamedAt >= week)
+                })
+                .OrderByDescending(a => a.TotalStream)
+                .Select(x => x.Artist);
+        }
     }
 }

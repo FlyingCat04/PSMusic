@@ -1,4 +1,5 @@
-﻿using PSMusic.Server.Models.DTO.Artist;
+﻿using PSMusic.Server.Helpers;
+using PSMusic.Server.Models.DTO.Artist;
 
 namespace PSMusic.Server.Services.Interfaces
 {
@@ -6,5 +7,6 @@ namespace PSMusic.Server.Services.Interfaces
     {
         Task<IEnumerable<ArtistDTO>>? SearchByName(string keyword);
         Task<ArtistDTO?> GetById(int id);
+        Task<PagedResult<ArtistDTO>> GetPopularArtists(int page, int size);
     }
 }

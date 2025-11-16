@@ -7,5 +7,6 @@ namespace PSMusic.Server.Models.Entities
         [Key]
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public ICollection<SongCategory> SongCategories { get; set; } = new List<SongCategory>();
     }
 }

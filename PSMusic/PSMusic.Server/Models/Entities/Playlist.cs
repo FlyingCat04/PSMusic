@@ -13,5 +13,6 @@ namespace PSMusic.Server.Models.Entities
         public string Title { get; set; } = string.Empty;
         public bool IsPublic { get; set; } = false;
         public string? AvatarUrl { get; set; }
+        public ICollection<Song> Songs { get; set; } = new List<Song>();
     }
 }

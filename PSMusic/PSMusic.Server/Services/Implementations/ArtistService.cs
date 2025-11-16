@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PSMusic.Server.Helpers;
 using PSMusic.Server.Models.DTO.Artist;
 using PSMusic.Server.Models.Entities;
 using PSMusic.Server.Repositories.Interfaces;
@@ -27,6 +28,13 @@ namespace PSMusic.Server.Services.Implementations
         {
             Artist? artist = await _repository.GetById(id);
             return artist == null ? null : _mapper.Map<ArtistDTO>(artist);
+        }
+
+        public async Task<PagedResult<ArtistDTO>> GetPopularArtists(int page, int size)
+        {
+            var query = _repository.GetArtistsWithStreamsLast7Days();
+            var artists = query.Select(a => _mapper.Map<ArtistDTO>(a));
+            return await artists.PaginateAsync(page, size);
         }
     }
 }
