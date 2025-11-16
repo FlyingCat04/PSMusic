@@ -53,7 +53,7 @@ namespace PSMusic.Server.Data
                 entity.HasKey(sc => new { sc.SongId, sc.CategoryId });
                 entity
                     .HasOne(sc => sc.Category)
-                    .WithMany()
+                    .WithMany(c => c.SongCategories)
                     .HasForeignKey(sc => sc.CategoryId);
 
                 entity

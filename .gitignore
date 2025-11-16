@@ -5,6 +5,7 @@
 # Ignore ASP.NET Core environment-specific settings
 PSMusic/PSMusic.Server/appsettings.*.json
 PSMusic/PSMusic.Server/appsettings.json
+PSMusic/PSMusic.client/.env
 
 # User-specific files
 *.rsuser

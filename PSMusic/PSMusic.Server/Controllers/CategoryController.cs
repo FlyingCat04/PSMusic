@@ -1,0 +1,28 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using PSMusic.Server.Services.Interfaces;
+
+namespace PSMusic.Server.Controllers
+{
+    [Route("api/category")]
+    [ApiController]
+    public class CategoryController : ControllerBase
+    {
+        private readonly ICategoryService _categoryService;
+
+        public CategoryController(ICategoryService categoryService) 
+        {
+            _categoryService = categoryService;
+        }
+
+        // GET api/category/popular?page=1&size=10
+        [HttpGet("popular")]
+        [Authorize]
+        public async Task<IActionResult> GetPopularCategories(int page = 1, int size = 10)
+        {
+            var popularCategories = await _categoryService.GetPopularCategories(page, size);
+            return Ok(popularCategories);
+        }
+    }
+}
