@@ -1,0 +1,55 @@
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, max-content));
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+.result-card {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+    width: 280px;
+    margin-bottom: 40px;
+}
+
+.result-card:hover {
+    background: rgba(255,255,255,.02);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(0,0,0,.35);
+}
+
+.result-cover {
+    width: 60%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+}
+
+
+/* artist avatar hình tròn */
+.result-cover-circle {
+    border-radius: 999px;
+}
+
+.result-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.result-subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
