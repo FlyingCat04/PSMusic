@@ -5,6 +5,7 @@ import GenreCard from '../../components/GenreCard/GenreCard';
 import ItemCardRow from '../../components/ItemCardRow/ItemCardRow';
 import ItemCardColumn from '../../components/ItemCardColumn/ItemCardColumn';
 import styles from './HomePage.module.css';
+import { useAuth } from '../../hooks/useAuth';
 
 // Mock data
 const SUGGESTED_SONGS = [
