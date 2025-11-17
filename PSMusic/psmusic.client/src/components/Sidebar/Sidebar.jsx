@@ -65,12 +65,12 @@ const Sidebar = () => {
       </nav>
 
       <div className={styles['sidebar-nav-title']}>Playlist</div>
-      <div className={styles['login-prompt']}>
+      {/* <div className={styles['login-prompt']}>
         <p>Đăng nhập để khám phá playlist dành riêng cho bạn</p>
         <button className={styles['login-button']}>
           ĐĂNG NHẬP
         </button>
-      </div>
+      </div> */}
 
       {/* <button className={styles['add-playlist-button']}>
         <Plus />

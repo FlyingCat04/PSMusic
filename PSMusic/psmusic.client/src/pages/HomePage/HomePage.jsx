@@ -1,83 +1,203 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, RefreshCcw } from 'lucide-react';
+import { ChevronRight, ChevronLeft, RefreshCcw } from 'lucide-react';
 import GenreCard from '../../components/GenreCard/GenreCard';
 import ItemCardRow from '../../components/ItemCardRow/ItemCardRow';
 import ItemCardColumn from '../../components/ItemCardColumn/ItemCardColumn';
+import LoadSpinner from '../../components/LoadSpinner/LoadSpinner';
+import homeService from '../../services/homeService';
 import styles from './HomePage.module.css';
-import { useAuth } from '../../hooks/useAuth';
-
-// Mock data
-const SUGGESTED_SONGS = [
-  { id: 1, title: 'Thích Em Hơi Nhiều', artist: 'Wren Evans', imageUrl: 'https://picsum.photos/seed/song1/100/100' },
-  { id: 2, title: 'Bích Thượng Quan / ...', artist: 'Cúc Tịnh Y / 鞠婧祎', imageUrl: 'https://picsum.photos/seed/song2/100/100' },
-  { id: 3, title: 'HER', artist: 'MINNIE', imageUrl: 'https://picsum.photos/seed/song3/100/100', isPremium: true },
-  { id: 4, title: 'PHÓNG ZÌN ZÌN', artist: 'tlinh, Low G', imageUrl: 'https://picsum.photos/seed/song4/100/100' },
-  { id: 5, title: 'Cây Đèn Thần', artist: 'Hồ Ngọc Hà', imageUrl: 'https://picsum.photos/seed/song5/100/100' },
-  { id: 6, title: 'Khiêm Tốn / 谦让', artist: 'Vương Tĩnh Văn / 王靖雯', imageUrl: 'https://picsum.photos/seed/song6/100/100' },
-  { id: 7, title: 'Lạnh Lẽo / 涼涼', artist: 'Trương Bích Thần / 张碧晨, ...', imageUrl: 'https://picsum.photos/seed/song7/100/100' },
-  { id: 8, title: 'Rồi Tới Luôn', artist: 'Nal', imageUrl: 'https://picsum.photos/seed/song8/100/100' },
-  { id: 9, title: 'Sài Gòn Đau Lòng Quá', artist: 'Hứa Kim Tuyền, ...', imageUrl: 'https://picsum.photos/seed/song9/100/100' },
-];
-
-const GENRES = [
-  { id: 1, title: 'Gen Z Hits', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#FF4E50' },
-  { id: 2, title: 'TikTok Thịnh Hành', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#00C9A7' },
-  { id: 3, title: 'K-Pop', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#FF61D2' },
-  { id: 4, title: 'Indie Việt', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#607D8B' },
-  { id: 5, title: 'Yêu', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#5B86E5' },
-  { id: 6, title: 'V-Pop Thịnh Hành', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#FF6F61' },
-  { id: 7, title: 'Remix Việt', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#9C27B0' },
-  { id: 8, title: 'Hip-Hop Việt', imageUrl: 'https://images2.thanhnien.vn/528068263637045248/2024/4/3/jack-1712114239424422902059.jpg', color: '#00BCD4' }
-];
 
 const HomePage = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [songs, setSongs] = useState([]);
+  
+  // Refs để cuộn
+  const artistsScrollRef = useRef(null);
+  const songsScrollRef = useRef(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Lấy tất cả dữ liệu cùng lúc
+      const data = await homeService.fetchPopularData();
+      
+      setCategories(data.categories || []);
+      setArtists(data.artists || []);
+      setSongs(data.songs || []);
+    } catch (err) {
+      console.error('Error fetching home page data:', err);
+      setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleScroll = (ref, direction) => {
+    if (!ref.current) return;
+    
+    const scrollAmount = 300;
+    const newScrollPosition = ref.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
+    
+    ref.current.scrollTo({
+      left: newScrollPosition,
+      behavior: 'smooth'
+    });
+  };
+
+  if (loading) {
+    return <LoadSpinner />;
+  }
+
+  if (error) {
+    return (
+      <div className={styles['home-main-content']}>
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+          <p>{error}</p>
+          <button onClick={fetchData} style={{ marginTop: '16px', padding: '8px 16px', cursor: 'pointer' }}>
+            Thử lại
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles['home-main-content']}>
-      <div className={styles['section-header']}>
-            <h2 className={styles['section-title']}>Khám Phá Qua Thể Loại</h2>
-            <Link to="/genres" className={styles['see-all-link']}>
-              Tất cả
-              <ChevronRight />
-            </Link>
-        </div>
+      {/* Categories Section */}
       <section className={styles['content-section']}>
+        <div className={styles['section-header']}>
+          <h2 className={styles['section-title']}>Khám Phá Qua Thể Loại</h2>
+          <Link to="/genres" className={styles['see-all-link']}>
+            Tất cả
+            <ChevronRight />
+          </Link>
+        </div>
         <div className={styles['genre-grid']}>
-          {GENRES.map((genre) => (
-            <GenreCard key={genre.id} genre={genre} variant="glass" />
-          ))}
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <GenreCard 
+                key={category.id || category.categoryId} 
+                genre={{
+                  id: category.id || category.categoryId,
+                  title: category.name || category.title,
+                  imageUrl: category.imageUrl || 'https://via.placeholder.com/200',
+                  color: category.color || '#FF4E50'
+                }} 
+                variant="glass" 
+              />
+            ))
+          ) : (
+            <p style={{ color: 'var(--text-secondary)' }}>Không có thể loại nào</p>
+          )}
         </div>
       </section>
 
+      {/* Artists Section */}
       <section className={styles['content-section']}>
         <div className={styles['section-header']}>
-          <h2 className={styles['section-title']}>Gợi Ý Bài Hát</h2>
-          <button className={styles['refresh-button']}>
-            <div className={styles['refresh-icon']}>
-              <RefreshCcw />
-            </div>
-            <span>Làm mới</span>
-          </button>
+          <h2 className={styles['section-title']}>Nghệ Sĩ Thịnh Hành</h2>
+          <Link to="/charts" className={styles['see-all-link']}>
+            Tất cả
+            <ChevronRight />
+          </Link>
         </div>
-        <div className={styles['songs-grid-row']}>
-          {SUGGESTED_SONGS.map((song) => (
-            <ItemCardRow key={song.id} song={song} />
-          ))}
+        <div className={styles['scrollable-container']}>
+          {artists.length > 8 && (
+            <button 
+              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-left']}`}
+              onClick={() => handleScroll(artistsScrollRef, 'left')}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft />
+            </button>
+          )}
+          <div className={styles['songs-grid-row-scrollable']} ref={artistsScrollRef}>
+            {artists.length > 0 ? (
+              artists.map((artist) => (
+                <ItemCardRow 
+                  key={artist.id || artist.artistId} 
+                  song={{
+                    id: artist.id || artist.artistId,
+                    title: artist.name,
+                    artist: artist.bio || 'Nghệ sĩ',
+                    imageUrl: artist.avatarURL || 'https://via.placeholder.com/100'
+                  }} 
+                />
+              ))
+            ) : (
+              <p style={{ color: 'var(--text-secondary)' }}>Không có nghệ sĩ nào</p>
+            )}
+          </div>
+          {artists.length > 8 && (
+            <button 
+              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
+              onClick={() => handleScroll(artistsScrollRef, 'right')}
+              aria-label="Scroll right"
+            >
+              <ChevronRight />
+            </button>
+          )}
         </div>
       </section>
       
+      {/* Popular Songs Section */}
       <section className={styles['content-section']}>
         <div className={styles['section-header']}>
-            <h2 className={styles['section-title']}>Bài Hát Thịnh Hành</h2>
-            <Link to="/charts" className={styles['see-all-link']}>
-              Tất cả
-              <ChevronRight />
-            </Link>
+          <h2 className={styles['section-title']}>Bài Hát Thịnh Hành</h2>
+          <Link to="/charts" className={styles['see-all-link']}>
+            Tất cả
+            <ChevronRight />
+          </Link>
         </div>
-        <div className={styles['songs-grid-column']}>
-            {[1,2,3,4,5].map(i => (
-                 <ItemCardColumn key={i} />
-            ))}
+        <div className={styles['scrollable-container']}>
+          {songs.length > 5 && (
+            <button 
+              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-left']}`}
+              onClick={() => handleScroll(songsScrollRef, 'left')}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft />
+            </button>
+          )}
+          <div className={styles['songs-grid-column-scrollable']} ref={songsScrollRef}>
+            {songs.length > 0 ? (
+              songs.map((song) => (
+                <ItemCardColumn 
+                  key={song.id || song.songId} 
+                  item={{
+                    id: song.id || song.songId,
+                    title: song.title || song.name,
+                    artist: Array.isArray(song.artistNames) 
+                      ? song.artistNames.join(', ') 
+                      : (song.artistName || song.artist || 'Unknown Artist'),
+                    imageUrl: song.avatarUrl || 'https://via.placeholder.com/200'
+                  }}
+                  type="song"
+                />
+              ))
+            ) : (
+              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
+            )}
+          </div>
+          {songs.length > 5 && (
+            <button 
+              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
+              onClick={() => handleScroll(songsScrollRef, 'right')}
+              aria-label="Scroll right"
+            >
+              <ChevronRight />
+            </button>
+          )}
         </div>
       </section>
     </div>

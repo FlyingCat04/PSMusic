@@ -171,6 +171,105 @@
   max-width: 100%;
 }
 
+/* Scrollable container styles */
+.scrollable-container {
+  position: relative;
+  width: 100%;
+}
+
+.songs-grid-row-scrollable {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 8px 24px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+.songs-grid-row-scrollable::-webkit-scrollbar {
+  height: 8px;
+}
+
+.songs-grid-row-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.songs-grid-row-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 20px;
+  border: transparent;
+}
+
+.songs-grid-column-scrollable {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+  padding-bottom: 8px;
+}
+
+.songs-grid-column-scrollable > * {
+  flex: 0 0 calc(20% - 19.2px);
+  min-width: 150px;
+}
+
+.songs-grid-column-scrollable::-webkit-scrollbar {
+  height: 8px;
+}
+
+.songs-grid-column-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.songs-grid-column-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 20px;
+  border: transparent;
+}
+
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.2s, opacity 0.2s;
+  opacity: 0.8;
+}
+
+.scroll-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  opacity: 1;
+}
+
+.scroll-arrow-left {
+  left: -20px;
+}
+
+.scroll-arrow-right {
+  right: -20px;
+}
+
+.scroll-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
 @media (max-width: 1024px) {  
   .genre-grid {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -181,10 +280,27 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
+
+  .songs-grid-column-scrollable > * {
+    flex: 0 0 calc(25% - 18px);
+    min-width: 150px;
+  }
   
   .songs-grid-row {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px 16px;
+  }
+
+  .songs-grid-row-scrollable {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .scroll-arrow-left {
+    left: -15px;
+  }
+
+  .scroll-arrow-right {
+    right: -15px;
   }
 }
 
@@ -198,10 +314,37 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
+
+  .songs-grid-column-scrollable > * {
+    flex: 0 0 calc(33.333% - 16px);
+    min-width: 140px;
+  }
   
   .songs-grid-row {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .songs-grid-row-scrollable {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .scroll-arrow {
+    width: 36px;
+    height: 36px;
+  }
+
+  .scroll-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .scroll-arrow-left {
+    left: -10px;
+  }
+
+  .scroll-arrow-right {
+    right: -10px;
   }
 }
 
@@ -214,5 +357,32 @@
   .songs-grid-column {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+  }
+
+  .songs-grid-column-scrollable > * {
+    flex: 0 0 calc(50% - 12px);
+    min-width: 120px;
+  }
+
+  .songs-grid-row-scrollable {
+    grid-template-columns: 1fr;
+  }
+
+  .scroll-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .scroll-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .scroll-arrow-left {
+    left: 0;
+  }
+
+  .scroll-arrow-right {
+    right: 0;
   }
 }

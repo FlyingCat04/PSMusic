@@ -1,7 +1,79 @@
 .item-card-column {
-    background-color: var(--sidebar-bg);
-    padding: 16px;
     border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.item-card-column-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: #374151;
+}
+
+.item-card-column-image.image-placeholder {
+    object-fit: contain;
+}
+
+.item-card-column-image:hover {
+    filter: brightness(0.75);
+    transition: filter 0.3s ease;
+}
+
+.item-card-column-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+    margin-top: 1rem;
+    color: var(--text-primary, #fff);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-card-column-title:hover {
+    color: var(--primary-purple);
+}
+
+.item-card-column-artist {
+    font-size: 0.8rem;
+    margin: 0;
+    margin-top: 0.25rem;
+    color: var(--text-secondary, #9ca3af);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-card-column-artist:hover {
+    color: var(--primary-purple);
+}
+
+/* Skeleton loading states */
+.item-card-column-image-skeleton {
+    width: 100%;
+    padding-bottom: 100%;
+    background-color: #6b7280;
+    border-radius: 4px;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.item-card-column-title-skeleton {
+    height: 1rem;
+    background-color: #6b7280;
+    border-radius: 4px;
+    width: 75%;
+    margin-top: 1rem;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.item-card-column-artist-skeleton {
+    height: 0.75rem;
+    background-color: #6b7280;
+    border-radius: 4px;
+    width: 50%;
+    margin-top: 0.5rem;
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
@@ -9,27 +81,4 @@
   50% {
     opacity: .5;
   }
-}
-
-.item-card-column-image {
-    width: 100%;
-    padding-bottom: 100%;
-    background-color: #6b7280;
-    border-radius: 4px;
-}
-
-.item-card-column-title {
-    height: 1rem;
-    background-color: #6b7280;
-    border-radius: 4px;
-    width: 75%;
-    margin-top: 1rem;
-}
-
-.item-card-column-artist {
-    height: 0.75rem;
-    background-color: #6b7280;
-    border-radius: 4px;
-    width: 50%;
-    margin-top: 0.5rem;
 }
