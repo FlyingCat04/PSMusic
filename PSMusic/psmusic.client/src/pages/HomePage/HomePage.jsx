@@ -93,7 +93,6 @@ const HomePage = () => {
                   imageUrl: category.imageUrl || 'https://via.placeholder.com/200',
                   color: category.color || '#FF4E50'
                 }} 
-                variant="glass" 
               />
             ))
           ) : (
