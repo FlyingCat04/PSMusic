@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import ClientLayout from './layouts/ClientLayout/ClientLayout';
+import { Routes, Route } from "react-router-dom";
 import HomePage from './pages/HomePage/HomePage';
 import AuthPage from './pages/Auth/AuthPage';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
@@ -7,6 +8,7 @@ import './App.css';
 
 const App = () => {
     return (
+    <ClientLayout>
         <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route
@@ -24,9 +26,11 @@ const App = () => {
                 <Route path="for-you" element={<div>Dành cho bạn</div>} />
                 <Route path="favorites" element={<div>Bài Hát Yêu Thích</div>} />
                 <Route path="recent" element={<div>Nghe Gần Đây</div>} />
+                <Route path="/search" element={<SearchResultPage />} />
             </Route>
         </Routes>
-    );
+    </ClientLayout >
+  );
 };
 
 export default App;

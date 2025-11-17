@@ -13,6 +13,7 @@ namespace PSMusic.Server.Services.Implementations
         public TokenGenerator(IConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _configuration = configuration!;
         }
         public string GenerateToken(User user)
         {

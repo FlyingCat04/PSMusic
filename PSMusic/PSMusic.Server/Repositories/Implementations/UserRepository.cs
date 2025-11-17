@@ -35,6 +35,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 Console.WriteLine($"Add a new user failed: {e.Message}");
                 return false;
             }
+            
         }
 
         // return true if email exists and vice versa

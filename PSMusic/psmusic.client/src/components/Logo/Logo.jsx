@@ -13,9 +13,9 @@ const Logo = () => {
             <div className={styles['logo-text-main']}>
                 <span className={styles['logo-text-primary']}>PS</span>
                 <span className={styles['logo-text-secondary']}>music</span>
-            </div>
-            <p className={styles['logo-text-subtitle']}>MXH ÂM NHẠC</p>
         </div>
+            <p className={styles['logo-text-subtitle']}>MXH ÂM NHẠC</p>
+      </div>
       </Link>
     );
 };

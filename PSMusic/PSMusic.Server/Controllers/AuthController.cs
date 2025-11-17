@@ -22,6 +22,7 @@ namespace PSMusic.Server.Controllers
 
         // POST api/auth/register
         [HttpPost("register")]
+        [Authorize]
         public async Task<IActionResult> Register([FromBody] CreateUserDTO user)
         {
             if (!ModelState.IsValid)
@@ -33,7 +34,7 @@ namespace PSMusic.Server.Controllers
             if (result.IsSuccess) return Ok(new { result.IsSuccess, result.Message });
             else return BadRequest(new { result.IsSuccess, result.Message });
         }
-        
+
         // POST api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthReqDTO req)

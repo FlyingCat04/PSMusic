@@ -1,0 +1,44 @@
+.sr-title-xl {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: .2px;
+    margin: 0 0 18px;
+    color: var(--text-primary);
+}
+
+/* section bao quanh mỗi block nội dung */
+.content-section {
+    margin-bottom: 40px;
+}
+
+/* Two-column songs area */
+.sr-rows {
+    display: grid;
+    gap: 16px;
+}
+
+/* modifier "two-col" tách riêng để dùng chung */
+.two-col {
+    grid-template-columns: 1fr 1fr;
+}
+
+.sr-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+@media (max-width: 880px) {
+    .sr-rows {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sr-placeholder {
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    color: var(--text-tertiary);
+    background: var(--component-bg);
+    text-align: center;
+}

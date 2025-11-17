@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Search, User } from 'lucide-react';
 import SettingsDropdown from '../SettingsDropdown/SettingsDropdown';
-import styles from './Header.module.css';
 
 const Header = () => {
+    const navigate = useNavigate();
+    const [keyword, setKeyword] = useState("");
   return (
     <header className={styles.header}>
       <div className={styles['header-left']}>
@@ -19,10 +21,20 @@ const Header = () => {
           <div className={styles['search-icon']}>
             <Search />
           </div>
-          <input
-            type="text"
-            placeholder="Tìm kiếm bài hát, nghệ sĩ, lời bài hát..."
-          />
+            <input
+                type="text"
+                placeholder="Tìm kiếm bài hát, nghệ sĩ, lời bài hát..."
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        const q = encodeURIComponent(keyword.trim());
+                        if (q) {
+                            navigate(`/search?key=${q}&t=tất_cả`);
+                        }
+                    }
+                }}
+            />
         </div>
       </div>
       <div className={styles['header-right']}>
