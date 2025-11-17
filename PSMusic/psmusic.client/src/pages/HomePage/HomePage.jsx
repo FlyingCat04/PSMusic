@@ -111,7 +111,7 @@ const HomePage = () => {
           </Link>
         </div>
         <div className={styles['scrollable-container']}>
-          {artists.length > 8 && (
+          {artists.length > 5 && (
             <button 
               className={`${styles['scroll-arrow']} ${styles['scroll-arrow-left']}`}
               onClick={() => handleScroll(artistsScrollRef, 'left')}
@@ -120,24 +120,25 @@ const HomePage = () => {
               <ChevronLeft />
             </button>
           )}
-          <div className={styles['songs-grid-row-scrollable']} ref={artistsScrollRef}>
+          <div className={styles['songs-grid-column-scrollable']} ref={artistsScrollRef}>
             {artists.length > 0 ? (
               artists.map((artist) => (
-                <ItemCardRow 
+                <ItemCardColumn 
                   key={artist.id || artist.artistId} 
-                  song={{
+                  item={{
                     id: artist.id || artist.artistId,
                     title: artist.name,
                     artist: artist.bio || 'Nghệ sĩ',
                     imageUrl: artist.avatarURL || 'https://via.placeholder.com/100'
-                  }} 
+                  }}
+                  type="artist"
                 />
               ))
             ) : (
               <p style={{ color: 'var(--text-secondary)' }}>Không có nghệ sĩ nào</p>
             )}
           </div>
-          {artists.length > 8 && (
+          {artists.length > 5 && (
             <button 
               className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
               onClick={() => handleScroll(artistsScrollRef, 'right')}

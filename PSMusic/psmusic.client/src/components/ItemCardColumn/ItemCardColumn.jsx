@@ -1,4 +1,5 @@
 import React from 'react';
+import { Play } from 'lucide-react';
 import styles from './ItemCardColumn.module.css';
 
 const PLACEHOLDER_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='#374151'/></svg>`;
@@ -28,14 +29,19 @@ const ItemCardColumn = ({ item, type = 'song' }) => {
 
     return (
         <div className={styles['item-card-column']}>
-            <img 
-                src={imageUrl} 
-                alt={title} 
-                className={styles['item-card-column-image']}
-                onError={handleImgError}
-            />
+            <div className={styles['image-wrapper']}>
+                <img 
+                    src={imageUrl} 
+                    alt={title} 
+                    className={styles['item-card-column-image']}
+                    onError={handleImgError}
+                />
+                <div className={styles['play-button-overlay']}>
+                    <Play className={styles['play-icon']} fill="currentColor" />
+                </div>
+            </div>
             <h4 className={styles['item-card-column-title']}>{title}</h4>
-            <p className={styles['item-card-column-artist']}>{subtitle}</p>
+            {type !== 'artist' && <p className={styles['item-card-column-artist']}>{subtitle}</p>}
         </div>
     );
 };

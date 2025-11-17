@@ -209,8 +209,7 @@
   width: 100%;
   overflow-x: auto;
   scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+  scrollbar-width: none;
   padding-bottom: 8px;
 }
 
@@ -220,17 +219,7 @@
 }
 
 .songs-grid-column-scrollable::-webkit-scrollbar {
-  height: 8px;
-}
-
-.songs-grid-column-scrollable::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.songs-grid-column-scrollable::-webkit-scrollbar-thumb {
-  background-color: rgba(155, 155, 155, 0.5);
-  border-radius: 20px;
-  border: transparent;
+  display: none;
 }
 
 .scroll-arrow {
