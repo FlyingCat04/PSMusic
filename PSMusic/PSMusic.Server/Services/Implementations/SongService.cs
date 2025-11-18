@@ -104,7 +104,8 @@ namespace PSMusic.Server.Services.Implementations
             return new SearchResponseDTO
             {
                 Results = combinedResults,
-                TopResult = topResult
+                TopResult = topResult,
+                TotalPages = (int)Math.Ceiling((double)artistResults.Count() / size)
             };
         }
 

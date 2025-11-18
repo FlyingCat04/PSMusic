@@ -5,5 +5,6 @@
         public SearchResultDTO? TopResult { get; set; } = null;
         public List<SearchResultDTO> Results { get; set; } = new List<SearchResultDTO>();
         public int Total => (Results.Count + (TopResult != null ? 1 : 0));
+        public int TotalPages { get; set; }
     }
 }
