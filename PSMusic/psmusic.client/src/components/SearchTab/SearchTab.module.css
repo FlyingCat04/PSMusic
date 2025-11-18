@@ -1,0 +1,62 @@
+.sr-tabs {
+    display: flex;
+    gap: 32px;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* nút tab dạng text phẳng */
+.sr-tab {
+    position: relative;
+    display: inline-block;
+    background: transparent;
+    border: none;
+    padding: 0 0 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-tertiary);
+    transition: color 0.2s ease;
+}
+
+
+/* hover: đổi màu chữ một chút */
+.sr-tab:hover {
+    color: #c7a4ff;
+}
+
+/* tab đang active */
+.sr-tab-active {
+    color: #c7a4ff;
+}
+
+/* gạch chân dưới tab active */
+.sr-tab-active::after {
+    content: close-quote;
+    position: absolute;
+    left: 0;
+    bottom: -2px; /* nằm sát container */
+    width: 100%;
+    height: 2px;
+    background: #19c5d8;
+    border-radius: 4px;
+    /* animation xuất hiện */
+    transform: scaleX(1);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+}
+
+/* tab không active thì không có gạch */
+.sr-tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: #19c5d8;
+    border-radius: 4px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+}

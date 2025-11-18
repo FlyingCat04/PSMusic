@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Search, User } from 'lucide-react';
 import SettingsDropdown from '../SettingsDropdown/SettingsDropdown';
+import { useNavigate } from 'react-router-dom'; 
 import styles from './Header.module.css';
 
 const Header = () => {
+
+    const navigate = useNavigate();
+    const [query, setQuery] = useState("");
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && query.trim() !== "") {
+            navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+        }
+    };
   return (
     <header className={styles.header}>
       <div className={styles['header-left']}>
@@ -18,10 +28,13 @@ const Header = () => {
         <div className={styles['search-bar']}>
           <div className={styles['search-icon']}>
             <Search />
-          </div>
+           </div>
           <input
             type="text"
             placeholder="Tìm kiếm bài hát, nghệ sĩ, lời bài hát..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>

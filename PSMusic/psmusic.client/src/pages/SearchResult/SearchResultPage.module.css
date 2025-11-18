@@ -1,0 +1,157 @@
+.sr-title-xl {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: .2px;
+    margin: 0 0 18px;
+    color: var(--text-primary);
+}
+
+/* section bao quanh mỗi block nội dung */
+.content-section {
+    margin-bottom: 40px;
+}
+
+/* Two-column songs area */
+.sr-rows {
+    display: grid;
+    gap: 16px;
+}
+
+/* modifier "two-col" tách riêng để dùng chung */
+.two-col {
+    grid-template-columns: 1fr 1fr;
+}
+
+.sr-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+@media (max-width: 880px) {
+    .sr-rows {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sr-placeholder {
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    color: var(--text-tertiary);
+    background: var(--component-bg);
+    text-align: center;
+}
+
+.songsTable {
+    margin-top: 12px;
+}
+
+/* header: Title / Uploader / Artist / … */
+.songsHeader {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* 4 cột */
+    column-gap: 68px;
+    padding: 0 87px 15px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+}
+
+/* mỗi dòng bài hát */
+.songsRow {
+    display: grid;
+    grid-template-columns: 3fr 2fr 2fr 60px;
+    column-gap: 24px;
+    align-items: center;
+    padding: 6px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+/* cell chứa SongRow ở cột Title */
+.songsCellTitle {
+    min-width: 0; /* cho text ellipsis nếu cần */
+}
+
+/* uploader, artist, duration */
+.songsCellUploader,
+.songsCellArtist,
+.songsCellDuration {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* timer bên phải căn phải */
+.songsCellDuration {
+    text-align: right;
+}
+
+
+/* thanh phân trang */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.page-button {
+    min-width: 32px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+}
+
+    .page-button:hover:not(:disabled) {
+        border-color: var(--border, rgba(255,255,255,0.16));
+        color: var(--text-primary);
+    }
+
+.page-button-active {
+    background: var(--accent, #1db954);
+    color: #000;
+    border-color: var(--accent, #1db954);
+}
+
+.page-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* tiêu đề bên trái, Thêm bên phải */
+    margin-bottom: 5px;
+}
+
+.section-title {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.see-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 15px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+    .see-all-link:hover {
+        color: var(--accent, #c7a4ff);
+    }
