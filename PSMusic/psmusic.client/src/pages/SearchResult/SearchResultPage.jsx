@@ -4,6 +4,7 @@ import styles from "./SearchResultPage.module.css";
 import SearchTabs from "../../components/SearchTab/SearchTab";
 import SongRow from "../../components/SongRow/SongRow";
 import SquareCard from "../../components/SquareCard/SquareCard";
+import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import Pagination from "../../components/Pagination/Pagination";
 import axiosInstance from "../../services/axiosInstance"; // chỉnh lại path nếu khác
 
@@ -226,7 +227,7 @@ const SearchResultPage = () => {
         navigate(`/artist/${encodeURIComponent(artistName)}`);
     };
     if (loading) {
-        return (<p>Đang tải kết quả...</p>);
+        <LoadSpinner />;
     }
 
     if (error) {
@@ -244,7 +245,7 @@ const SearchResultPage = () => {
                 !error &&
                 keyword &&
                 songs.length === 0 &&
-                page === 1 && ( 
+                !topResult && ( 
                     <p>Không tìm thấy kết quả cho "{keyword}".</p>
                 )}
 
