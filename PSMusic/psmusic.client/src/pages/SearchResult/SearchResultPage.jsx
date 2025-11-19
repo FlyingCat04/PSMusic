@@ -127,6 +127,7 @@ const SearchResultPage = () => {
                 const data = res.data || {};
                 const rawTop = data.topResult || null;
                 const results = data.results || [];
+                setTotalPages(data.totalPages || 1);
 
                 // map topResult
                 let mappedTop = null;
@@ -154,9 +155,6 @@ const SearchResultPage = () => {
                 setTopResult(mappedTop);
                 setSongs(songItems);
                 setArtists(artistItems);
-
-                setTotalPages(Math.max(1, Math.ceil(songItems.length / PAGE_SIZE)));
-                setPage(1);
 
                 // tuỳ backend, nếu có totalPages hoặc total thì set chính xác
                 
@@ -227,6 +225,13 @@ const SearchResultPage = () => {
     const handleViewArtist = (artistName) => {
         navigate(`/artist/${encodeURIComponent(artistName)}`);
     };
+    if (loading) {
+        return (<p>Đang tải kết quả...</p>);
+    }
+
+    if (error) {
+        return (<p style={{ color: "red" }}>{error}</p>);
+    }
 
     return (
         <div className="content-container">
@@ -234,8 +239,6 @@ const SearchResultPage = () => {
 
             <SearchTabs active={activeTab} onChange={handleTabChange} />
 
-            {loading && <p>Đang tải kết quả...</p>}
-            {error && <p style={{ color: "red" }}>{error}</p>}
 
             {!loading &&
                 !error &&

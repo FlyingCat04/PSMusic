@@ -1,27 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Search, User } from 'lucide-react';
 import SettingsDropdown from '../SettingsDropdown/SettingsDropdown';
 import { useNavigate } from 'react-router-dom'; 
 import styles from './Header.module.css';
+import axiosInstance from '../../services/axiosInstance';
 
 const Header = () => {
 
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
 
+    const [isFocused, setIsFocused] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
+    const [loadingSuggest, setLoadingSuggest] = useState(false);
+
+    const goPrev = () => navigate(-1);
+    const goNext = () => navigate(1);
+
     const handleKeyDown = (e) => {
         if (e.key === "Enter" && query.trim() !== "") {
             navigate(`/search?q=${encodeURIComponent(query.trim())}`);
         }
     };
+
+    useEffect(() => {
+        if (!isFocused) return;              // chỉ gợi ý khi ô search đang focus
+        const kw = query.trim();
+        if (kw.length < 2) {                 // quá ngắn thì không gọi API
+            setSuggestions([]);
+            return;
+        }
+
+        const handle = setTimeout(async () => {
+            try {
+                setLoadingSuggest(true);
+
+                const res = await axiosInstance.get("/song/search", {
+                    params: {
+                        keyword: kw,        
+                        page: 1,
+                        size: 5,           
+                    },
+                });
+
+                const data = res.data || {};
+                const results = data.results || {};
+
+                const mapped = results.map((s) => ({
+                    type: s.type || "song",
+                    id: s.id,
+                    title: s.title || s.name || "Không tên",
+                    artist: Array.isArray(s.artistsName)
+                        ? s.artistsName.join(", ")
+                        : s.artistName || s.artist || "",
+                }));
+
+                setSuggestions(mapped);
+            } catch (err) {
+                console.error(err);
+                setSuggestions([]);
+            } finally {
+                setLoadingSuggest(false);
+            }
+        }, 300); 
+
+        return () => clearTimeout(handle);
+    }, [query, isFocused]);
+
   return (
     <header className={styles.header}>
       <div className={styles['header-left']}>
         <div className={styles['navigation-arrows']}>
-          <button className={`${styles['nav-arrow']} ${styles.disabled}`}>
+          <button className={`${styles['nav-arrow']}`} onClick={goPrev}>
             <ChevronLeft />
           </button>
-          <button className={styles['nav-arrow']}>
+
+          <button className={styles['nav-arrow']} onClick={goNext}>
             <ChevronRight />
           </button>
         </div>
@@ -35,7 +89,44 @@ const Header = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => {
+                setTimeout(() => setIsFocused(false), 150);
+            }}
           />
+
+            {isFocused && query.trim() && (
+                <div className={styles.suggestBox}>
+                    {loadingSuggest && (
+                        <div className={styles.suggestItemMuted}>Đang tìm gợi ý...</div>
+                    )}
+
+                    {!loadingSuggest && suggestions.length === 0 && (
+                        <div className={styles.suggestItemMuted}>Không có gợi ý phù hợp</div>
+                    )}
+
+                    {!loadingSuggest &&
+                        suggestions.map((s) => (
+                            <button
+                                key={s.id}
+                                type="button"
+                                className={styles.suggestItem}
+                                onMouseDown={() => {
+                                    if (s.type === "artist") {
+                                        navigate(`/artist/${s.name}`);
+                                    } else {
+                                        navigate(`/song/${s.id}`);
+                                    }
+                                }}
+                            >
+                                <div className={styles.suggestTitle}>{s.title}</div>
+                                {s.artist && (
+                                    <div className={styles.suggestSubtitle}>{s.artist}</div>
+                                )}
+                            </button>
+                        ))}
+                </div>
+            )}
         </div>
       </div>
       <div className={styles['header-right']}>
