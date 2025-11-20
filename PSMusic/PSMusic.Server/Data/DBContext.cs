@@ -103,6 +103,10 @@ namespace PSMusic.Server.Data
                 entity.Property(entity => entity.Value).IsRequired();
                 entity.Property(entity => entity.UserId).IsRequired();
                 entity.Property(entity => entity.SongId).IsRequired();
+                entity.HasOne(e => e.Song)
+                    .WithMany(u => u.Ratings)
+                    .HasForeignKey(f => f.SongId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<PSMusic.Server.Models.Entities.Stream>(entity => 
@@ -121,7 +125,7 @@ namespace PSMusic.Server.Data
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(e => e.Song)
-                    .WithMany()
+                    .WithMany(u => u.Favorites)
                     .HasForeignKey(f => f.SongId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
