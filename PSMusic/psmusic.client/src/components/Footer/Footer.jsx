@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Facebook, Youtube, Instagram } from 'lucide-react';
+import { AudioLines, MapPin, Phone, Mail, Facebook, Youtube, Instagram } from 'lucide-react';
 import Logo from '../Logo/Logo';
 import styles from './Footer.module.css';
 
@@ -32,7 +32,18 @@ const Footer = () => {
         <div className={styles['footer-content']}>
           {/* Company Info */}
           <div className={`${styles['footer-section']} ${styles['company-info']}`}>
-            <Logo />
+            <Link to="/" className={styles.logo}>
+              <div className={styles['logo-icon']}>
+                <AudioLines />
+              </div>
+              <div className={styles['logo-text']}>
+                  <div className={styles['logo-text-main']}>
+                      <span className={styles['logo-text-primary']}>PS</span>
+                      <span className={styles['logo-text-secondary']}>music</span>
+                  </div>
+                  <p className={styles['logo-text-subtitle']}>MXH ÂM NHẠC</p>
+              </div>
+            </Link>
             <p className={styles['company-description']}>{footerData.company.description}</p>
             <div className={styles['contact-info']}>
               <p><Phone className={styles['contact-icon']} /> {footerData.company.phone}</p>

@@ -45,6 +45,27 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<(IEnumerable<Song> Songs, int TotalCount)> SearchPaging(string keyword, int page, int size)
+        {
+            var query = _dbContext.Song
+                .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
+                .Where(s =>
+                    EF.Functions.ILike(EF.Functions.Unaccent(s.Name), EF.Functions.Unaccent($"%{keyword}%")) ||
+                    s.SongArtists.Any(sa => EF.Functions.ILike(EF.Functions.Unaccent(sa.Artist.Name), EF.Functions.Unaccent($"%{keyword}%")))
+                );
+
+            int total = await query.CountAsync();
+
+            var result = await query
+                .OrderBy(s => s.Name)             
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync();
+
+            return (result, total);
+        }
+
+
         public IQueryable<Song> GetSongsWithStreamsLast7Days()
         {
             var week = DateTime.UtcNow.AddDays(-7);

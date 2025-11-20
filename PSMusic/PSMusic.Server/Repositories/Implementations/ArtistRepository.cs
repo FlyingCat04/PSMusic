@@ -21,6 +21,25 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<(IEnumerable<Artist> Artists, int TotalCount)> SearchPaging(string keyword, int page, int size)
+        {
+            var query = _dbContext.Artist
+                .Where(a =>
+                    EF.Functions.ILike(EF.Functions.Unaccent(a.Name), EF.Functions.Unaccent($"%{keyword}%"))
+                );
+
+            int total = await query.CountAsync();
+
+            var result = await query
+                .OrderBy(a => a.Name)
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync();
+
+            return (result, total);
+        }
+
+
         public async Task<Artist?> GetById(int id)
         {
             Artist? artist = await _dbContext.Artist
