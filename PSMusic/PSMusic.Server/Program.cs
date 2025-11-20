@@ -55,7 +55,10 @@ builder.Services.AddCors(options =>
         }
         else
         {
-            policy.WithOrigins("https://psmusic.netlify.app/")
+            policy.WithOrigins(
+                "https://psmusic.netlify.app",
+                "https://dev--psmusic.netlify.app"
+            )
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
