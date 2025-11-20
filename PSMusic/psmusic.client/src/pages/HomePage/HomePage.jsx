@@ -111,7 +111,7 @@ const HomePage = () => {
           </Link>
         </div>
         <div className={styles['scrollable-container']}>
-          {artists.length > 5 && (
+          {/* {artists.length > 5 && (
             <button 
               className={`${styles['scroll-arrow']} ${styles['scroll-arrow-left']}`}
               onClick={() => handleScroll(artistsScrollRef, 'left')}
@@ -119,7 +119,7 @@ const HomePage = () => {
             >
               <ChevronLeft />
             </button>
-          )}
+          )} */}
           <div className={styles['songs-grid-column-scrollable']} ref={artistsScrollRef}>
             {artists.length > 0 ? (
               artists.map((artist) => (
@@ -138,7 +138,7 @@ const HomePage = () => {
               <p style={{ color: 'var(--text-secondary)' }}>Không có nghệ sĩ nào</p>
             )}
           </div>
-          {artists.length > 5 && (
+          {/* {artists.length > 5 && (
             <button 
               className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
               onClick={() => handleScroll(artistsScrollRef, 'right')}
@@ -146,7 +146,7 @@ const HomePage = () => {
             >
               <ChevronRight />
             </button>
-          )}
+          )} */}
         </div>
       </section>
       
@@ -160,7 +160,7 @@ const HomePage = () => {
           </Link>
         </div>
         <div className={styles['scrollable-container']}>
-          {songs.length > 5 && (
+          {/* {songs.length > 5 && (
             <button 
               className={`${styles['scroll-arrow']} ${styles['scroll-arrow-left']}`}
               onClick={() => handleScroll(songsScrollRef, 'left')}
@@ -168,7 +168,7 @@ const HomePage = () => {
             >
               <ChevronLeft />
             </button>
-          )}
+          )} */}
           <div className={styles['songs-grid-column-scrollable']} ref={songsScrollRef}>
             {songs.length > 0 ? (
               songs.map((song) => (
@@ -189,7 +189,7 @@ const HomePage = () => {
               <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
             )}
           </div>
-          {songs.length > 5 && (
+          {/* {songs.length > 5 && (
             <button 
               className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
               onClick={() => handleScroll(songsScrollRef, 'right')}
@@ -197,7 +197,7 @@ const HomePage = () => {
             >
               <ChevronRight />
             </button>
-          )}
+          )} */}
         </div>
       </section>
     </div>
