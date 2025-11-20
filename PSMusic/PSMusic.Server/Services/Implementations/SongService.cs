@@ -50,103 +50,48 @@ namespace PSMusic.Server.Services.Implementations
             return _mapper.Map<IEnumerable<SongDTO>>(songs);
         }
 
-        //public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
-        //{
-        //    if (page < 1) page = 1;
-        //    if (size < 10) size = 10;
-
-        //    var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongDTO>();
-
-        //    var songResults = new List<SearchResultDTO>();
-        //    foreach (var song in songs)
-        //    {
-        //        var artistsForSong = song.ArtistNames;
-
-        //        songResults.Add(new SearchResultDTO
-        //        {
-        //            Id = song.Id,
-        //            Type = "song",
-        //            Name = song.Name,
-        //            ArtistsName = artistsForSong
-        //        });
-        //    }
-
-
-        //    var artists = await _artistService.SearchByName(keyword) ?? Enumerable.Empty<ArtistDTO>();
-        //    var artistResults = artists.Select(a => new SearchResultDTO
-        //    {
-        //        Id = a.Id,
-        //        Type = "artist",
-        //        Name = a.Name,
-        //    })
-        //    .ToList();
-
-        //    SearchResultDTO? topResult = null;
-        //    string normalizedKeyword = TextHelper.Normalize(keyword);
-        //    topResult = artistResults.FirstOrDefault(a =>
-        //        TextHelper.Normalize(a.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
-        //    if (topResult == null)
-        //    {
-        //        topResult = songResults.FirstOrDefault(s =>
-        //            TextHelper.Normalize(s.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
-        //    }
-
-        //    if (topResult != null)
-        //    {
-        //        artistResults.Remove(topResult);
-        //        songResults.Remove(topResult);
-        //    }
-
-        //    var combinedResults = artistResults
-        //        .Concat(songResults)
-        //        .Skip((page - 1) * size)
-        //        .Take(size)
-        //        .ToList();
-
-        //    return new SearchResponseDTO
-        //    {
-        //        Results = combinedResults,
-        //        TopResult = topResult,
-        //        TotalPages = (int)Math.Ceiling((double)artistResults.Count() / size)
-        //    };
-        //}
-
         public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
         {
             if (page < 1) page = 1;
             if (size < 10) size = 10;
-
-            // 1. SONGS
-            var songs = await _songRepository.Search(keyword) ?? Enumerable.Empty<Song>();
-            var songDTOs = _mapper.Map<IEnumerable<SongDTO>>(songs);
-
-            var songResults = songDTOs.Select(s => new SearchResultDTO
+            Console.WriteLine("abcdef");
+            var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongDTO>();
+            Console.WriteLine("ab");
+            var songResults = new List<SearchResultDTO>();
+            foreach (var song in songs)
             {
-                Id = s.Id,
-                Type = "song",
-                Name = s.Name,
-                ArtistsName = s.ArtistNames?.ToList() ?? new List<string>()
-            }).ToList();
+                var artistsForSong = song.ArtistNames;
 
-            // 2. ARTISTS
+                songResults.Add(new SearchResultDTO
+                {
+                    Id = song.Id,
+                    Type = "song",
+                    AvatarUrl = song.AvatarUrl,
+                    Name = song.Name,
+                    ArtistsName = artistsForSong
+                });
+            }
+
+
             var artists = await _artistService.SearchByName(keyword) ?? Enumerable.Empty<ArtistDTO>();
             var artistResults = artists.Select(a => new SearchResultDTO
             {
                 Id = a.Id,
                 Type = "artist",
+                AvatarUrl = a.AvatarUrl,
                 Name = a.Name,
-                ArtistsName = new List<string>() // hoặc null cũng được
-            }).ToList();
+            })
+            .ToList();
 
-            // 3. TOP RESULT
+            SearchResultDTO? topResult = null;
             string normalizedKeyword = TextHelper.Normalize(keyword);
-
-            SearchResultDTO? topResult =
-                artistResults.FirstOrDefault(a =>
-                    TextHelper.Normalize(a.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase))
-                ??
-                songResults.FirstOrDefault(s =>
+            topResult = artistResults.FirstOrDefault(a =>
+                TextHelper.Normalize(a.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
+            if (topResult == null)
+            {
+                topResult = songResults.FirstOrDefault(s =>
                     TextHelper.Normalize(s.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
+            }
 
             if (topResult != null)
             {
@@ -154,25 +99,82 @@ namespace PSMusic.Server.Services.Implementations
                 songResults.Remove(topResult);
             }
 
-            // 4. GỘP RỒI MỚI PHÂN TRANG
-            var combinedAll = artistResults.Concat(songResults).ToList();
-
-            int totalItems = combinedAll.Count;
-            int totalPages = (int)Math.Ceiling(totalItems / (double)size);
-
-            var pagedResults = combinedAll
+            var combinedResults = artistResults
+                .Concat(songResults)
                 .Skip((page - 1) * size)
                 .Take(size)
                 .ToList();
 
             return new SearchResponseDTO
             {
+                Results = combinedResults,
                 TopResult = topResult,
-                Results = pagedResults,
-                TotalPages = totalPages
-                // Total = pagedResults.Count + (TopResult != null ? 1 : 0)
+                TotalPages = (int)Math.Ceiling((double)(artistResults.Count() + songResults.Count()) / size)
             };
         }
+
+        //public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
+        //{
+        //    if (page < 1) page = 1;
+        //    if (size < 10) size = 10;
+
+        //    // 1. SONGS
+        //    var songs = await _songRepository.Search(keyword) ?? Enumerable.Empty<Song>();
+        //    var songDTOs = _mapper.Map<IEnumerable<SongDTO>>(songs);
+
+        //    var songResults = songDTOs.Select(s => new SearchResultDTO
+        //    {
+        //        Id = s.Id,
+        //        Type = "song",
+        //        Name = s.Name,
+        //        ArtistsName = s.ArtistNames?.ToList() ?? new List<string>()
+        //    }).ToList();
+
+        //    // 2. ARTISTS
+        //    var artists = await _artistService.SearchByName(keyword) ?? Enumerable.Empty<ArtistDTO>();
+        //    var artistResults = artists.Select(a => new SearchResultDTO
+        //    {
+        //        Id = a.Id,
+        //        Type = "artist",
+        //        Name = a.Name,
+        //        ArtistsName = new List<string>() // hoặc null cũng được
+        //    }).ToList();
+
+        //    // 3. TOP RESULT
+        //    string normalizedKeyword = TextHelper.Normalize(keyword);
+
+        //    SearchResultDTO? topResult =
+        //        artistResults.FirstOrDefault(a =>
+        //            TextHelper.Normalize(a.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase))
+        //        ??
+        //        songResults.FirstOrDefault(s =>
+        //            TextHelper.Normalize(s.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
+
+        //    if (topResult != null)
+        //    {
+        //        artistResults.Remove(topResult);
+        //        songResults.Remove(topResult);
+        //    }
+
+        //    // 4. GỘP RỒI MỚI PHÂN TRANG
+        //    var combinedAll = artistResults.Concat(songResults).ToList();
+
+        //    int totalItems = combinedAll.Count;
+        //    int totalPages = (int)Math.Ceiling(totalItems / (double)size);
+
+        //    var pagedResults = combinedAll
+        //        .Skip((page - 1) * size)
+        //        .Take(size)
+        //        .ToList();
+
+        //    return new SearchResponseDTO
+        //    {
+        //        TopResult = topResult,
+        //        Results = pagedResults,
+        //        TotalPages = totalPages
+        //        // Total = pagedResults.Count + (TopResult != null ? 1 : 0)
+        //    };
+        //}
         public async Task<PagedResult<SongDTO>> GetPopularSongs(int page, int size)
         {
             var query = _songRepository.GetSongsWithStreamsLast7Days();

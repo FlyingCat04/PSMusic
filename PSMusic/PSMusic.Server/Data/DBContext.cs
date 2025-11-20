@@ -80,6 +80,7 @@ namespace PSMusic.Server.Data
             {
                 entity.HasKey(entity => entity.Id);
                 entity.Property(entity => entity.Name).IsRequired();
+                entity.Property(entity => entity.AvatarUrl).HasColumnName("AvatarUrl");
             });
 
             modelBuilder.Entity<Playlist>(entity =>
@@ -91,10 +92,20 @@ namespace PSMusic.Server.Data
                     .HasOne(p => p.User)
                     .WithMany(u => u.Playlists)
                     .HasForeignKey(p => p.UserId);
+            });
+
+            modelBuilder.Entity<SongPlaylist>(entity =>
+            {
+                entity.HasKey(sp => new { sp.SongId, sp.PlaylistId });
                 entity
-                    .HasOne(p => p.Song)
+                    .HasOne(sa => sa.Song)
                     .WithMany()
-                    .HasForeignKey(p => p.SongId);
+                    .HasForeignKey(sa => sa.SongId);
+
+                entity
+                    .HasOne(sp => sp.Playlist)
+                    .WithMany(p => p.SongPlaylists)
+                    .HasForeignKey(sp => sp.PlaylistId);
             });
 
             modelBuilder.Entity<Rating>(entity => 

@@ -28,7 +28,7 @@ namespace PSMusic.Server.Controllers
 
         // GET api/song/search?keyword=abc
         [HttpGet("search")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Search(string keyword, int page = 1, int size = 10)
         {
             var result = await _songService.SearchAll(keyword, page, size);
@@ -38,7 +38,7 @@ namespace PSMusic.Server.Controllers
         // GET api/song/popular?page=1&size=10
         [HttpGet("popular")]
         [Authorize]
-        public async Task<IActionResult> GetHomeData(int page = 1, int size = 10)
+        public async Task<IActionResult> GetPopularSong(int page = 1, int size = 10)
         {
             var popularSongs = await _songService.GetPopularSongs(page, size);
             return Ok(popularSongs);
