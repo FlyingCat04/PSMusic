@@ -36,5 +36,11 @@ namespace PSMusic.Server.Services.Implementations
             var artists = query.Select(a => _mapper.Map<ArtistDTO>(a));
             return await artists.PaginateAsync(page, size);
         }
+
+        public async Task<List<ArtistDTO>> GetArtistsBySongId(int songId)
+        {
+            var artists = await _repository.GetArtistsBySongId(songId);
+            return _mapper.Map<List<ArtistDTO>>(artists);
+        }
     }
 }

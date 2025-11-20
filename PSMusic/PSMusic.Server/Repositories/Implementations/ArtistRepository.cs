@@ -65,5 +65,16 @@ namespace PSMusic.Server.Repositories.Implementations
                 .OrderByDescending(a => a.TotalStream)
                 .Select(x => x.Artist);
         }
+
+        public async Task<List<Artist>> GetArtistsBySongId(int songId)
+        {
+            return await _dbContext.SongArtist
+                .AsNoTracking()
+                .Where(sa => sa.SongId == songId)
+                .Select(sa => sa.Artist)
+                .ToListAsync();
+                
+        }
+
     }
 }

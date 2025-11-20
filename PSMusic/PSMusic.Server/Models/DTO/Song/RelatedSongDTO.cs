@@ -1,4 +1,4 @@
-namespace PSMusic.Server.Models.DTO.Music
+namespace PSMusic.Server.Models.DTO.Song
 {
     public class RelatedSongDTO
     {

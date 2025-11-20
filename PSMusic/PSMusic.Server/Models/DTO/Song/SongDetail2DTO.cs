@@ -1,6 +1,6 @@
-namespace PSMusic.Server.Models.DTO.Music
+namespace PSMusic.Server.Models.DTO.Song
 {
-    public class SongDetailDTO
+    public class SongDetail2DTO
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;

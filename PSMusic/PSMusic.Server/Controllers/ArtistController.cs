@@ -24,5 +24,14 @@ namespace PSMusic.Server.Controllers
             var result = await _artistService.GetPopularArtists(page, size);
             return Ok(result);
         }
+
+        // GET: api/artist/1/artists
+        [HttpGet("{id}/artists")]
+        [Authorize]
+        public async Task<ActionResult> GetSongArtists(int id)
+        {
+            var artists = await _artistService.GetArtistsBySongId(id);
+            return Ok(artists);
+        }
     }
 }
