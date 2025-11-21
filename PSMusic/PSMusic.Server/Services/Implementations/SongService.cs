@@ -182,5 +182,11 @@ namespace PSMusic.Server.Services.Implementations
             var songs = query.Select(s => _mapper.Map<SongDTO>(s));
             return await songs.PaginateAsync(page, size);
         }
+
+        public async Task<IEnumerable<SongDTO>> GetBatch(int size)
+        {
+            var results = await _songRepository.GetRandomSongsAsync(size);
+            return _mapper.Map<IEnumerable<SongDTO>>(results);
+        }
     }
 }

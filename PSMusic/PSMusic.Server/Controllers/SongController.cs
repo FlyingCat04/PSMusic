@@ -43,5 +43,13 @@ namespace PSMusic.Server.Controllers
             var popularSongs = await _songService.GetPopularSongs(page, size);
             return Ok(popularSongs);
         }
+
+        [HttpGet("next-batch")]
+        [Authorize]
+        public async Task<IActionResult> GetNextBatch(int size = 10)
+        {
+            var randomSongs = await _songService.GetBatch(size);
+            return Ok(randomSongs);
+        }
     }
 }

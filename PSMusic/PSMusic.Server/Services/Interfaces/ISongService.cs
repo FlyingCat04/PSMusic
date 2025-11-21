@@ -11,5 +11,6 @@ namespace PSMusic.Server.Services.Interfaces
         Task<IEnumerable<SongDTO>?> SearchByName(string keyword);
         Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size);
         Task<PagedResult<SongDTO>> GetPopularSongs(int page, int size);
+        Task<IEnumerable<SongDTO>> GetBatch(int size);
     }
 }

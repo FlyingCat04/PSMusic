@@ -84,5 +84,13 @@ namespace PSMusic.Server.Repositories.Implementations
                 .OrderByDescending(s => _dbContext.Stream
                     .Count(st => st.SongId == s.Id && st.StreamedAt >= week));
         }
+
+        public async Task<IEnumerable<Song>> GetRandomSongsAsync(int count)
+        {
+            return await _dbContext.Song
+                .OrderBy(s => EF.Functions.Random())
+                .Take(count)
+                .ToListAsync();
+        }
     }
 }
