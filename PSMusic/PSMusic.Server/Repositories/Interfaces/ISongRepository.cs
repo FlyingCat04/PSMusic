@@ -11,5 +11,7 @@ namespace PSMusic.Server.Repositories.Interfaces
         IQueryable<Song> GetSongsWithStreamsLast7Days();
         Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId);
         Task<List<Song>> GetRelatedSongs(int songId);
+        Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id);
+        Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId);
     }
 }

@@ -118,5 +118,42 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync(); 
         } 
 
+        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id)
+        {
+            return await _dbContext.Song
+                .AsNoTracking()
+                .Where(s => s.Id == id)
+                .Select(s => new SongPlayerDTO {
+                    Id = s.Id,
+                    Title = s.Name,
+                    CoverUrl = s.AvatarUrl,
+                    AudioUrl = s.Mp3Url ?? "",
+                    LyricUrl = s.LrcUrl ?? "",
+                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
+                    SingerUrl = s.SongArtists
+                        .Select(sa => sa.Artist.AvatarUrl)
+                        .FirstOrDefault() ?? "",
+                    Likes = s.Favorites.Count(f => f.IsFavorite)
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId)
+        {
+            return await _dbContext.Favorite
+                .AsNoTracking()
+                .Where(f => f.UserId == userId && f.IsFavorite)
+                .Select(f => f.Song) 
+                .Select(s => new FavoriteSongDTO
+                {
+                    Id = s.Id,
+                    Title = s.Name,
+                    ImageUrl = s.AvatarUrl, 
+                    LyricUrl = s.LrcUrl ?? "", 
+                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name))
+                })
+                .ToListAsync();
+        }
+
     }
 }

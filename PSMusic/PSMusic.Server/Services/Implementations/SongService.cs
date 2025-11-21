@@ -196,6 +196,16 @@ namespace PSMusic.Server.Services.Implementations
             return _mapper.Map<List<RelatedSongDTO>>(songEntities);
         }
 
+        public async Task<SongPlayerDTO?> GetSongForPlayer(int id)
+        {
+            var result = await _songRepository.GetSongForPlayer_DTO(id);
+            return result;
+        }
 
+        public async Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId)
+        {
+            var result = await _songRepository.GetFavoriteSongs(userId);
+            return result;
+        }
     }
 }

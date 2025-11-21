@@ -64,5 +64,25 @@ namespace PSMusic.Server.Controllers
             return Ok(songs);
         }
 
+        // GET: api/song/1/player
+        [HttpGet("{songId}/player")]
+        [Authorize]
+        public async Task<ActionResult> GetSongForPlayer(int songId)
+        {
+            var song = await _songService.GetSongForPlayer(songId);
+            return Ok(song);
+        }
+
+        // GET: api/songs/favorites?userId=1
+        [HttpGet("favorites")]
+        [Authorize]        
+        public async Task<ActionResult> GetFavoriteSongs([FromQuery] int userId)
+        {
+            if (userId <= 0) return BadRequest(new { message = "UserId không hợp lệ" });
+            var songs = await _songService.GetFavoriteSongs(userId);
+            return Ok(songs);
+        }
+
+
     }
 }
