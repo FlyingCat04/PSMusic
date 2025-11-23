@@ -64,7 +64,8 @@ namespace PSMusic.Server.Data
 
             modelBuilder.Entity<SongArtist>(entity =>
             {
-                entity.HasKey(sa => new { sa.SongId, sa.ArtistId });
+                //entity.HasKey(sa => new { sa.SongId, sa.ArtistId });
+                entity.HasKey(sa => sa.Id);
                 entity
                     .HasOne(sa => sa.Song)
                     .WithMany(s => s.SongArtists)

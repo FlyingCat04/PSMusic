@@ -32,5 +32,29 @@ namespace PSMusic.Server.Repositories.Implementations
                 .OrderByDescending(x => x.TotalStream)
                 .Select(x => x.Category);
         }
+
+        public async Task<Category?> GetMainCategoryOfAnArtist(int artistId)
+        {
+            var result = await _dbContext.Song
+                .Where(s => s.SongArtists.Any(sa => sa.ArtistId == artistId))
+                .SelectMany(s => s.SongCategories)
+                .GroupBy(sc => sc.Category)
+                .Select(g => new
+                {
+                    Category = g.Key,
+                    SongCount = g.Count()
+                })
+                .OrderByDescending(x => x.SongCount)
+                .FirstOrDefaultAsync();
+
+            return result?.Category;
+        }
+
+        public async Task<Category?> GetById(int id)
+        {
+            return await _dbContext.Category
+                .Where(c => c.Id == id)
+                .FirstOrDefaultAsync();
+        }
     }
 }
