@@ -1,5 +1,5 @@
-import React from 'react';
-import { Play } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, Heart } from 'lucide-react';
 import styles from './ItemCardColumn.module.css';
 
 const PLACEHOLDER_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='#374151'/></svg>`;
@@ -11,7 +11,9 @@ const handleImgError = (e) => {
   e.currentTarget.classList.add(styles['image-placeholder']);
 };
 
-const ItemCardColumn = ({ item, type = 'song' }) => {
+const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
     // If no item data, show skeleton
     if (!item) {
         return (
@@ -27,18 +29,51 @@ const ItemCardColumn = ({ item, type = 'song' }) => {
     const title = item.title || item.name || 'Unknown';
     const subtitle = type === 'artist' ? (item.bio || 'Artist') : (item.artist || item.artistName || 'Unknown Artist');
 
+    const handlePlayClick = (e) => {
+        e.stopPropagation();
+        if (onPlay) onPlay(item);
+    };
+
+    const handleFavoriteClick = (e) => {
+        e.stopPropagation();
+        if (onFavorite) onFavorite(item);
+    };
+
     return (
         <div className={styles['item-card-column']}>
-            <div className={styles['image-wrapper']}>
+            <div 
+                className={styles['image-wrapper']}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
                 <img 
                     src={imageUrl} 
                     alt={title} 
                     className={styles['item-card-column-image']}
                     onError={handleImgError}
                 />
-                <div className={styles['play-button-overlay']}>
-                    <Play className={styles['play-icon']} fill="currentColor" />
-                </div>
+                
+                {/* Favorite Button - Top Right Corner - Only for songs */}
+                {type !== 'artist' && (
+                    <button 
+                        className={`${styles['favorite-button']} ${isHovered ? styles['show'] : ''}`}
+                        onClick={handleFavoriteClick}
+                        aria-label="Add to favorites"
+                    >
+                        <Heart size={20} />
+                    </button>
+                )}
+
+                {/* Play Button - Center - Only for songs */}
+                {type !== 'artist' && (
+                    <button 
+                        className={`${styles['play-button-overlay']} ${isHovered ? styles['show'] : ''}`}
+                        onClick={handlePlayClick}
+                        aria-label="Play"
+                    >
+                        <Play className={styles['play-icon']} fill="currentColor" />
+                    </button>
+                )}
             </div>
             <h4 className={styles['item-card-column-title']}>{title}</h4>
             {type !== 'artist' && <p className={styles['item-card-column-artist']}>{subtitle}</p>}
