@@ -1,7 +1,7 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
 import { useNavigate } from "react-router-dom";
-import authService from "../../services/authService";
+import { AuthContext } from "../../contexts/AuthContext";
 import styles from "./SignIn.module.css";
 
 function SignInForm() {
@@ -10,6 +10,7 @@ function SignInForm() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleChange = evt => {
     const value = evt.target.value;
@@ -91,7 +92,7 @@ function SignInForm() {
     setLoading(true);
     setError("");
 
-    const result = await authService.login(name, password);
+    const result = await login(name, password);
 
     setLoading(false);
 

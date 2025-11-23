@@ -17,5 +17,20 @@ namespace PSMusic.Server.Helpers
 
             return new PagedResult<T>(items, page, size, totalItems);
         }
+
+        public static PagedResult<T> Paginate<T>(
+            this IEnumerable<T> source,
+            int page,
+            int size)
+        {
+            var totalItems = source.Count();
+            var items = source
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToList();
+
+            return new PagedResult<T>(items, page, size, totalItems);
+        }
+
     }
 }
