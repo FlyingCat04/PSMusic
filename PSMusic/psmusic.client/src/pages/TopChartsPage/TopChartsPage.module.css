@@ -78,6 +78,9 @@
     background: linear-gradient(135deg, var(--sidebar-bg) 0%, rgba(0, 0, 0, 0.5) 100%);
     border: 1px solid rgba(255, 255, 255, 0.04);
     transition: all 0.3s ease;
+    width: 100%;
+    min-width: 0;
+    flex-shrink: 0;
 }
 
 .column:hover {
