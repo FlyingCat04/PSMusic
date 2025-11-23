@@ -72,7 +72,7 @@
 .player-controls-new {
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: 240px;
   right: 0;
   background-color: #222;
   border-top: 1px solid #333;
@@ -81,7 +81,7 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  width: 100%;
+  width: calc(100% - 240px);
   box-sizing: border-box;
   color: white;
 }
