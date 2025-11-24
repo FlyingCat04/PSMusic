@@ -46,6 +46,7 @@ namespace PSMusic.Server.Data
             {
                 entity.HasKey(entity => entity.Id);
                 entity.Property(entity => entity.Name).IsRequired();
+                entity.Ignore(entity => entity.Playlists);
             });
 
             modelBuilder.Entity<SongCategory>(entity => 
