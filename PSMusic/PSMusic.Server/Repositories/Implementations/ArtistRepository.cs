@@ -2,6 +2,7 @@
 using PSMusic.Server.Data;
 using PSMusic.Server.Models.Entities;
 using PSMusic.Server.Repositories.Interfaces;
+using System.Diagnostics.Contracts;
 
 namespace PSMusic.Server.Repositories.Implementations
 {
@@ -65,5 +66,29 @@ namespace PSMusic.Server.Repositories.Implementations
                 .OrderByDescending(a => a.TotalStream)
                 .Select(x => x.Artist);
         }
+
+        public async Task<IEnumerable<Artist>?> GetArtistsByMainCategory(int categoryId)
+        {
+            return await _dbContext.Artist
+                .Where(artist => _dbContext.SongArtist
+                    .Where(sa => sa.ArtistId == artist.Id && sa.Song != null)
+                    .SelectMany(sa => sa.Song.SongCategories)
+                    .GroupBy(sc => sc.CategoryId)
+                    .OrderByDescending(g => g.Count())
+                    .Select(g => g.Key)
+                    .FirstOrDefault() == categoryId
+                )
+                .ToListAsync();
+        }
+        public async Task<List<Artist>> GetArtistsBySongId(int songId)
+        {
+            return await _dbContext.SongArtist
+                .AsNoTracking()
+                .Where(sa => sa.SongId == songId)
+                .Select(sa => sa.Artist)
+                .ToListAsync();
+                
+        }
+
     }
 }

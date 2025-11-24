@@ -66,16 +66,17 @@
     border: none;
     border-radius: 999px;
     padding: 12px 32px;
-    background: var(--primary-purple);
-    color: #000;
+    background: var(--artist-play-bg, var(--primary-purple));
+    color: var(--artist-play-text, #000);
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
+    transition: transform 0.12s ease, filter 0.12s ease, background 0.2s ease;
 }
 
 .playButton:hover {
     transform: scale(1.04);
-    background: var(--primary-purple);
+    filter: brightness(2.05);
 }
 
 .secondaryButton {

@@ -31,7 +31,7 @@ const App = () => {
                 <Route path="favorites" element={<div>Bài Hát Yêu Thích</div>} />
                 <Route path="recent" element={<div>Nghe Gần Đây</div>} />
                 <Route path="/song/:id" element={<SongViewPage />} />
-                <Route path="artist/:name" element={<ArtistPage />} />
+                <Route path="artist/:id" element={<ArtistPage />} />
                 <Route path="/favorites" element={<FavoriteSongsPage />} />
                 <Route path="/player/:id" element={<MusicPlayerPage />} />
                 <Route path="/search" element={<SearchResultPage />} />

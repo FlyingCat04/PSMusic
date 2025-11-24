@@ -9,12 +9,12 @@ namespace PSMusic.Server.Mapping
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile() 
+        public MappingProfile()
         {
             // map user
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<User, CreateUserDTO>().ReverseMap();
-            
+
             // map song
             CreateMap<Song, SongDTO>()
                 .ForMember(dto => dto.ArtistNames,
@@ -26,12 +26,30 @@ namespace PSMusic.Server.Mapping
                     opt => opt.Ignore())
                 .ForMember(dto => dto.Categories,
                     opt => opt.Ignore());
+            CreateMap<Song, SongWithArtistRole>()
+                .ForMember(dto => dto.Type,
+                    opt => opt.MapFrom((src, dest, destMember, context) =>
+                    {
+                        var artistId = (int)context.Items["artistId"];
+                        var mainArtistId = src.SongArtists.OrderBy(sa => sa.Id).First().ArtistId;
+                        return mainArtistId == artistId ? "Main" : "Collab";
+                    })
+                )
+                .ForMember(dto => dto.ArtistNames,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.Artist.Name))
+                );
 
             // map artist
             CreateMap<Artist, ArtistDTO>().ReverseMap();
 
             // map category
             CreateMap<Category, CategoryDTO>().ReverseMap();
+
+            // map related song
+            CreateMap<Song, RelatedSongDTO>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.AvatarUrl))
+                .ForMember(dest => dest.Mp3Url, opt => opt.MapFrom(src => src.Mp3Url));
         }
     }
 }

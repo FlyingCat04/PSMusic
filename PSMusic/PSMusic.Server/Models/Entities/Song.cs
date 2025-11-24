@@ -16,5 +16,8 @@ namespace PSMusic.Server.Models.Entities
         //public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
         public ICollection<Stream> Streams { get; set; } = new List<Stream>();
         //public ICollection<Playlist> Playlists { get; set; } = new List<Playlist>();
+        public ICollection<Playlist> Playlists { get; set; } = new List<Playlist>();
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+        public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
     }
 }

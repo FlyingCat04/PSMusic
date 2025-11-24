@@ -9,6 +9,7 @@
         // song name or artist name or playlist name
         public string Name { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; } = string.Empty;
+        public string? Mp3Url { get; set; } = string.Empty;
         // only available of type is not "artist"
         public List<string>? ArtistsName { get; set; } = new List<string>();
     }

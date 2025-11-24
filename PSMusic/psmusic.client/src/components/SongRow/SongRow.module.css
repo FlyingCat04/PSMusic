@@ -1,4 +1,4 @@
-/* Song row */
+/* Song row mặc định (tab khác) */
 .sr-row {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -11,19 +11,20 @@
     position: relative;
 }
 
-.sr-row:hover {
-    background: var(--component-hover-bg);
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-    transform: translateY(-1px);
-}
+    .sr-row:hover {
+        background: var(--component-hover-bg);
+        border-color: var(--primary-purple);
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+        transform: translateY(-1px);
+    }
 
-
+/* Song row khi ở tab Bài hát: 4 cột bằng nhau
+   [cover + title] [artist] [duration] [menu] */
 .sr-song-tab {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) auto;
     align-items: center;
-    gap: 14px;
+    column-gap: 20px;
     background: none;
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -39,18 +40,14 @@
     transform: translateY(-1px);
 }
 
-.sr-meta-tab {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    column-gap: 24px;
-    padding: 0 10px 8px;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-tertiary);
+
+/* cột title trong tab Bài hát */
+.sr-title-col {
+    min-width: 0;
 }
 
 .sr-title-tab {
-    display: flex;
+    display: inline-flex;
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
@@ -59,6 +56,16 @@
     align-items: center;
 }
 
+/* cột artist trong tab Bài hát */
+.sr-artist-col {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* cover */
 .sr-cover {
     width: 52px;
     height: 52px;
@@ -67,6 +74,7 @@
     border: 1px solid var(--border);
 }
 
+/* layout cũ cho tab khác */
 .sr-meta {
     min-width: 0;
     text-align: left;
@@ -81,9 +89,9 @@
     text-overflow: ellipsis;
 }
 
-.sr-title:hover {
-    color: #c7a4ff;
-}
+    .sr-title:hover {
+        color: #c7a4ff;
+    }
 
 .sr-subtitle {
     color: var(--text-tertiary);
@@ -94,142 +102,31 @@
     text-overflow: ellipsis;
 }
 
-/* Avatar wrapper để bắt click + overlay */
-/*.sr-avatar-wrapper {
-    position: relative;
-    width: 52px;
-    height: 52px;
-    cursor: pointer;
-}*/
-
-/* overlay khi playing */
-.sr-cover-playing {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-}
-
-/* avatar wrapper đã có, thêm overflow để bo tròn overlay luôn khớp */
+/* avatar wrapper */
 .sr-avatar-wrapper {
     position: relative;
     width: 52px;
     height: 52px;
-/*    cursor: pointer;*/
     border: none;
     padding: 0;
     background: transparent;
     overflow: hidden;
 }
 
-/* overlay khi HOVER: nền tối + icon play */
-.sr-cover-hover {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    opacity: 0;
-    transition: opacity 0.18s ease-out;
-}
+/* ... (phần còn lại giữ nguyên: sr-cover-playing, sr-eq, sr-right, menu, submenu ...) */
 
-/* khi hover vào avatar thì hiện overlay */
-.sr-row:hover .sr-cover-hover {
-    opacity: 1;
-}
-
-/* icon play tam giác trắng */
-.sr-play-icon {
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-left: 16px solid #ffffff;
-    /* nếu muốn nhỏ hơn / lớn hơn thì chỉnh các số này */
-}
-
-/* overlay khi ĐANG PHÁT vẫn dùng eq như cũ, nhưng nằm trên cùng */
-.sr-cover-playing {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    z-index: 2; /* đảm bảo cao hơn hover */
-}
-
-/* để hover không đè lên trạng thái đang phát (tuỳ bạn thích) */
-.sr-avatar-wrapper:hover .sr-cover-playing {
-    /* nếu muốn khi đang phát thì không hiện play tam giác */
-    /* có thể tắt hover overlay bằng: */
-    pointer-events: none;
-}
-
-
-/* tiny equalizer */
-.sr-eq {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    display: grid;
-    grid-auto-flow: column;
-    gap: 2px;
-    padding: 2px;
-}
-
-    .sr-eq::before,
-    .sr-eq::after,
-    .sr-eq span {
-        content: "";
-        display: block;
-        width: 3px;
-        height: 100%;
-        background: var(--text-tertiary);
-        animation: sr-bounce 900ms ease-in-out infinite;
-    }
-
-    .sr-eq::after {
-        animation-delay: .2s;
-    }
-
-    .sr-eq span {
-        animation-delay: .4s;
-    }
-
-@keyframes sr-bounce {
-    0%, 100% {
-        transform: scaleY(.3);
-    }
-
-    50% {
-        transform: scaleY(1);
-    }
-}
-
-/* Empty-state box */
-.sr-placeholder {
-    border: 1px dashed var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    color: var(--text-tertiary);
-    background: var(--component-bg);
-    text-align: center;
-}
-
-/* --- Right area trong SongRow: equalizer + menu 3 chấm --- */
 .sr-right {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.sr-duration {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    min-width: 40px;
+    text-align: right;
 }
 
 .sr-dotsButton {
@@ -403,7 +300,6 @@
 /* dòng "Playlist mới" */
 .sr-subMenuItemPrimary {
     width: 100%;
-    background: transparent;
     border: none;
     padding: 8px 14px;
     text-align: left;
@@ -446,9 +342,27 @@
         background: rgba(255, 255, 255, 0.06);
     }
 
-/* khi không có playlist phù hợp */
-.sr-subMenuEmpty {
-    padding: 8px 14px;
-    font-size: 12px;
+/* Cột 1: cover + title */
+.sr-col-cover-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.sr-title-songtab {
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Cột 2: nghệ sĩ */
+.sr-col-artist {
+    font-size: 13px;
     color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

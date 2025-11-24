@@ -57,6 +57,7 @@ const mapSong = (item) => ({
         ? item.artistsName.join(", ")
         : "The Cassette",
     imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
+    mp3Url: item.mp3Url || "",
 });
 
 const mapArtist = (item) => ({
@@ -168,6 +169,10 @@ const SearchResultPage = () => {
         fetchResults();
     }, [keyword, page]);
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [page]);
+
     // 2 cột bài hát cho tab "Tất cả"
     const { leftCol, rightCol } = useMemo(() => {
         let base = songs.slice(0, 10); // giới hạn 10 bài trong tab Tất cả
@@ -221,8 +226,8 @@ const SearchResultPage = () => {
         }
     };
 
-    const handleViewArtist = (artistName) => {
-        navigate(`/artist/${encodeURIComponent(artistName)}`);
+    const handleViewArtist = (artistId) => {
+        navigate(`/artist/${artistId}`);
     };
     if (loading) {
         <LoadSpinner />;
@@ -231,6 +236,8 @@ const SearchResultPage = () => {
     if (error) {
         return (<p style={{ color: "red" }}>{error}</p>);
     }
+
+
 
     return (
         <div className="content-container">
@@ -275,7 +282,7 @@ const SearchResultPage = () => {
                                 title={topResult.name}
                                 subtitle={topResult.followers}
                                 circle
-                                onClick={() => handleViewArtist(topResult.name)}
+                                onClick={() => handleViewArtist(topResult.id)}
                             />
                         </div>
                     )}
@@ -377,7 +384,7 @@ const SearchResultPage = () => {
                                 title={a.name}
                                 subtitle={a.followers}
                                 circle
-                                onClick={() => handleViewArtist(a.name)}
+                                onClick={() => handleViewArtist(a.id)}
                             />
                         ))}
                     </div>

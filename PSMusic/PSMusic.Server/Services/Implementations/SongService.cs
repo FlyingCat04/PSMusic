@@ -18,7 +18,6 @@ namespace PSMusic.Server.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IArtistService _artistService;
 
-
         public SongService(ISongRepository songRepository, IMapper mapper, IArtistService artistService)
         {
             _songRepository = songRepository;
@@ -67,6 +66,7 @@ namespace PSMusic.Server.Services.Implementations
                     Id = song.Id,
                     Type = "song",
                     AvatarUrl = song.AvatarUrl,
+                    Mp3Url = song.Mp3Url,
                     Name = song.Name,
                     ArtistsName = artistsForSong
                 });
@@ -187,6 +187,103 @@ namespace PSMusic.Server.Services.Implementations
         {
             var results = await _songRepository.GetRandomSongsAsync(size);
             return _mapper.Map<IEnumerable<SongDTO>>(results);
+        }
+
+        public async Task<IEnumerable<SongDTO>?> GetByArtistId(int id)
+        {
+            if (await _artistService.GetById(id) == null) throw new Exception($"Nghệ sĩ với id {id} không tồn tại");
+
+            var results = await _songRepository.GetByArtistId(id);
+            return _mapper.Map<IEnumerable<SongDTO>>(results);
+        }
+
+        public async Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsMainArtistAsync(int id, int page = 1, int size = 10)
+        {
+            if (page < 1) page = 1;
+            if (size < 10) size = 10;
+
+            var popularSongs = _songRepository.GetAll();
+
+            var songAsMainArtist = popularSongs
+                .Where(s => s.SongArtists
+                    .Any(sa => sa.ArtistId == id && sa.Id ==
+                        s.SongArtists.Min(x => x.Id)
+                    )
+                );
+
+            var mainArtistSongs = await songAsMainArtist
+                .Include(s => s.SongArtists)
+                    .ThenInclude(sa => sa.Artist)
+                .ToListAsync();
+
+            var result = mainArtistSongs
+                .Select(s => _mapper.Map<SongWithArtistRole>(s, opt =>
+                {
+                    opt.Items["artistId"] = id;
+                }))
+                .ToList();
+
+            return result.Paginate(page, size);
+        }
+
+        public async Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsCollaboratorAsync(int id, int page = 1, int size = 10)
+        {
+
+            var popularSongs = _songRepository.GetAll();
+
+            var songAsCollaborator = popularSongs
+                .Where(s => s.SongArtists
+                    .Any(sa => sa.ArtistId == id && sa.Id !=
+                        s.SongArtists.Min(x => x.Id)
+                    )
+                );
+
+            var collaboratorSongs = await songAsCollaborator
+                .Include(s => s.SongArtists)
+                    .ThenInclude(sa => sa.Artist)
+                .ToListAsync();
+
+            var result = collaboratorSongs
+                .Select(s => _mapper.Map<SongWithArtistRole>(s, opt =>
+                {
+                    opt.Items["artistId"] = id;
+                }))
+                .ToList();
+
+            return result.Paginate(page, size);
+        }
+
+        public async Task<PagedResult<SongDTO>?> GetPopularSongWithCategory(int id, int page, int size)
+        {
+            var results = await _songRepository.GetPopularSongWithCategory(id);
+            if (results == null) return null;
+
+            var songs = results.Select(s => _mapper.Map<SongDTO>(s));
+            return songs.Paginate(page, size);
+        }
+
+        public async Task<SongDetail2DTO?> GetSongDetail(int songId, int userId)
+        {            
+            var result = await _songRepository.GetSongDetail_DTO(songId, userId);
+            return result;
+        }
+
+        public async Task<List<RelatedSongDTO>> GetRelatedSongs(int songId)
+        {
+            var songEntities = await _songRepository.GetRelatedSongs(songId);
+            return _mapper.Map<List<RelatedSongDTO>>(songEntities);
+        }
+
+        public async Task<SongPlayerDTO?> GetSongForPlayer(int id)
+        {
+            var result = await _songRepository.GetSongForPlayer_DTO(id);
+            return result;
+        }
+
+        public async Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId)
+        {
+            var result = await _songRepository.GetFavoriteSongs(userId);
+            return result;
         }
     }
 }

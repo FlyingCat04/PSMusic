@@ -3,14 +3,20 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
+import { DataCacheProvider } from './contexts/DataCacheContext.jsx'
 import { BrowserRouter } from "react-router-dom";
+import { PlayerProvider } from './contexts/PlayerContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <PlayerProvider>
+        <DataCacheProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </DataCacheProvider>
+      </PlayerProvider>
     </AuthProvider>
   </StrictMode>,
 )

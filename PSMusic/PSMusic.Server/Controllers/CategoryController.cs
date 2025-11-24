@@ -24,5 +24,13 @@ namespace PSMusic.Server.Controllers
             var popularCategories = await _categoryService.GetPopularCategories(page, size);
             return Ok(popularCategories);
         }
+
+        [HttpGet("{id:int}")]
+        //[Authorize]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var result = await _categoryService.GetById(id);
+            return Ok(result);
+        }
     }
 }
