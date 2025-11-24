@@ -281,6 +281,16 @@ const HomePage = () => {
               <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
             )}
           </div>
+          {/* {songs.length > 5 && (
+            <button 
+              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
+              onClick={() => handleScroll(songsScrollRef, 'right')}
+              aria-label="Scroll right"
+            >
+              <ChevronRight />
+            </button>
+          )} */}
+
         </div>
       </section>
     </div>
