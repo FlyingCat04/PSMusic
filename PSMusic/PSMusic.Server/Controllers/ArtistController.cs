@@ -44,7 +44,7 @@ namespace PSMusic.Server.Controllers
             if (mainCategory == null) return Ok();
 
             var result = await _artistService.GetArtistsByMainCategory(mainCategory.Id);
-            var filteredResult = result.Select(a => a.Id != id);
+            var filteredResult = result.Where(a => a.Id != id);
             return Ok(filteredResult);
         }
         
