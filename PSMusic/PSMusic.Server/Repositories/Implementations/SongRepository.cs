@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSMusic.Server.Data;
+using PSMusic.Server.Models.DTO.Song;
 using PSMusic.Server.Models.Entities;
 using PSMusic.Server.Repositories.Interfaces;
 
@@ -124,5 +125,78 @@ namespace PSMusic.Server.Repositories.Implementations
                     .Count(st => st.SongId == s.Id))
                 .ToListAsync();
         }
+        public async Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId)
+        {
+            var songDto = await _dbContext.Song
+                .Where(s => s.Id == songId)
+                .Select(s => new SongDetail2DTO {
+                    Id = s.Id,
+                    Title = s.Name,
+                    ImageUrl = s.AvatarUrl,
+                    LyricUrl = s.LrcUrl ?? "", 
+                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
+                    Favorite = s.Favorites.Count(f => f.IsFavorite),
+                    Reviews = s.Ratings.Count(),
+                    IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
+                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId)
+                })
+                .FirstOrDefaultAsync();
+
+            return songDto;
+        }
+        
+        public async Task<List<Song>> GetRelatedSongs(int songId)
+        {
+            var artistIdsQuery = _dbContext.SongArtist
+                .Where(sa => sa.SongId == songId)
+                .Select(sa => sa.ArtistId);
+
+            return await _dbContext.SongArtist
+                .AsNoTracking()
+                .Where(sa => artistIdsQuery.Contains(sa.ArtistId) && sa.SongId != songId)
+                .Select(sa => sa.Song)
+                .Distinct()
+                .Take(30)
+                .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
+                .ToListAsync(); 
+        } 
+
+        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id)
+        {
+            return await _dbContext.Song
+                .AsNoTracking()
+                .Where(s => s.Id == id)
+                .Select(s => new SongPlayerDTO {
+                    Id = s.Id,
+                    Title = s.Name,
+                    CoverUrl = s.AvatarUrl,
+                    AudioUrl = s.Mp3Url ?? "",
+                    LyricUrl = s.LrcUrl ?? "",
+                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
+                    SingerUrl = s.SongArtists
+                        .Select(sa => sa.Artist.AvatarUrl)
+                        .FirstOrDefault() ?? "",
+                    Likes = s.Favorites.Count(f => f.IsFavorite)
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId)
+        {
+            return await _dbContext.Favorite
+                .AsNoTracking()
+                .Where(f => f.UserId == userId && f.IsFavorite)
+                .Select(f => f.Song) 
+                .Select(s => new FavoriteSongDTO
+                {
+                    Id = s.Id,
+                    Title = s.Name,
+                    ImageUrl = s.AvatarUrl, 
+                    LyricUrl = s.LrcUrl ?? "", 
+                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name))
+                })
+                .ToListAsync();
+        }
+
     }
 }

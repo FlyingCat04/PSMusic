@@ -16,5 +16,9 @@ namespace PSMusic.Server.Services.Interfaces
         Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsMainArtistAsync(int id, int page, int size);
         Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsCollaboratorAsync(int id, int page, int size);
         Task<PagedResult<SongDTO>?> GetPopularSongWithCategory(int id, int page, int size);
+        Task<SongDetail2DTO?> GetSongDetail(int songId, int userId);
+        Task<List<RelatedSongDTO>> GetRelatedSongs(int songId);
+        Task<SongPlayerDTO?> GetSongForPlayer(int id);
+        Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId);
     }
 }

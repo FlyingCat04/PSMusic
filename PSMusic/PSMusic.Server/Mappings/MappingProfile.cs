@@ -44,6 +44,12 @@ namespace PSMusic.Server.Mapping
 
             // map category
             CreateMap<Category, CategoryDTO>().ReverseMap();
+
+            // map related song
+            CreateMap<Song, RelatedSongDTO>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.AvatarUrl))
+                .ForMember(dest => dest.Mp3Url, opt => opt.MapFrom(src => src.Mp3Url));
         }
     }
 }

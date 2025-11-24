@@ -9,5 +9,6 @@ namespace PSMusic.Server.Services.Interfaces
         Task<ArtistDTO?> GetById(int id);
         Task<PagedResult<ArtistDTO>> GetPopularArtists(int page, int size);
         Task<IEnumerable<ArtistDTO>?> GetArtistsByMainCategory(int categoryId);
+        Task<List<ArtistDTO>> GetArtistsBySongId(int songId);
     }
 }
