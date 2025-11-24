@@ -183,10 +183,10 @@ namespace PSMusic.Server.Services.Implementations
             return await songs.PaginateAsync(page, size);
         }
 
-        public async Task<IEnumerable<SongDTO>> GetBatch(int size)
+        public async Task<IEnumerable<NextBatchSongDTO>> GetBatch(int size)
         {
             var results = await _songRepository.GetRandomSongsAsync(size);
-            return _mapper.Map<IEnumerable<SongDTO>>(results);
+            return _mapper.Map<IEnumerable<NextBatchSongDTO>>(results);
         }
 
         public async Task<IEnumerable<SongDTO>?> GetByArtistId(int id)
@@ -284,6 +284,11 @@ namespace PSMusic.Server.Services.Implementations
         {
             var result = await _songRepository.GetFavoriteSongs(userId);
             return result;
+        }
+
+        public async Task<int> GetFavoriteCount(int songId)
+        {
+            return await _songRepository.GetFavoriteCount(songId);
         }
     }
 }
