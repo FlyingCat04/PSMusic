@@ -4,16 +4,19 @@
     grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 14px;
-    background: var(--component-bg);
+    background: none;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 10px 12px;
     position: relative;
 }
 
-    .sr-row:hover {
-        background: rgba(255,255,255,.02);
-    }
+.sr-row:hover {
+    background: var(--component-hover-bg);
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    transform: translateY(-1px);
+}
 
 
 .sr-song-tab {
@@ -21,7 +24,7 @@
     grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 14px;
-    background: var(--component-bg);
+    background: none;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 10px 12px;
@@ -30,7 +33,10 @@
 }
 
 .sr-song-tab:hover {
-    background: rgba(255,255,255,.02);
+    background: var(--component-hover-bg);
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    transform: translateY(-1px);
 }
 
 .sr-meta-tab {

@@ -8,6 +8,7 @@ import MusicPlayerPage from './pages/MusicPlayerPage/MusicPlayerPage';
 import AuthPage from './pages/Auth/AuthPage';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import SearchResultPage from './pages/SearchResult/SearchResultPage';
+import ArtistPage from './pages/ArtistPage/ArtistPage';
 import './App.css';
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
                 <Route path="favorites" element={<div>Bài Hát Yêu Thích</div>} />
                 <Route path="recent" element={<div>Nghe Gần Đây</div>} />
                 <Route path="/song/:id" element={<SongViewPage />} />
+                <Route path="artist/:name" element={<ArtistPage />} />
                 <Route path="/favorites" element={<FavoriteSongsPage />} />
                 <Route path="/player/:id" element={<MusicPlayerPage />} />
                 <Route path="/search" element={<SearchResultPage />} />

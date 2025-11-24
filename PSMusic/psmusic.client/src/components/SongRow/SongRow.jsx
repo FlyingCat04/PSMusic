@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./SongRow.module.css";
 
-const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab }) => {
+const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab = ""}) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [artistMenuOpen, setArtistMenuOpen] = useState(false);
 
     const [playlistMenuOpen, setPlaylistMenuOpen] = useState(false);
     const [playlistQuery, setPlaylistQuery] = useState("");
+
 
     const [playlistMenuPlacement, setPlaylistMenuPlacement] = useState("right");
     const playlistMenuRef = useRef(null);
@@ -15,6 +16,9 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
     const artistMenuRef = useRef(null);
 
     const menuRef = useRef(null);
+    
+
+    const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
 
     const handleRowStyle = () => { 
         return activeTab === "Bài hát" ? "sr-song-tab" : "sr-row";
@@ -130,7 +134,13 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
             {/* AVATAR + ICON isPlaying overlay */}
             <div className={styles["sr-avatar-wrapper"]}>
-                <img className={styles["sr-cover"]} src={item.imageUrl} alt="" />
+                <img 
+                    className={styles["sr-cover"]} 
+                    src={item.imageUrl} 
+                    alt="" 
+                    onError={(e) => {
+                        e.target.src = DEFAULT_SONG_IMAGE;
+                }} />
 
 
                 {showPlayingIcon && (

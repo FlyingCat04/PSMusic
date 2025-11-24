@@ -1,0 +1,112 @@
+.page {
+    min-height: 100vh;
+    background: linear-gradient( 
+        to bottom, 
+        color-mix(in srgb, var(--primary-purple) 30%, transparent),
+        var(--background-dark) 
+    );
+    color: #fff;
+    border-radius: 8px;
+}
+
+.hero {
+    position: relative;
+    padding: 24px 32px 32px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.heroBg {
+    position: absolute;
+    inset: -40px;
+    background: linear-gradient( 
+        to bottom, 
+        color-mix(in srgb, var(--primary-purple) 30%, transparent),
+        var(--background-dark) 
+    );
+    opacity: 0.55;
+}
+
+.heroOverlay {
+    position: relative;
+    display: flex;
+    gap: 24px;
+    align-items: flex-end;
+    padding-top: 80px;
+}
+
+.avatar {
+    width: 192px;
+    height: 192px;
+    border-radius: 999px;
+    object-fit: cover;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+
+.heroMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.artistName {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1px;
+}
+
+.actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.playButton {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 32px;
+    background: var(--primary-purple);
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.playButton:hover {
+    transform: scale(1.04);
+    background: var(--primary-purple);
+}
+
+.secondaryButton {
+    border-radius: 999px;
+    padding: 8px 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: transparent;
+    color: #fff;
+}
+
+.iconButton {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+.section {
+    padding: 24px 32px;
+}
+
+.sectionTitle {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.songList {
+    display: flex;
+    flex-direction: column;
+}

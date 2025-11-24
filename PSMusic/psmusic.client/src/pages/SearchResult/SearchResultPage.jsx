@@ -6,7 +6,8 @@ import SongRow from "../../components/SongRow/SongRow";
 import SquareCard from "../../components/SquareCard/SquareCard";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import Pagination from "../../components/Pagination/Pagination";
-import axiosInstance from "../../services/axiosInstance"; // chỉnh lại path nếu khác
+import SectionHeader from "../../components/SectionHeader/SectionHeader";
+import axiosInstance from "../../services/axiosInstance"; 
 
 const TAB_TO_TYPE = {
     "Tất cả": "all",
@@ -33,39 +34,36 @@ const DEFAULT_SONG_IMAGE =
 const DEFAULT_ARTIST_IMAGE =
     "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
-const SectionHeader = ({ title, onMore }) => (
-    <div className={styles["section-header"]}>
-        <h2 className={styles["section-title"]}>{title}</h2>
-        {onMore && (
-            <button
-                type="button"
-                className={styles["see-all-link"]}
-                onClick={onMore}
-            >
-                Thêm
-                <svg viewBox="0 0 24 24" width="16" height="16" style={{ marginLeft: 4 }}>
-                    <path fill="currentColor" d="M9 18l6-6-6-6v12z" />
-                </svg>
-            </button>
-        )}
-    </div>
-);
+
 
 // helper map dữ liệu từ backend sang dạng frontend dùng
+const checkImage = (url, fallback) => {
+    if (!url) return fallback;
+
+    const img = new Image();
+    img.src = url;
+
+    img.onerror = () => {
+        img.src = fallback;
+    };
+
+    return url;
+};
+
 const mapSong = (item) => ({
     id: item.id,
     title: item.name || "Không tên",
     artist: Array.isArray(item.artistsName)
         ? item.artistsName.join(", ")
-        : "",
-    imageUrl: item.avatarUrl || DEFAULT_SONG_IMAGE,
+        : "The Cassette",
+    imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
 });
 
 const mapArtist = (item) => ({
     id: item.id,
     name: item.name || "Nghệ sĩ",
-    followers: "", // sau này backend có trường followersText thì gán vào
-    imageUrl: item.avatarUrl || DEFAULT_ARTIST_IMAGE,
+    followers: "",
+    imageUrl: checkImage(item.avatarUrl, DEFAULT_ARTIST_IMAGE),
 });
 
 const SearchResultPage = () => {

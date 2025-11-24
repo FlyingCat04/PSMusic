@@ -8,4 +8,9 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\components\TrackTable\" />
+    <Folder Include="src\components\SectionHeader\" />
+    <Folder Include="src\pages\ArtistPage\" />
+  </ItemGroup>
 </Project>

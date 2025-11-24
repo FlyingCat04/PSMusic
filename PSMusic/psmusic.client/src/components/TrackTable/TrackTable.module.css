@@ -1,0 +1,77 @@
+/* src/components/TrackTable/TrackTable.module.css */
+
+.tracklist {
+    width: 100%;
+}
+
+/* HEADER */
+
+.header {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 3fr) minmax(0, 2fr) 60px;
+    padding: 0 16px 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+}
+
+.colIndex {
+    text-align: right;
+    padding-right: 8px;
+}
+
+.colTitle {
+    padding-right: 8px;
+}
+
+.colArtist {
+    padding-right: 8px;
+    text-align: left;
+}
+
+.colTime {
+    text-align: right;
+}
+
+/* BODY */
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* mỗi dòng là một grid giống header để các cột thẳng hàng */
+.row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 3fr) minmax(0, 2fr) 60px;
+    align-items: center;
+    column-gap: 16px;
+}
+
+    /* số thứ tự */
+    .row .colIndex {
+        font-size: 13px;
+        color: var(--text-tertiary);
+    }
+
+    /* SongRow chiếm full chiều ngang của cột Title */
+    .row .colTitle {
+        min-width: 0;
+    }
+
+    /* cột artist ngoài – có thể rút gọn text */
+    .row .colArtist {
+        font-size: 13px;
+        color: var(--text-tertiary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* time / icon */
+    .row .colTime {
+        font-size: 12px;
+        color: var(--text-tertiary);
+    }
