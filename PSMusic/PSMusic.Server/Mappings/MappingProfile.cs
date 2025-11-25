@@ -35,8 +35,12 @@ namespace PSMusic.Server.Mapping
                         return mainArtistId == artistId ? "Main" : "Collab";
                     })
                 )
-                .ForMember(dto => dto.ArtistNames,
-                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.Artist.Name))
+                .ForMember(dto => dto.Artists,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => new PartialArtistDTO
+                    {
+                        Id = sa.Artist.Id,
+                        Name = sa.Artist.Name
+                    }))
                 );
             CreateMap<Song, NextBatchSongDTO>()
                 .ForMember(dto => dto.ArtistNames,
