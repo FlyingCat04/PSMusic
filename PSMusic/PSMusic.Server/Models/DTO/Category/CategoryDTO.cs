@@ -6,6 +6,7 @@ namespace PSMusic.Server.Models.DTO.Category
     {
         [Key]
         public int Id { get; set; }
+        public string? AvatarUrl { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
     }
 }

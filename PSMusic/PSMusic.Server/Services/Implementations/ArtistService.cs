@@ -42,5 +42,11 @@ namespace PSMusic.Server.Services.Implementations
             var results = await _repository.GetArtistsByMainCategory(categoryId);
             return results == null ? null : _mapper.Map<IEnumerable<ArtistDTO>>(results);
         }
+        
+        public async Task<List<ArtistDTO>> GetArtistsBySongId(int songId)
+        {
+            var artists = await _repository.GetArtistsBySongId(songId);
+            return _mapper.Map<List<ArtistDTO>>(artists);
+        }
     }
 }

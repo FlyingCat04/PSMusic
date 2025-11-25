@@ -2,9 +2,15 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Footer from '../../components/Footer/Footer';
 import styles from './ClientLayout.module.css';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import PlayerControl from '../../components/PlayerControl/PlayerControl';
+import { usePlayer } from '../../contexts/PlayerContext';
 
 const ClientLayout = () => {
+    const { isPlayerVisible } = usePlayer();
+    const location = useLocation();
+    const isMusicPlayerPage = location.pathname.startsWith('/player');
+
   return (
     <div className={styles.appLayout}>
       <Sidebar />
@@ -14,6 +20,7 @@ const ClientLayout = () => {
           <Outlet />
         </main>
         <Footer />
+        {isPlayerVisible && !isMusicPlayerPage && <PlayerControl />}
       </div>
     </div>
   );

@@ -43,10 +43,10 @@ namespace PSMusic.Server.Services.Implementations
             return song == null ? null : _mapper.Map<SongDetailDTO>(song);
         }
 
-        public async Task<IEnumerable<SongDTO>?> SearchByName(string keyword)
+        public async Task<IEnumerable<SongSearchDetailDTO>?> SearchByName(string keyword)
         {
             var songs = await _songRepository.Search(keyword) ?? Enumerable.Empty<Song>();
-            return _mapper.Map<IEnumerable<SongDTO>>(songs);
+            return _mapper.Map<IEnumerable<SongSearchDetailDTO>>(songs);
         }
 
         public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
@@ -54,12 +54,12 @@ namespace PSMusic.Server.Services.Implementations
             if (page < 1) page = 1;
             if (size < 10) size = 10;
             Console.WriteLine("abcdef");
-            var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongDTO>();
+            var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongSearchDetailDTO>();
             Console.WriteLine("ab");
             var songResults = new List<SearchResultDTO>();
             foreach (var song in songs)
             {
-                var artistsForSong = song.ArtistNames;
+                var artistsForSong = _mapper.Map<IEnumerable<PartialArtistDTO>>(song.Artists);
 
                 songResults.Add(new SearchResultDTO
                 {
@@ -68,7 +68,7 @@ namespace PSMusic.Server.Services.Implementations
                     AvatarUrl = song.AvatarUrl,
                     Mp3Url = song.Mp3Url,
                     Name = song.Name,
-                    ArtistsName = artistsForSong
+                    Artists = artistsForSong
                 });
             }
 
@@ -183,10 +183,10 @@ namespace PSMusic.Server.Services.Implementations
             return await songs.PaginateAsync(page, size);
         }
 
-        public async Task<IEnumerable<SongDTO>> GetBatch(int size)
+        public async Task<IEnumerable<NextBatchSongDTO>> GetBatch(int size)
         {
             var results = await _songRepository.GetRandomSongsAsync(size);
-            return _mapper.Map<IEnumerable<SongDTO>>(results);
+            return _mapper.Map<IEnumerable<NextBatchSongDTO>>(results);
         }
 
         public async Task<IEnumerable<SongDTO>?> GetByArtistId(int id)
@@ -260,6 +260,35 @@ namespace PSMusic.Server.Services.Implementations
 
             var songs = results.Select(s => _mapper.Map<SongDTO>(s));
             return songs.Paginate(page, size);
+        }
+
+        public async Task<SongDetail2DTO?> GetSongDetail(int songId, int userId)
+        {            
+            var result = await _songRepository.GetSongDetail_DTO(songId, userId);
+            return result;
+        }
+
+        public async Task<List<RelatedSongDTO>> GetRelatedSongs(int songId)
+        {
+            var songEntities = await _songRepository.GetRelatedSongs(songId);
+            return _mapper.Map<List<RelatedSongDTO>>(songEntities);
+        }
+
+        public async Task<SongPlayerDTO?> GetSongForPlayer(int id)
+        {
+            var result = await _songRepository.GetSongForPlayer_DTO(id);
+            return result;
+        }
+
+        public async Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId)
+        {
+            var result = await _songRepository.GetFavoriteSongs(userId);
+            return result;
+        }
+
+        public async Task<int> GetFavoriteCount(int songId)
+        {
+            return await _songRepository.GetFavoriteCount(songId);
         }
     }
 }
