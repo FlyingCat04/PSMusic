@@ -8,6 +8,7 @@ const authService = {
                 username,
                 password
             });
+            console.log(res);
             return res.data;
         } catch (error) {
             console.log(error.response);

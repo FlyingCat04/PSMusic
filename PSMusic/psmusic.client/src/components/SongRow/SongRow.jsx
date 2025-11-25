@@ -3,23 +3,23 @@ import styles from "./SongRow.module.css";
 
 const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab = "", hideInnerArtist= false}) => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [artistMenuOpen, setArtistMenuOpen] = useState(false);
+    const [isHoverCover, setIsHoverCover] = useState(false);
+    //const [artistMenuOpen, setArtistMenuOpen] = useState(false);
 
-    const [playlistMenuOpen, setPlaylistMenuOpen] = useState(false);
-    const [playlistQuery, setPlaylistQuery] = useState("");
+    //const [playlistMenuOpen, setPlaylistMenuOpen] = useState(false);
+    //const [playlistQuery, setPlaylistQuery] = useState("");
 
     const [duration, setDuration] = useState(null);
 
-    const [playlistMenuPlacement, setPlaylistMenuPlacement] = useState("right");
-    const playlistMenuRef = useRef(null);
+    //const [playlistMenuPlacement, setPlaylistMenuPlacement] = useState("right");
+    //const playlistMenuRef = useRef(null);
 
-    const [artistMenuPlacement, setArtistMenuPlacement] = useState("right"); // "right" | "left"
-    const artistMenuRef = useRef(null);
+    //const [artistMenuPlacement, setArtistMenuPlacement] = useState("right"); // "right" | "left"
+    //const artistMenuRef = useRef(null);
 
     const menuRef = useRef(null);
 
     const mp3Url = item?.mp3Url || null;
-    const hideArtist = hideInnerArtist || false;
     const activeTabChose = activeTab || "";
     
 
@@ -44,21 +44,21 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
         return activeTab === "Bài hát" ? "sr-title-tab" : "sr-title";
     };
 
-    const playlists = [
-        { id: 1, name: "My 2024 Playlist in a Bottle" },
-        { id: 2, name: "THE 8" },
-        { id: 3, name: "Lộn xộn" },
-        { id: 4, name: "hopeless romantic" },
-        { id: 5, name: "Wishing" },
-        { id: 6, name: "Shadow of you" },
-        { id: 7, name: "Shadow of you" },
-        { id: 8, name: "Shadow of you" },
-        { id: 9, name: "Shadow of you" },
-    ];
+    //const playlists = [
+    //    { id: 1, name: "My 2024 Playlist in a Bottle" },
+    //    { id: 2, name: "THE 8" },
+    //    { id: 3, name: "Lộn xộn" },
+    //    { id: 4, name: "hopeless romantic" },
+    //    { id: 5, name: "Wishing" },
+    //    { id: 6, name: "Shadow of you" },
+    //    { id: 7, name: "Shadow of you" },
+    //    { id: 8, name: "Shadow of you" },
+    //    { id: 9, name: "Shadow of you" },
+    //];
 
-    const filteredPlaylists = playlists.filter((pl) =>
-        pl.name.toLowerCase().includes(playlistQuery.toLowerCase())
-    );
+    //const filteredPlaylists = playlists.filter((pl) =>
+    //    pl.name.toLowerCase().includes(playlistQuery.toLowerCase())
+    //);
 
     useEffect(() => {
         if (activeTabChose !== "Bài hát") {
@@ -103,69 +103,69 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
         };
     }, [menuOpen]);
 
-    useEffect(() => {
-        if (!artistMenuOpen) return;
-        if (artistMenuPlacement === "left") return;
+    //useEffect(() => {
+    //    if (!artistMenuOpen) return;
+    //    if (artistMenuPlacement === "left") return;
 
-        const raf = window.requestAnimationFrame(() => {
-            if (!artistMenuRef.current) return;
-            const rect = artistMenuRef.current.getBoundingClientRect();
-            const vw = window.innerWidth || document.documentElement.clientWidth;
+    //    const raf = window.requestAnimationFrame(() => {
+    //        if (!artistMenuRef.current) return;
+    //        const rect = artistMenuRef.current.getBoundingClientRect();
+    //        const vw = window.innerWidth || document.documentElement.clientWidth;
 
-            // Nếu chạm mép phải (chừa 30px), thì cho submenu mở sang trái
-            if (rect.right > vw - 30) {
-                setArtistMenuPlacement("left");
-            } else {
-                setArtistMenuPlacement("right");
-            }
-        });
+    //        // Nếu chạm mép phải (chừa 30px), thì cho submenu mở sang trái
+    //        if (rect.right > vw - 30) {
+    //            setArtistMenuPlacement("left");
+    //        } else {
+    //            setArtistMenuPlacement("right");
+    //        }
+    //    });
 
-        return () => window.cancelAnimationFrame(raf);
-    }, [artistMenuOpen, artistMenuPlacement]);
+    //    return () => window.cancelAnimationFrame(raf);
+    //}, [artistMenuOpen, artistMenuPlacement]);
 
-    useEffect(() => {
-        if (!playlistMenuOpen) return;
-        if (playlistMenuPlacement === "left") return;
+    //useEffect(() => {
+    //    if (!playlistMenuOpen) return;
+    //    if (playlistMenuPlacement === "left") return;
 
-        const raf = window.requestAnimationFrame(() => {
-            if (!playlistMenuRef.current) return;
-            const rect = playlistMenuRef.current.getBoundingClientRect();
-            const vw = window.innerWidth || document.documentElement.clientWidth;
+    //    const raf = window.requestAnimationFrame(() => {
+    //        if (!playlistMenuRef.current) return;
+    //        const rect = playlistMenuRef.current.getBoundingClientRect();
+    //        const vw = window.innerWidth || document.documentElement.clientWidth;
 
-            if (rect.right > vw - 15) {
-                setPlaylistMenuPlacement("left");
-            } else {
-                setPlaylistMenuPlacement("right");
-            }
-        });
+    //        if (rect.right > vw - 15) {
+    //            setPlaylistMenuPlacement("left");
+    //        } else {
+    //            setPlaylistMenuPlacement("right");
+    //        }
+    //    });
 
-        return () => window.cancelAnimationFrame(raf);
-    }, [playlistMenuOpen, playlistMenuPlacement]);
+    //    return () => window.cancelAnimationFrame(raf);
+    //}, [playlistMenuOpen, playlistMenuPlacement]);
 
 
-    const toggleMenu = (e) => {
-        e.stopPropagation();          // không trigger click vào cả row
-        setMenuOpen((prev) => !prev);
-    };
+    //const toggleMenu = (e) => {
+    //    e.stopPropagation();          // không trigger click vào cả row
+    //    setMenuOpen((prev) => !prev);
+    //};
 
-    const handleMenuAction = (action, payload) => {
-        switch (action) {
-            case "play":
-                onPlay?.(item);
-                break;
+    //const handleMenuAction = (action, payload) => {
+    //    switch (action) {
+    //        case "play":
+    //            onPlay?.(item);
+    //            break;
 
-            case "add-to-playlist":
-                if (onAddToPlaylist) onAddToPlaylist(item, payload);
-                break;
+    //        case "add-to-playlist":
+    //            if (onAddToPlaylist) onAddToPlaylist(item, payload);
+    //            break;
 
-            case "view-artist":
-                if (onViewArtist) onViewArtist(item.artistId);
-                break;
-            default:
-                console.warn("No handler for action:", action);
-        }
-        setMenuOpen(false);
-    };
+    //        case "view-artist":
+    //            if (onViewArtist) onViewArtist(item.artistId);
+    //            break;
+    //        default:
+    //            console.warn("No handler for action:", action);
+    //    }
+    //    setMenuOpen(false);
+    //};
 
     return (
 
@@ -174,14 +174,20 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
             {activeTab === "Bài hát" ? (
                 <>
                     {/* Cột 1: avatar + tên bài hát */}
-                    <div className={styles["sr-col-cover-title"]}>
-                        <div className={styles["sr-avatar-wrapper"]}>
+                    <div className={styles["sr-col-cover-title"]} onClick={() => onPlay?.(item)}>
+                        <div
+                            className={styles["sr-avatar-wrapper"]}
+                            onMouseEnter={() => setIsHoverCover(true)}
+                            onMouseLeave={() => setIsHoverCover(false)}
+                            onClick={() => onPlay?.(item)} 
+                        >
                             <img
                                 className={styles["sr-cover"]}
                                 src={item.imageUrl}
                                 alt=""
-                                onError={(e) => {
-                                    e.target.src = DEFAULT_SONG_IMAGE;
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onPlay?.(item);   // Bấm 1 lần là play luôn
                                 }}
                             />
 
@@ -189,9 +195,22 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                                 <div className={styles["sr-cover-playing"]}>
                                     <div className={styles["sr-eq"]}>
                                         <span />
+                                        <span />
+                                        <span />
                                     </div>
                                 </div>
                             )}
+
+                            {/* Nếu KHÔNG phát và đang hover → hiện nút play */}
+                            {!showPlayingIcon && isHoverCover && (
+                                <button
+                                    type="button"
+                                    className={styles["sr-play-overlay"]}
+                                >
+                                    <span className={styles["sr-play-icon"]}>▶</span>
+                                </button>
+                            )}
+
                         </div>
 
                         <button
@@ -230,9 +249,12 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
             ) : (
                 <>
                     {/* layout cũ cho tab khác */}
-                    <div className={styles["sr-avatar-wrapper"]}>
+                        <div className={styles["sr-avatar-wrapper"]} onClick={() => onPlay?.(item)}   >
                         <img
                             className={styles["sr-cover"]}
+                            onMouseEnter={() => setIsHoverCover(true)}
+                            onMouseLeave={() => setIsHoverCover(false)}
+                            onClick={() => onPlay?.(item)} 
                             src={item.imageUrl}
                             alt=""
                             onError={(e) => {
@@ -244,8 +266,24 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                             <div className={styles["sr-cover-playing"]}>
                                 <div className={styles["sr-eq"]}>
                                     <span />
+                                    <span />
+                                    <span />
                                 </div>
                             </div>
+                        )}
+
+                        {/* Nếu KHÔNG phát và đang hover → hiện nút play */}
+                        {!showPlayingIcon && isHoverCover && (
+                            <button
+                                type="button"
+                                className={styles["sr-play-overlay"]}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onPlay?.(item);   // Bấm 1 lần là play luôn
+                                }}
+                            >
+                                <span className={styles["sr-play-icon"]}>▶</span>
+                            </button>
                         )}
                     </div>
 

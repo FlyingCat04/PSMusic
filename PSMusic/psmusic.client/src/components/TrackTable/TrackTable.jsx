@@ -1,12 +1,11 @@
 import React from "react";
 import { Clock3 } from "lucide-react";
 import SongRow from "../SongRow/SongRow";
+import { usePlayer } from "../../contexts/PlayerContext";
 import styles from "./TrackTable.module.css";
 
 const TrackTable = ({
     songs,
-    playingSongId,
-    onPlay,
     onTitleClick,
     onAddToPlaylist,
     onViewArtist,
@@ -14,6 +13,7 @@ const TrackTable = ({
     pageSize = 10,
 }) => {
     const startIndex = (page - 1) * pageSize;
+    const { playSong, currentSong, isPlaying } = usePlayer();
     return (
         <div className={styles.tracklist}>
             {/* HEADER */}
@@ -38,8 +38,13 @@ const TrackTable = ({
                             <div className={styles.colIndex}>{displayIndex}</div>
                             <SongRow
                                 item={song}
-                                showPlayingIcon={song.id === playingSongId}
-                                onPlay={() => onPlay?.(song)}
+                                showPlayingIcon={currentSong?.id === song.id && isPlaying}
+                                onPlay={() => playSong({
+                                    ...song,
+                                    audioUrl: song.mp3Url,
+                                    coverUrl: song.imageUrl,
+                                    artist: song.artists?.map(a => a.name) || [],
+                                })}
                                 onTitleClick={onTitleClick}
                                 onAddToPlaylist={onAddToPlaylist}
                                 onViewArtist={onViewArtist}

@@ -14,11 +14,13 @@ export const DataCacheProvider = ({ children }) => {
     const [cache, setCache] = useState({
         homePage: null,
         topCharts: null,
+        exploreCategories: null,
     });
 
     const [timestamps, setTimestamps] = useState({
         homePage: null,
         topCharts: null,
+        exploreCategories: null,
     });
 
     // Cache expiration time
@@ -40,6 +42,11 @@ export const DataCacheProvider = ({ children }) => {
         setTimestamps(prev => ({ ...prev, topCharts: Date.now() }));
     };
 
+    const setExploreCategoriesData = (data) => {
+        setCache(prev => ({ ...prev, exploreCategories: data }));
+        setTimestamps(prev => ({ ...prev, exploreCategories: Date.now() }));
+    };
+
     const getHomePageData = () => {
         return isCacheValid('homePage') ? cache.homePage : null;
     };
@@ -48,21 +55,27 @@ export const DataCacheProvider = ({ children }) => {
         return isCacheValid('topCharts') ? cache.topCharts : null;
     };
 
+    const getExploreCategoriesData = () => {
+        return isCacheValid('exploreCategories') ? cache.exploreCategories : null;
+    };
+
     const clearCache = (key) => {
         if (key) {
             setCache(prev => ({ ...prev, [key]: null }));
             setTimestamps(prev => ({ ...prev, [key]: null }));
         } else {
-            setCache({ homePage: null, topCharts: null });
-            setTimestamps({ homePage: null, topCharts: null });
+            setCache({ homePage: null, topCharts: null, exploreCategories: null });
+            setTimestamps({ homePage: null, topCharts: null, exploreCategories: null });
         }
     };
 
     const value = {
         setHomePageData,
         setTopChartsData,
+        setExploreCategoriesData,
         getHomePageData,
         getTopChartsData,
+        getExploreCategoriesData,
         clearCache,
     };
 

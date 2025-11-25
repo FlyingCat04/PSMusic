@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../services/axiosInstance";
+import { usePlayer } from "../../contexts/PlayerContext";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
 import SquareCard from "../../components/SquareCard/SquareCard";
 import TrackTable from "../../components/TrackTable/TrackTable";
 import Pagination from "../../components/Pagination/Pagination";
 import styles from "./ArtistPage.module.css";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
-import ColorThief from "color-thief-browser";
+
 
 
 const DEFAULT_SONG_IMAGE =
@@ -124,7 +125,8 @@ const ArtistPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [playingSongId, setPlayingSongId] = useState(null);
+    //const [playingSongId, setPlayingSongId] = useState(null);
+    const { playSong, currentSong, isPlaying } = usePlayer();
 
     // hero artist
     const [artist, setArtist] = useState({
@@ -162,6 +164,7 @@ const ArtistPage = () => {
         const fetchArtistDetails = async () => {
             try {
                 setLoadingArtist(true);
+                <LoadSpinner />
                 setError("");
 
                 const res = await axiosInstance.get(
@@ -415,8 +418,9 @@ const ArtistPage = () => {
                         <div className={styles.songList}>
                             <TrackTable
                                 songs={mainSongs}
-                                playingSongId={playingSongId}
-                                onPlay={setPlayingSongId}
+                                currentSong={currentSong}
+                                isPlaying={isPlaying}
+                                onPlay={playSong}
                                 onTitleClick={handleTitleClick}
                                 onAddToPlaylist={handleAddToPlaylist}
                                 onViewArtist={handleViewArtist}
@@ -445,8 +449,9 @@ const ArtistPage = () => {
                             <div className={styles.songList}>
                                 <TrackTable
                                     songs={collabSongs}
-                                    playingSongId={playingSongId}
-                                    onPlay={setPlayingSongId}
+                                    currentSong={currentSong}
+                                    isPlaying={isPlaying}
+                                    onPlay={playSong}
                                     onTitleClick={handleTitleClick}
                                     onAddToPlaylist={handleAddToPlaylist}
                                     onViewArtist={handleViewArtist}
