@@ -12,5 +12,6 @@
     <Folder Include="src\components\TrackTable\" />
     <Folder Include="src\components\SectionHeader\" />
     <Folder Include="src\pages\ArtistPage\" />
+    <Folder Include="src\pages\CategoryPage\" />
   </ItemGroup>
 </Project>
