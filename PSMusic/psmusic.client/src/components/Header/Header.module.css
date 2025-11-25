@@ -1,17 +1,23 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 24px;
   padding: 24px;
   background-color: var(--background-main);
   flex-shrink: 0;
   z-index: 10;
 }
 
-.header-left, .header-right {
+.header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-shrink: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .navigation-arrows {
@@ -43,7 +49,8 @@
 
 .search-bar {
   position: relative;
-  margin-left: 8px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .search-icon {
@@ -54,12 +61,36 @@
   color: var(--text-tertiary);
 }
 
+.clear-button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--text-tertiary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.clear-button:hover {
+  background-color: var(--component-hover-bg);
+  color: var(--text-primary);
+}
+
 .search-bar input {
   background-color: var(--sidebar-bg);
   border: none;
   border-radius: 9999px;
-  padding: 10px 32px 8px 48px;
-  width: 440px;
+  padding: 10px 48px 10px 48px;
+  width: 100%;
   height: 38px;
   font-family: 'Lexend';
   font-size: 14px;
@@ -124,7 +155,7 @@
   height: 40px;
   border-radius: 50%;
   padding: 2px;
-  background: linear-gradient(135deg, #8e44ad, #f76e9c, #ff5f6d);
+  background: var(--primary-purple);
 }
 
 .user-avatar .fa-user {
@@ -137,77 +168,15 @@
   border-radius: 50%;
 }
 
-@media (max-width: 1030px) {
-  .search-bar input {
-    width: 400px;
-  }
-}
-
-@media (max-width: 1000px) {
-  .search-bar input {
-    width: 380px;
-  }
-}
-
-@media (max-width: 980px) {
-  .search-bar input {
-    width: 360px;
-  }
-}
-
-@media (max-width: 940px) {
-  .search-bar input {
-    width: 340px;
-  }
-}
-
-@media (max-width: 930px) {
-  .search-bar input {
-    width: 320px;
-  }
-}
-
 @media (max-width: 910px) {
   .header-button.primary {
     display: none;
-  }
-
-  .search-bar input {
-    width: 440px;
-  }
-}
-
-@media (max-width: 888px) {
-  .search-bar input {
-    width: 400px;
-  }
-}
-
-@media (max-width: 850px) {
-  .search-bar input {
-    width: 380px;
-  }
-}
-
-@media (max-width: 830px) {
-  .search-bar input {
-    width: 360px;
   }
 }
 
 @media (max-width: 810px) {
   .icon-button {
     display: none;
-  }
-
-  .search-bar input {
-    width: 400px;
-  }
-}
-
-@media (max-width: 795px) {
-  .search-bar input {
-    width: 380px;
   }
 }
 
