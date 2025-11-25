@@ -2,7 +2,6 @@
 //PlayerControl.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { Heart } from "lucide-react";
-import { useParams } from "react-router-dom";
 
 import RatingModal from "../Modal/RatingModal";
 import "../../pages/MusicPlayerPage/MusicPlayerPage.css"; // dùng lại CSS gốc
@@ -10,9 +9,9 @@ import { usePlayer } from "../../contexts/PlayerContext";
 
 
 export default function PlayerControl() {
-    //const { id } = useParams();
+    
 
-    const { currentSong, isPlaying, togglePlay, currentTime, duration, volume, setVolume, audioRef } = usePlayer();
+    const { currentSong, isPlaying, togglePlay, currentTime, duration, volume, setVolume, audioRef, playNextSong, playPrevSong } = usePlayer();
     const id  = 1;
 
     const mockSongs = [
@@ -61,6 +60,18 @@ export default function PlayerControl() {
         const minutes = Math.floor(timeInSeconds / 60);
         const seconds = Math.floor(timeInSeconds % 60);
         return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    };
+
+    const formatArtists = (artists, maxLength = 20) => {
+        if (!Array.isArray(artists)) return "";
+
+        const fullName = artists.join(", ");
+
+        if (fullName.length > maxLength) {
+            return fullName.slice(0, maxLength) + "...";
+        }
+
+        return fullName;
     };
 
     const toggleFavorite = () => {
@@ -168,12 +179,12 @@ export default function PlayerControl() {
                     <div className="player-info-left">
                         <img
                             src={song.singerUrl}
-                            alt={song.artist}
+                            alt={formatArtists(song.artist)}
                             className="singer-avatar"
                         />
                         <div className="song-title-artist">
                             <span className="song-title">{song.title}</span>
-                            <span className="song-artist">{song.artist}</span>
+                            <span className="song-artist">{formatArtists(song.artist)}</span>
                         </div>
                         <div
                             className="icon-button"
@@ -213,7 +224,7 @@ export default function PlayerControl() {
                             </svg>
                         </button>
 
-                        <button className="control-btn prev-btn">
+                        <button className="control-btn prev-btn" onClick={ playPrevSong }>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -263,7 +274,7 @@ export default function PlayerControl() {
                             )}
                         </button>
 
-                        <button className="control-btn next-btn">
+                        <button className="control-btn next-btn" onClick={playNextSong}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
