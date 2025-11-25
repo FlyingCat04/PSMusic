@@ -123,7 +123,7 @@ const HomePage = () => {
                 genre={{
                   id: category.id || category.categoryId,
                   title: category.name || category.title,
-                  imageUrl: category.imageUrl || 'https://via.placeholder.com/200',
+                  imageUrl: category.avatarUrl || 'https://via.placeholder.com/200',
                   color: category.color || '#FF4E50'
                 }} 
               />
