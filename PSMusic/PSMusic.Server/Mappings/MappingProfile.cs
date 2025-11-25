@@ -49,11 +49,19 @@ namespace PSMusic.Server.Mapping
                     opt => opt.MapFrom(e => e.Mp3Url))
                 .ForMember(dto => dto.LyricUrl,
                     opt => opt.MapFrom(e => e.LrcUrl));
-
+            CreateMap<Song, SongSearchDetailDTO>()
+                .ForMember(dto => dto.Artists,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => new PartialArtistDTO 
+                    { 
+                        Id = sa.Artist.Id, 
+                        Name = sa.Artist.Name 
+                    }))
+                );
 
 
             // map artist
             CreateMap<Artist, ArtistDTO>().ReverseMap();
+            CreateMap<Artist, PartialArtistDTO>().ReverseMap();
 
             // map category
             CreateMap<Category, CategoryDTO>().ReverseMap();

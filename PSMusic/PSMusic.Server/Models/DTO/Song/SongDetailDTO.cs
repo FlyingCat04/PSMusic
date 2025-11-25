@@ -17,6 +17,17 @@ namespace PSMusic.Server.Models.DTO.Song
 
     }
 
+    public class SongSearchDetailDTO
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string LrcUrl { get; set; } = string.Empty;
+        public string Mp3Url { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; } = string.Empty;
+        public List<PartialArtistDTO> Artists { get; set; } = new List<PartialArtistDTO>();
+    }
+
     public class SongDetail2DTO
     {
         public int Id { get; set; }

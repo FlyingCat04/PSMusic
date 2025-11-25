@@ -43,10 +43,10 @@ namespace PSMusic.Server.Services.Implementations
             return song == null ? null : _mapper.Map<SongDetailDTO>(song);
         }
 
-        public async Task<IEnumerable<SongDTO>?> SearchByName(string keyword)
+        public async Task<IEnumerable<SongSearchDetailDTO>?> SearchByName(string keyword)
         {
             var songs = await _songRepository.Search(keyword) ?? Enumerable.Empty<Song>();
-            return _mapper.Map<IEnumerable<SongDTO>>(songs);
+            return _mapper.Map<IEnumerable<SongSearchDetailDTO>>(songs);
         }
 
         public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
@@ -54,12 +54,12 @@ namespace PSMusic.Server.Services.Implementations
             if (page < 1) page = 1;
             if (size < 10) size = 10;
             Console.WriteLine("abcdef");
-            var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongDTO>();
+            var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongSearchDetailDTO>();
             Console.WriteLine("ab");
             var songResults = new List<SearchResultDTO>();
             foreach (var song in songs)
             {
-                var artistsForSong = song.ArtistNames;
+                var artistsForSong = _mapper.Map<IEnumerable<PartialArtistDTO>>(song.Artists);
 
                 songResults.Add(new SearchResultDTO
                 {
@@ -68,7 +68,7 @@ namespace PSMusic.Server.Services.Implementations
                     AvatarUrl = song.AvatarUrl,
                     Mp3Url = song.Mp3Url,
                     Name = song.Name,
-                    ArtistsName = artistsForSong
+                    Artists = artistsForSong
                 });
             }
 
