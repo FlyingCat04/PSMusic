@@ -17,15 +17,15 @@
     font-size: 13px;
 }
 
-    .page-button:not(:disabled):hover {
-        border-color: var(--border, rgba(255, 255, 255, 0.16));
-        color: var(--text-primary);
-    }
+.page-button:not(:disabled):hover {
+    border-color: var(--border, rgba(255, 255, 255, 0.16));
+    color: var(--primary-purple);
+}
 
 .page-button-active {
-    background: var(--accent, #c7a4ff);
+    background: var(--primary-purple);
     color: #000;
-    border-color: var(--accent, #c7a4ff);
+    border-color: var(--primary-purple);
 }
 
 .page-button:disabled {

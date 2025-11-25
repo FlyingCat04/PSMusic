@@ -35,11 +35,6 @@ namespace PSMusic.Server.Mapping
                         return mainArtistId == artistId ? "Main" : "Collab";
                     })
                 )
-                .ForMember(dto => dto.ArtistNames,
-                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.Artist.Name))
-                );
-
-            CreateMap<Song, SongSearchDetailDTO>()
                 .ForMember(dto => dto.Artists,
                     opt => opt.MapFrom(e => e.SongArtists.Select(sa => new PartialArtistDTO
                     {
@@ -47,6 +42,26 @@ namespace PSMusic.Server.Mapping
                         Name = sa.Artist.Name
                     }))
                 );
+            CreateMap<Song, NextBatchSongDTO>()
+                .ForMember(dto => dto.ArtistNames,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.Artist.Name)))
+                .ForMember(dto => dto.Title,
+                    opt => opt.MapFrom(e => e.Name))
+                .ForMember(dto => dto.CoverUrl,
+                    opt => opt.MapFrom(e => e.AvatarUrl))
+                .ForMember(dto => dto.AudioUrl,
+                    opt => opt.MapFrom(e => e.Mp3Url))
+                .ForMember(dto => dto.LyricUrl,
+                    opt => opt.MapFrom(e => e.LrcUrl));
+            CreateMap<Song, SongSearchDetailDTO>()
+                .ForMember(dto => dto.Artists,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => new PartialArtistDTO 
+                    { 
+                        Id = sa.Artist.Id, 
+                        Name = sa.Artist.Name 
+                    }))
+                );
+
 
             // map artist
             CreateMap<Artist, ArtistDTO>().ReverseMap();

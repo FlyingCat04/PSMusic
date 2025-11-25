@@ -128,3 +128,7 @@
     cursor: default;
 }
 
+.songList {
+    display: flex;
+    flex-direction: column;
+}

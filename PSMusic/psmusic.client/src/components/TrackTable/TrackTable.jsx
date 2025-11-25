@@ -1,4 +1,3 @@
-// src/components/TrackTable/TrackTable.jsx
 import React from "react";
 import { Clock3 } from "lucide-react";
 import SongRow from "../SongRow/SongRow";
@@ -11,7 +10,10 @@ const TrackTable = ({
     onTitleClick,
     onAddToPlaylist,
     onViewArtist,
+    page = 1,
+    pageSize = 10,
 }) => {
+    const startIndex = (page - 1) * pageSize;
     return (
         <div className={styles.tracklist}>
             {/* HEADER */}
@@ -19,10 +21,8 @@ const TrackTable = ({
                 <div className={styles.colIndex}>#</div>
 
                 <div className={styles.headerMain}>
-                    {/* chừa chỗ cho cover */}
-                    <div className={styles.colCover} />
-                    <div className={styles.colTitle}>Title</div>
-                    <div className={styles.colArtist}>Artist</div>
+                    <div className={styles.colTitle}>Tên bài hát</div>
+                    <div className={styles.colArtist}>Nghệ sĩ</div>
                     <div className={styles.colTime}>
                         <Clock3 size={16} />
                     </div>
@@ -31,22 +31,23 @@ const TrackTable = ({
 
             {/* BODY */}
             <div className={styles.body}>
-                {songs.map((song, index) => (
-                    <div key={song.id} className={styles.row}>
-                        <div className={styles.colIndex}>{index + 1}</div>
-
-                        {/* Toàn bộ nội dung bên phải do SongRow lo */}
-                        <SongRow
-                            item={song}
-                            showPlayingIcon={song.id === playingSongId}
-                            onPlay={() => onPlay?.(song)}
-                            onTitleClick={onTitleClick}
-                            onAddToPlaylist={onAddToPlaylist}
-                            onViewArtist={onViewArtist}
-                            activeTab="Bài hát"
-                        />
-                    </div>
-                ))}
+                {songs.map((song, index) => {
+                    const displayIndex = startIndex + index + 1; // số thứ tự thực
+                    return (
+                        <div key={song.id} className={styles.row}>
+                            <div className={styles.colIndex}>{displayIndex}</div>
+                            <SongRow
+                                item={song}
+                                showPlayingIcon={song.id === playingSongId}
+                                onPlay={() => onPlay?.(song)}
+                                onTitleClick={onTitleClick}
+                                onAddToPlaylist={onAddToPlaylist}
+                                onViewArtist={onViewArtist}
+                                activeTab="Bài hát"
+                            />
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

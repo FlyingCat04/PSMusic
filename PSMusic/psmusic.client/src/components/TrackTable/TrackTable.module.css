@@ -1,14 +1,13 @@
-/* src/components/TrackTable/TrackTable.module.css */
 
 .tracklist {
     width: 100%;
 }
 
 /* HEADER */
-
 .header {
     display: grid;
-    grid-template-columns: 32px minmax(0, 3fr) minmax(0, 2fr) 60px;
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-items: center;
     padding: 0 16px 8px;
     font-size: 12px;
     text-transform: uppercase;
@@ -21,57 +20,49 @@
     padding-right: 8px;
 }
 
+/* phần header chính – bám layout của sr-song-tab: 
+   [cover+title] [artist] [time] */
+.headerMain {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) auto;
+    column-gap: 20px;
+    align-items: center;
+}
+
+/* chữ "Tên bài hát" lùi vào để thẳng với text sau cover 52px + gap 12px */
 .colTitle {
-    padding-right: 8px;
+    padding-left: 64px;
+    white-space: nowrap;
 }
 
 .colArtist {
-    padding-right: 8px;
-    text-align: left;
+    white-space: nowrap;
+    padding-left: 0px;
 }
 
 .colTime {
     text-align: right;
+    padding-right: 15px;
 }
 
 /* BODY */
-
 .body {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-/* mỗi dòng là một grid giống header để các cột thẳng hàng */
+/* mỗi dòng: cột # + nguyên SongRow */
 .row {
     display: grid;
-    grid-template-columns: 32px minmax(0, 3fr) minmax(0, 2fr) 60px;
+    grid-template-columns: 32px minmax(0, 1fr);
     align-items: center;
     column-gap: 16px;
+    padding: 0 16px 0 16px;
 }
 
-    /* số thứ tự */
-    .row .colIndex {
-        font-size: 13px;
-        color: var(--text-tertiary);
-    }
-
-    /* SongRow chiếm full chiều ngang của cột Title */
-    .row .colTitle {
-        min-width: 0;
-    }
-
-    /* cột artist ngoài – có thể rút gọn text */
-    .row .colArtist {
-        font-size: 13px;
-        color: var(--text-tertiary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    /* time / icon */
-    .row .colTime {
-        font-size: 12px;
-        color: var(--text-tertiary);
-    }
+/* số thứ tự trong body */
+.row .colIndex {
+    font-size: 13px;
+    color: var(--text-tertiary);
+}

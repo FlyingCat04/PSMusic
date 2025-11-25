@@ -420,6 +420,8 @@ const ArtistPage = () => {
                                 onTitleClick={handleTitleClick}
                                 onAddToPlaylist={handleAddToPlaylist}
                                 onViewArtist={handleViewArtist}
+                                page={mainPage}
+                                pageSize={PAGE_SIZE}
                             />
                         </div>
                         <Pagination
@@ -448,6 +450,8 @@ const ArtistPage = () => {
                                     onTitleClick={handleTitleClick}
                                     onAddToPlaylist={handleAddToPlaylist}
                                     onViewArtist={handleViewArtist}
+                                    page={collabPage}
+                                    pageSize={PAGE_SIZE}
                                 />
                             </div>
                             <Pagination

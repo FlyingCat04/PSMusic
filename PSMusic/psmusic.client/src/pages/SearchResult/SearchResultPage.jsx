@@ -7,6 +7,7 @@ import SquareCard from "../../components/SquareCard/SquareCard";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import Pagination from "../../components/Pagination/Pagination";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
+import TrackTable from "../../components/TrackTable/TrackTable";
 import axiosInstance from "../../services/axiosInstance"; 
 
 const TAB_TO_TYPE = {
@@ -337,23 +338,30 @@ const SearchResultPage = () => {
 
                     {/* bảng + phân trang cho tab Bài hát */}
                     {activeTab === "Bài hát" && (
-                        <div className={styles.songsTable}>
-                            <div className={styles.songsHeader}>
-                                <span>Title</span>
-                                <span>Artist</span>
-                            </div>
-                            {songs.map((s) => (
-                                <SongRow
-                                    key={s.id}
-                                    item={s}
-                                    showPlayingIcon={s.id === playingSongId}
-                                    onPlay={() => setPlayingSongId(s.id)}
-                                    onTitleClick={handleTitleClick}
-                                    onAddToPlaylist={handleAddToPlaylist}
-                                    onViewArtist={handleViewArtist}
-                                    activeTab={activeTab}
-                                />
-                            ))}
+                        <div className={styles.songList}>
+                            {/*{songs.map((s) => (*/}
+                            {/*    <SongRow*/}
+                            {/*        key={s.id}*/}
+                            {/*        item={s}*/}
+                            {/*        showPlayingIcon={s.id === playingSongId}*/}
+                            {/*        onPlay={() => setPlayingSongId(s.id)}*/}
+                            {/*        onTitleClick={handleTitleClick}*/}
+                            {/*        onAddToPlaylist={handleAddToPlaylist}*/}
+                            {/*        onViewArtist={handleViewArtist}*/}
+                            {/*        activeTab={activeTab}*/}
+                            {/*    />*/}
+                            {/*))}*/}
+
+                            <TrackTable
+                                songs={songs}
+                                playingSongId={playingSongId}
+                                onPlay={setPlayingSongId}
+                                onTitleClick={handleTitleClick}
+                                onAddToPlaylist={handleAddToPlaylist}
+                                onViewArtist={handleViewArtist}
+                                page={page}
+                                pageSize={PAGE_SIZE}
+                            />
 
                             <Pagination
                                 page={page}
