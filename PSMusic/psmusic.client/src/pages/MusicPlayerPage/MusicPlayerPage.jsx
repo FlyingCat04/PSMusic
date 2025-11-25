@@ -2,10 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import "./MusicPlayerPage.css";
 import { usePlayer } from "../../contexts/PlayerContext";
+import { useParams } from "react-router-dom";
 
 export default function MusicPlayerPage() {
+    //const { id } = useParams();
     const id = 1;
     const { currentSong, playSong, isPlaying, currentTime } = usePlayer();
+
 
     //const mockSongs = [
     //    {
