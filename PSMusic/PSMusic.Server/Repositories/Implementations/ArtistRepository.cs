@@ -80,5 +80,14 @@ namespace PSMusic.Server.Repositories.Implementations
                 )
                 .ToListAsync();
         }
+        public async Task<List<Artist>> GetArtistsBySongId(int songId)
+        {
+            return await _dbContext.SongArtist
+                .AsNoTracking()
+                .Where(sa => sa.SongId == songId)
+                .Select(sa => sa.Artist)
+                .ToListAsync();
+        }
+
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace PSMusic.Server.Models.DTO.Search
+﻿using PSMusic.Server.Models.DTO.Artist;
+
+namespace PSMusic.Server.Models.DTO.Search
 {
     public class SearchResultDTO
     {
@@ -11,6 +13,7 @@
         public string? AvatarUrl { get; set; } = string.Empty;
         public string? Mp3Url { get; set; } = string.Empty;
         // only available of type is not "artist"
-        public List<string>? ArtistsName { get; set; } = new List<string>();
+        //public List<string>? ArtistsName { get; set; } = new List<string>();
+        public IEnumerable<PartialArtistDTO> Artists { get; set; } = new List<PartialArtistDTO>();
     }
 }

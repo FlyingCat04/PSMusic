@@ -1,0 +1,254 @@
+.item-top-charts {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    background-color: transparent;
+    width: 100%;
+}
+
+.item-top-charts:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.rank-number {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.item-top-charts:hover .rank-number {
+    transform: scale(1.05);
+}
+
+.image-container {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.item-top-charts:hover .item-image {
+    transform: scale(1.05);
+}
+
+.image-placeholder {
+    opacity: 0.3;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.play-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.play-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-purple);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.play-button:hover {
+    transform: scale(1.05);
+}
+
+.play-button:active {
+    transform: scale(0.95);
+}
+
+.item-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s ease;
+}
+
+.item-top-charts:hover .item-title {
+    color: var(--primary-purple, #8b5cf6);
+}
+
+.item-artist {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.premium-badge {
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    flex-shrink: 0;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    transform: scale(1.05);
+}
+
+.action-btn:active {
+    transform: scale(0.9);
+}
+
+@media (max-width: 768px) {
+    .item-top-charts {
+        padding: 10px;
+        gap: 12px;
+    }
+
+    .rank-number {
+        font-size: 16px;
+        min-width: 32px;
+    }
+
+    .image-container {
+        width: 56px;
+        height: 56px;
+    }
+
+    .play-button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .item-top-charts {
+        padding: 8px;
+        gap: 10px;
+    }
+
+    .rank-number {
+        font-size: 14px;
+        min-width: 28px;
+    }
+
+    .image-container {
+        width: 48px;
+        height: 48px;
+    }
+
+    .play-button {
+        width: 32px;
+        height: 32px;
+    }
+
+    .play-button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .item-title {
+        font-size: 12px;
+    }
+
+    .item-artist {
+        font-size: 10px;
+    }
+
+    .premium-badge {
+        font-size: 9px;
+        padding: 3px 10px;
+    }
+
+    .action-btn {
+        width: 30px;
+        height: 30px;
+    }
+
+    .action-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+}
