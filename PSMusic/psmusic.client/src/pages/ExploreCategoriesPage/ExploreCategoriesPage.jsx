@@ -138,7 +138,7 @@ const ExploreCategoriesPage = () => {
                                             ? song.artistNames.join(', ')
                                             : (song.artistName || song.artist || 'Unknown Artist'),
                                         imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                                        premium: song.premium || false
+                                        mp3Url: song.mp3Url
                                     }}
                                     type="song"
                                 />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Heart, MoreHorizontal } from 'lucide-react';
 import styles from './ItemTopCharts.module.css';
+import { usePlayer } from '../../contexts/PlayerContext';
 
 const PLACEHOLDER_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%'/></svg>`;
 const PLACEHOLDER_DATA_URL = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_SVG)}`;
@@ -13,9 +14,19 @@ const handleImgError = (e) => {
 
 const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const { playSong } = usePlayer();
 
     const handlePlayClick = (e) => {
         e.stopPropagation();
+        
+        if (song.mp3Url) {
+            const songData = {
+                ...song,
+                audioUrl: song.mp3Url
+            };
+            playSong(songData);
+        }
+        
         if (onPlay) onPlay(song);
     };
 
@@ -63,7 +74,12 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
 
         {/* Info */}
         <div className={styles['item-info']}>
-            <h4 className={styles['item-title']}>{song.title}</h4>
+            <h4 
+                className={styles['item-title']}
+                onClick={handlePlayClick}
+            >
+                {song.title}
+            </h4>
             <p className={styles['item-artist']}>{song.artist}</p>
         </div>
 
