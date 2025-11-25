@@ -90,7 +90,7 @@
 }
 
     .sr-title:hover {
-        color: #c7a4ff;
+        color: var(--primary-purple);
     }
 
 .sr-subtitle {
@@ -365,4 +365,24 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Hover effect cho artist name */
+.artistName {
+    cursor: pointer;
+    color: var(--text-tertiary);
+    transition: color 0.15s ease, text-decoration-color 0.2s ease;
+}
+
+.artistName:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--primary-purple);
+}
+
+
+.moreArtists {
+    color: var(--text-tertiary);
+    margin-left: 2px;
+    cursor: default;
 }

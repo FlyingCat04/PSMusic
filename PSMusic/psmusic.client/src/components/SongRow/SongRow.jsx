@@ -204,7 +204,27 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
                     {/* Cột 2: nghệ sĩ */}
                     <div className={styles["sr-col-artist"]}>
-                        {item.artist}
+                        {item.artists && item.artists.length > 0 ? (() => { 
+                            const maxArtists = 3; 
+                            const displayed = item.artists.slice(0, maxArtists);
+                            const hasMore = item.artists.length > maxArtists;
+                            return (
+                                <>
+                                    {displayed.map((a, idx) => (
+                                        <span
+                                            key={a.id}
+                                            className={styles.artistName}
+                                            onClick={() => onViewArtist?.(a.id)}
+                                        >
+                                            {a.name}
+                                            {idx < displayed.length - 1 ? ", " : ""}
+                                        </span>
+                                    ))}
+
+                                    {hasMore && <span className={styles.moreArtists}>…</span>}
+                                </>
+                            );
+                        })() : item.artistText}
                     </div>
                 </>
             ) : (
@@ -239,7 +259,28 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                         </button>
                         {!hideInnerArtist && (
                             <div className={styles["sr-subtitle"]}>
-                                {item.artist}
+                            {(() => {
+                                const maxArtists = 2;
+                                const displayed = item.artists.slice(0, maxArtists);
+                                const hasMore = item.artists.length > maxArtists;
+
+                                return (
+                                    <>
+                                        {displayed.map((a, idx) => (
+                                            <span
+                                                key={a.id}
+                                                className={styles.artistName}
+                                                onClick={() => onViewArtist?.(a.id)}
+                                            >
+                                                {a.name}
+                                                {idx < displayed.length - 1 ? ", " : ""}
+                                            </span>
+                                        ))}
+
+                                        {hasMore && <span className={styles.moreArtists}>…</span>}
+                                    </>
+                                );
+                            })()}
                             </div>
                         )}
                     </div>

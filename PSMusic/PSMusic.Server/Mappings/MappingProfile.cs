@@ -39,8 +39,18 @@ namespace PSMusic.Server.Mapping
                     opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.Artist.Name))
                 );
 
+            CreateMap<Song, SongSearchDetailDTO>()
+                .ForMember(dto => dto.Artists,
+                    opt => opt.MapFrom(e => e.SongArtists.Select(sa => new PartialArtistDTO
+                    {
+                        Id = sa.Artist.Id,
+                        Name = sa.Artist.Name
+                    }))
+                );
+
             // map artist
             CreateMap<Artist, ArtistDTO>().ReverseMap();
+            CreateMap<Artist, PartialArtistDTO>().ReverseMap();
 
             // map category
             CreateMap<Category, CategoryDTO>().ReverseMap();

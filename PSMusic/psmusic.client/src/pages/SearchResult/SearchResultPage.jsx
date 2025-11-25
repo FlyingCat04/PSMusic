@@ -50,12 +50,12 @@ const checkImage = (url, fallback) => {
     return url;
 };
 
+
 const mapSong = (item) => ({
     id: item.id,
     title: item.name || "Không tên",
-    artist: Array.isArray(item.artistsName)
-        ? item.artistsName.join(", ")
-        : "The Cassette",
+    artistText: item.artists.map(a => a.name).join(", "),
+    artists: item.artists,
     imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
     mp3Url: item.mp3Url || "",
 });
@@ -125,7 +125,7 @@ const SearchResultPage = () => {
                 });
 
                 const data = res.data || {};
-                const rawTop = data.topResult || null;
+                const rawTop = data.topResult || null;  
                 const results = data.results || [];
                 setTotalPages(data.totalPages || 1);
 

@@ -108,9 +108,8 @@ const darkenColor = (r, g, b, factor = 0.6) => {
 const mapSong = (item) => ({
     id: item.id,
     title: item.name || "Không tên",
-    artist: Array.isArray(item.artistNames || item.artistsName)
-        ? (item.artistNames || item.artistsName).join(", ")
-        : "",
+    artistText: item.artists.map(a => a.name).join(", "),
+    artists: item.artists,
     imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
     mp3Url: item.mp3Url || "",
 });
@@ -199,7 +198,7 @@ const ArtistPage = () => {
                 const { r, g, b, css } = extractDominantColor(img);
 
                 // 1) Màu chủ đạo dùng cho nền
-                document.documentElement.style.setProperty("--primary-purple", css);
+                document.documentElement.style.setProperty("--bg-hero", css);
 
                 // 2) Quyết định độ sáng/tối
                 const luminance = getLuminance(r, g, b);
@@ -341,7 +340,7 @@ const ArtistPage = () => {
     };
 
     const handleViewArtist = (artistId) => {
-        navigate(`/artist/${encodeURIComponent(artistId)}`);
+        navigate(`/artist/${artistId}`);
     };
 
     const handleMainPageChange = (newPage) => {
