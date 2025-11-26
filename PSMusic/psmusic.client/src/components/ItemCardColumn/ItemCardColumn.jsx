@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Play, Heart } from 'lucide-react';
 import styles from './ItemCardColumn.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
@@ -30,7 +31,7 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
 
     const imageUrl = item.imageUrl || item.avatarUrl || PLACEHOLDER_DATA_URL;
     const title = item.title || item.name || 'Unknown';
-    const subtitle = type === 'artist' ? (item.bio || 'Artist') : (item.artist || item.artistName || 'Unknown Artist');
+    const artists = item.artists || [];
 
     const handlePlayClick = (e) => {
         e.stopPropagation();
@@ -92,17 +93,38 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                     </button>
                 )}
             </div>
-            <h4 
-                className={styles['item-card-column-title']}
-                onClick={handlePlayClick}
-            >
-                {title}
-            </h4>
-            {type !== 'artist' && 
-                <p 
-                    className={styles['item-card-column-artist']}
+            {type === 'artist' ? (
+                <Link 
+                    to={`/artist/${item.id}`}
+                    className={styles['item-card-column-title']}
                 >
-                    {subtitle}
+                    {title}
+                </Link>
+            ) : (
+                <Link 
+                    to={`/song/${item.id}`}
+                    className={styles['item-card-column-title']}
+                >
+                    {title}
+                </Link>
+            )}
+            {type !== 'artist' && 
+                <p className={styles['item-card-column-artist']}>
+                    {artists.length > 0 ? (
+                        artists.map((artist, index) => (
+                            <React.Fragment key={artist.id || index}>
+                                <Link 
+                                    to={`/artist/${artist.id}`}
+                                    className={styles['artist-link']}
+                                >
+                                    {artist.name}
+                                </Link>
+                                {index < artists.length - 1 && <span>, </span>}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        'Unknown Artist'
+                    )}
                 </p>
             }
         </div>

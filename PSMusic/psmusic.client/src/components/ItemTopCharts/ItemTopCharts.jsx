@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Play, Heart, MoreHorizontal } from 'lucide-react';
 import styles from './ItemTopCharts.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
@@ -15,6 +16,7 @@ const handleImgError = (e) => {
 const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
     const [isHovered, setIsHovered] = useState(false);
     const { playSong } = usePlayer();
+    const artists = song.artists || [];
 
     const handlePlayClick = (e) => {
         e.stopPropagation();
@@ -74,19 +76,30 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
 
         {/* Info */}
         <div className={styles['item-info']}>
-            <h4 
+            <Link 
+                to={`/song/${song.id}`}
                 className={styles['item-title']}
-                onClick={handlePlayClick}
             >
                 {song.title}
-            </h4>
-            <p className={styles['item-artist']}>{song.artist}</p>
+            </Link>
+            <p className={styles['item-artist']}>
+                {artists.length > 0 ? (
+                    artists.map((artist, index) => (
+                        <React.Fragment key={artist.id || index}>
+                            <Link 
+                                to={`/artist/${artist.id}`}
+                                className={styles['artist-link']}
+                            >
+                                {artist.name}
+                            </Link>
+                            {index < artists.length - 1 && <span>, </span>}
+                        </React.Fragment>
+                    ))
+                ) : (
+                    'Unknown Artist'
+                )}
+            </p>
         </div>
-
-        {/* Premium Badge */}
-        {song.premium && (
-            <span className={styles['premium-badge']}>PREMIUM</span>
-        )}
 
         {/* Action Buttons */}
         <div className={`${styles['action-buttons']} ${isHovered ? styles['show'] : ''}`}>

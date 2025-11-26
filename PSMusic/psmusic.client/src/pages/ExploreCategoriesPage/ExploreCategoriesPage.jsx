@@ -134,9 +134,9 @@ const ExploreCategoriesPage = () => {
                                     item={{
                                         id: song.id || song.songId,
                                         title: song.title || song.name,
-                                        artist: Array.isArray(song.artistNames)
-                                            ? song.artistNames.join(', ')
-                                            : (song.artistName || song.artist || 'Unknown Artist'),
+                                        artists: Array.isArray(song.artists) 
+                                        ? song.artists 
+                                        : [{ name: 'Unknown Artist' }],
                                         imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
                                         mp3Url: song.mp3Url
                                     }}
