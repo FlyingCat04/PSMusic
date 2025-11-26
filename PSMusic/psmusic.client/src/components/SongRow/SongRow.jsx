@@ -248,11 +248,13 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
             ) : (
                 <>
                     {/* layout cũ cho tab khác */}
-                        <div className={styles["sr-avatar-wrapper"]} onClick={() => onPlay?.(item)}   >
-                        <img
-                            className={styles["sr-cover"]}
+                        <div className={styles["sr-avatar-wrapper"]}
+                            onClick={() => onPlay?.(item)}
                             onMouseEnter={() => setIsHoverCover(true)}
                             onMouseLeave={() => setIsHoverCover(false)}
+                        >
+                        <img
+                            className={styles["sr-cover"]}
                             onClick={() => onPlay?.(item)} 
                             src={item.imageUrl}
                             alt=""

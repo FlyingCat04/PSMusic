@@ -54,6 +54,7 @@
     align-items: center;
 }
 
+
 /* cột artist trong tab Bài hát */
 .sr-artist-col {
     font-size: 14px;
@@ -389,6 +390,9 @@
     text-overflow: ellipsis;
 }
 
+.sr-title-songtab:hover {
+    color: var(--primary-purple);
+}
 /* Cột 2: nghệ sĩ */
 .sr-col-artist {
     font-size: 13px;
