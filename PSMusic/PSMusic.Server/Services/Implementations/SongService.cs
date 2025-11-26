@@ -175,11 +175,11 @@ namespace PSMusic.Server.Services.Implementations
         //        // Total = pagedResults.Count + (TopResult != null ? 1 : 0)
         //    };
         //}
-        public async Task<PagedResult<SongDTO>> GetPopularSongs(int page, int size)
+        public async Task<PagedResult<SongSearchDetailDTO>> GetPopularSongs(int page, int size)
         {
             var query = _songRepository.GetSongsWithStreamsLast7Days();
 
-            var songs = query.Select(s => _mapper.Map<SongDTO>(s));
+            var songs = query.Select(s => _mapper.Map<SongSearchDetailDTO>(s));
             return await songs.PaginateAsync(page, size);
         }
 
