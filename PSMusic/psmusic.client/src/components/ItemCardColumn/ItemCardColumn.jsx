@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { Play, Heart } from 'lucide-react';
 import styles from './ItemCardColumn.module.css';
+import { usePlayer } from '../../contexts/PlayerContext';
 
 const PLACEHOLDER_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='#374151'/></svg>`;
 const PLACEHOLDER_DATA_URL = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_SVG)}`;
 
 const handleImgError = (e) => {
-  e.currentTarget.onerror = null;
-  e.currentTarget.src = PLACEHOLDER_DATA_URL;
-  e.currentTarget.classList.add(styles['image-placeholder']);
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = PLACEHOLDER_DATA_URL;
+    e.currentTarget.classList.add(styles['image-placeholder']);
 };
 
 const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
     const [isHovered, setIsHovered] = useState(false);
+    // const { audioRef, togglePlay } = usePlayer();
+    const { playSong } = usePlayer();
 
     // If no item data, show skeleton
     if (!item) {
@@ -31,6 +34,20 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
 
     const handlePlayClick = (e) => {
         e.stopPropagation();
+        
+        // Set audio source and play immediately
+        // if (audioRef.current && item.mp3Url) {
+        //     audioRef.current.src = item.mp3Url;
+        //     audioRef.current.play();
+        //     togglePlay();      
+        if (item.mp3Url) {
+            const songData = {
+                ...item,
+                audioUrl: item.mp3Url
+            };
+            playSong(songData);      
+        }
+        
         if (onPlay) onPlay(item);
     };
 
@@ -75,8 +92,19 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                     </button>
                 )}
             </div>
-            <h4 className={styles['item-card-column-title']}>{title}</h4>
-            {type !== 'artist' && <p className={styles['item-card-column-artist']}>{subtitle}</p>}
+            <h4 
+                className={styles['item-card-column-title']}
+                onClick={handlePlayClick}
+            >
+                {title}
+            </h4>
+            {type !== 'artist' && 
+                <p 
+                    className={styles['item-card-column-artist']}
+                >
+                    {subtitle}
+                </p>
+            }
         </div>
     );
 };

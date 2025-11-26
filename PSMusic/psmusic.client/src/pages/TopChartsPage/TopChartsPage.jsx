@@ -157,7 +157,7 @@ const TopChartsPage = () => {
                             song.avatarUrl ||
                             song.imageUrl ||
                             "https://via.placeholder.com/100",
-                        premium: song.premium || false,
+                        mp3Url: song.mp3Url
                         }}
                     />
                     ))
@@ -192,7 +192,7 @@ const TopChartsPage = () => {
                             song.avatarUrl ||
                             song.imageUrl ||
                             "https://via.placeholder.com/100",
-                        premium: song.premium || false,
+                        mp3Url: song.mp3Url
                         }}
                     />
                     ))
@@ -229,7 +229,7 @@ const TopChartsPage = () => {
                         song.avatarUrl ||
                         song.imageUrl ||
                         "https://via.placeholder.com/100",
-                    premium: song.premium || false,
+                    mp3Url: song.mp3Url
                     }}
                 />
                 ))
@@ -264,7 +264,7 @@ const TopChartsPage = () => {
                         song.avatarUrl ||
                         song.imageUrl ||
                         "https://via.placeholder.com/100",
-                    premium: song.premium || false,
+                    mp3Url: song.mp3Url
                     }}
                 />  
                 ))
@@ -299,7 +299,7 @@ const TopChartsPage = () => {
                         song.avatarUrl ||
                         song.imageUrl ||
                         "https://via.placeholder.com/100",
-                    premium: song.premium || false,
+                    mp3Url: song.mp3Url
                     }}
                 />
                 ))

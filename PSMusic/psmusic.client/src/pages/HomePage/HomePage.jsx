@@ -123,7 +123,7 @@ const HomePage = () => {
                 genre={{
                   id: category.id || category.categoryId,
                   title: category.name || category.title,
-                  imageUrl: category.imageUrl || 'https://via.placeholder.com/200',
+                  imageUrl: category.avatarUrl || 'https://via.placeholder.com/200',
                   color: category.color || '#FF4E50'
                 }} 
               />
@@ -204,7 +204,8 @@ const HomePage = () => {
                     artist: Array.isArray(song.artistNames) 
                       ? song.artistNames.join(', ') 
                       : (song.artistName || song.artist || 'Unknown Artist'),
-                    imageUrl: song.avatarUrl || 'https://via.placeholder.com/200'
+                    imageUrl: song.avatarUrl || 'https://via.placeholder.com/200',
+                    mp3Url: song.mp3Url
                   }}
                   type="song"
                 />
@@ -238,7 +239,7 @@ const HomePage = () => {
                       ? song.artistNames.join(', ') 
                       : (song.artistName || song.artist || 'Unknown Artist'),
                     imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                    premium: song.premium || false
+                    mp3Url: song.mp3Url
                   }}
                   type="song"
                 />
@@ -272,7 +273,7 @@ const HomePage = () => {
                       ? song.artistNames.join(', ') 
                       : (song.artistName || song.artist || 'Unknown Artist'),
                     imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                    premium: song.premium || false
+                    mp3Url: song.mp3Url
                   }}
                   type="song"
                 />
