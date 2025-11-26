@@ -138,7 +138,8 @@ const ExploreCategoriesPage = () => {
                                         ? song.artists 
                                         : [{ name: 'Unknown Artist' }],
                                         imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                                        mp3Url: song.mp3Url
+                                        mp3Url: song.mp3Url,
+                                        // premium: song.premium || false
                                     }}
                                     type="song"
                                 />

@@ -6,7 +6,10 @@ import SongRow from "../../components/SongRow/SongRow";
 import SquareCard from "../../components/SquareCard/SquareCard";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import Pagination from "../../components/Pagination/Pagination";
-import axiosInstance from "../../services/axiosInstance"; // chỉnh lại path nếu khác
+import SectionHeader from "../../components/SectionHeader/SectionHeader";
+import TrackTable from "../../components/TrackTable/TrackTable";
+import axiosInstance from "../../services/axiosInstance";
+import { usePlayer } from "../../contexts/PlayerContext";
 
 const TAB_TO_TYPE = {
     "Tất cả": "all",
@@ -33,39 +36,37 @@ const DEFAULT_SONG_IMAGE =
 const DEFAULT_ARTIST_IMAGE =
     "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
-const SectionHeader = ({ title, onMore }) => (
-    <div className={styles["section-header"]}>
-        <h2 className={styles["section-title"]}>{title}</h2>
-        {onMore && (
-            <button
-                type="button"
-                className={styles["see-all-link"]}
-                onClick={onMore}
-            >
-                Thêm
-                <svg viewBox="0 0 24 24" width="16" height="16" style={{ marginLeft: 4 }}>
-                    <path fill="currentColor" d="M9 18l6-6-6-6v12z" />
-                </svg>
-            </button>
-        )}
-    </div>
-);
+
 
 // helper map dữ liệu từ backend sang dạng frontend dùng
+const checkImage = (url, fallback) => {
+    if (!url) return fallback;
+
+    const img = new Image();
+    img.src = url;
+
+    img.onerror = () => {
+        img.src = fallback;
+    };
+
+    return url;
+};
+
+
 const mapSong = (item) => ({
     id: item.id,
     title: item.name || "Không tên",
-    artist: Array.isArray(item.artistsName)
-        ? item.artistsName.join(", ")
-        : "",
-    imageUrl: item.avatarUrl || DEFAULT_SONG_IMAGE,
+    artistText: item.artists.map(a => a.name).join(", "),
+    artists: item.artists,
+    imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
+    mp3Url: item.mp3Url || "",
 });
 
 const mapArtist = (item) => ({
     id: item.id,
     name: item.name || "Nghệ sĩ",
-    followers: "", // sau này backend có trường followersText thì gán vào
-    imageUrl: item.avatarUrl || DEFAULT_ARTIST_IMAGE,
+    followers: "",
+    imageUrl: checkImage(item.avatarUrl, DEFAULT_ARTIST_IMAGE),
 });
 
 const SearchResultPage = () => {
@@ -80,7 +81,8 @@ const SearchResultPage = () => {
     const [activeTab, setActiveTab] = useState(TYPE_TO_TAB[type] || "Tất cả");
     const [page, setPage] = useState(pageFromUrl);
 
-    const [playingSongId, setPlayingSongId] = useState(null);
+    //const [playingSongId, setPlayingSongId] = useState(null);
+    const { playSong, currentSong, isPlaying } = usePlayer();
 
     // dữ liệu từ backend
     const [topResult, setTopResult] = useState(null); // { kind: "song"/"artist", ...mapped }
@@ -126,7 +128,7 @@ const SearchResultPage = () => {
                 });
 
                 const data = res.data || {};
-                const rawTop = data.topResult || null;
+                const rawTop = data.topResult || null;  
                 const results = data.results || [];
                 setTotalPages(data.totalPages || 1);
 
@@ -169,6 +171,10 @@ const SearchResultPage = () => {
 
         fetchResults();
     }, [keyword, page]);
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [page]);
 
     // 2 cột bài hát cho tab "Tất cả"
     const { leftCol, rightCol } = useMemo(() => {
@@ -223,8 +229,8 @@ const SearchResultPage = () => {
         }
     };
 
-    const handleViewArtist = (artistName) => {
-        navigate(`/artist/${encodeURIComponent(artistName)}`);
+    const handleViewArtist = (artistId) => {
+        navigate(`/artist/${artistId}`);
     };
     if (loading) {
         <LoadSpinner />;
@@ -233,6 +239,8 @@ const SearchResultPage = () => {
     if (error) {
         return (<p style={{ color: "red" }}>{error}</p>);
     }
+
+
 
     return (
         <div className="content-container">
@@ -259,11 +267,16 @@ const SearchResultPage = () => {
                                 item={{
                                     id: topResult.id,
                                     title: topResult.title,
-                                    artist: topResult.artist,
+                                    artists: topResult.artists,
                                     imageUrl: topResult.imageUrl,
                                 }}
-                                showPlayingIcon={topResult.id === playingSongId}
-                                onPlay={() => setPlayingSongId(topResult.id)}
+                                showPlayingIcon={currentSong?.id === topResult.id && isPlaying}
+                                onPlay={() => playSong({
+                                    ...topResult,
+                                    audioUrl: topResult.mp3Url,
+                                    coverUrl: topResult.imageUrl,
+                                    artists: topResult.artists?.map(a => a.name) || [],
+                                })}
                                 onTitleClick={handleTitleClick}
                                 onAddToPlaylist={handleAddToPlaylist}
                                 onViewArtist={handleViewArtist}
@@ -277,7 +290,7 @@ const SearchResultPage = () => {
                                 title={topResult.name}
                                 subtitle={topResult.followers}
                                 circle
-                                onClick={() => handleViewArtist(topResult.name)}
+                                onClick={() => handleViewArtist(topResult.id)}
                             />
                         </div>
                     )}
@@ -304,8 +317,13 @@ const SearchResultPage = () => {
                                     <SongRow
                                         key={s.id}
                                         item={s}
-                                        showPlayingIcon={s.id === playingSongId}
-                                        onPlay={() => setPlayingSongId(s.id)}
+                                        showPlayingIcon={currentSong?.id === s.id && isPlaying}
+                                        onPlay={() => playSong({
+                                            ...s,
+                                            audioUrl: s.mp3Url,
+                                            coverUrl: s.imageUrl,
+                                            artist: s.artists?.map(a => a.name) || [],
+                                        })}
                                         onTitleClick={handleTitleClick}
                                         onAddToPlaylist={handleAddToPlaylist}
                                         onViewArtist={handleViewArtist}
@@ -318,8 +336,13 @@ const SearchResultPage = () => {
                                     <SongRow
                                         key={s.id}
                                         item={s}
-                                        showPlayingIcon={s.id === playingSongId}
-                                        onPlay={() => setPlayingSongId(s.id)}
+                                        showPlayingIcon={currentSong?.id === s.id && isPlaying}
+                                        onPlay={() => playSong({
+                                            ...s,
+                                            audioUrl: s.mp3Url,
+                                            coverUrl: s.imageUrl,
+                                            artist: s.artists?.map(a => a.name) || [],
+                                        })}
                                         onTitleClick={handleTitleClick}
                                         onAddToPlaylist={handleAddToPlaylist}
                                         onViewArtist={handleViewArtist}
@@ -332,23 +355,19 @@ const SearchResultPage = () => {
 
                     {/* bảng + phân trang cho tab Bài hát */}
                     {activeTab === "Bài hát" && (
-                        <div className={styles.songsTable}>
-                            <div className={styles.songsHeader}>
-                                <span>Title</span>
-                                <span>Artist</span>
-                            </div>
-                            {songs.map((s) => (
-                                <SongRow
-                                    key={s.id}
-                                    item={s}
-                                    showPlayingIcon={s.id === playingSongId}
-                                    onPlay={() => setPlayingSongId(s.id)}
-                                    onTitleClick={handleTitleClick}
-                                    onAddToPlaylist={handleAddToPlaylist}
-                                    onViewArtist={handleViewArtist}
-                                    activeTab={activeTab}
-                                />
-                            ))}
+                        <div className={styles.songList}>
+
+                            <TrackTable
+                                songs={songs}
+                                currentSong={currentSong}
+                                isPlaying={isPlaying}
+                                onPlay={playSong}
+                                onTitleClick={handleTitleClick}
+                                onAddToPlaylist={handleAddToPlaylist}
+                                onViewArtist={handleViewArtist}
+                                page={page}
+                                pageSize={PAGE_SIZE}
+                            />
 
                             <Pagination
                                 page={page}
@@ -379,7 +398,7 @@ const SearchResultPage = () => {
                                 title={a.name}
                                 subtitle={a.followers}
                                 circle
-                                onClick={() => handleViewArtist(a.name)}
+                                onClick={() => handleViewArtist(a.id)}
                             />
                         ))}
                     </div>

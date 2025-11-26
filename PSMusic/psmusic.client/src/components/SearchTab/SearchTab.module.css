@@ -22,12 +22,12 @@
 
 /* hover: đổi màu chữ một chút */
 .sr-tab:hover {
-    color: #c7a4ff;
+    color: var(--primary-purple);
 }
 
 /* tab đang active */
 .sr-tab-active {
-    color: #c7a4ff;
+    color: var(--primary-purple);
 }
 
 /* gạch chân dưới tab active */

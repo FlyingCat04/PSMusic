@@ -1,0 +1,68 @@
+
+.tracklist {
+    width: 100%;
+}
+
+/* HEADER */
+.header {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-items: center;
+    padding: 0 16px 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+}
+
+.colIndex {
+    text-align: right;
+    padding-right: 8px;
+}
+
+/* phần header chính – bám layout của sr-song-tab: 
+   [cover+title] [artist] [time] */
+.headerMain {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) auto;
+    column-gap: 20px;
+    align-items: center;
+}
+
+/* chữ "Tên bài hát" lùi vào để thẳng với text sau cover 52px + gap 12px */
+.colTitle {
+    padding-left: 64px;
+    white-space: nowrap;
+}
+
+.colArtist {
+    white-space: nowrap;
+    padding-left: 0px;
+}
+
+.colTime {
+    text-align: right;
+    padding-right: 15px;
+}
+
+/* BODY */
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* mỗi dòng: cột # + nguyên SongRow */
+.row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 16px;
+    padding: 0 16px 0 16px;
+}
+
+/* số thứ tự trong body */
+.row .colIndex {
+    font-size: 13px;
+    color: var(--text-tertiary);
+}

@@ -15,5 +15,6 @@ namespace PSMusic.Server.Models.DTO.Song
         public string Artist { get; set; } = string.Empty; 
         public string ImageUrl { get; set; } = string.Empty; // Map từ AvatarUrl
         public string LyricUrl { get; set; } = string.Empty;
+        public string AudioUrl { get; set; } = string.Empty;
     }
 }

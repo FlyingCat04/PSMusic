@@ -22,6 +22,11 @@ const ClientLayout = () => {
         <Footer />
         {isPlayerVisible && !isMusicPlayerPage && <PlayerControl />}
       </div>
+    {isPlayerVisible && (
+        <div className={styles.playerWrapper}>
+            <PlayerControl />
+        </div>
+    )}
     </div>
   );
 };
