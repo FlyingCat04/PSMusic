@@ -29,91 +29,97 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
             playSong(songData);
         }
         
+        if (onPlay) onPlay(song);
+    };
 
-        const handlePlayClick = (e) => {
-            e.stopPropagation();
-            if (onPlay) onPlay(song);
-        };
+    const handleFavoriteClick = (e) => {
+        e.stopPropagation();
+        if (onFavorite) onFavorite(song);
+    };
 
-        const handleFavoriteClick = (e) => {
-            e.stopPropagation();
-            if (onFavorite) onFavorite(song);
-        };
+    const handleMenuClick = (e) => {
+        e.stopPropagation();
+        if (onMenu) onMenu(song);
+    };
 
-        const handleMenuClick = (e) => {
-            e.stopPropagation();
-            if (onMenu) onMenu(song);
-        };
+    return (
+        <div 
+            className={styles['item-top-charts']}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+        {/* Rank Number */}
+        {rank && (
+            <span className={`${styles['rank-number']} ${rank <= 3 ? styles[`rank-${rank}`] : ''}`}>
+            {rank}
+            </span>
+        )}
 
-        return (
-            <div
-                className={styles['item-top-charts']}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+        {/* Image với Play Button */}
+        <div className={styles['image-container']}>
+            <img 
+                src={song.imageUrl} 
+                alt={song.title} 
+                className={styles['item-image']} 
+                onError={handleImgError} 
+            />
+            <div className={`${styles['play-overlay']} ${isHovered ? styles['show'] : ''}`}>
+            <button 
+                className={styles['play-button']}
+                onClick={handlePlayClick}
+                aria-label="Play"
             >
-                {/* Rank Number */}
-                {rank && (
-                    <span className={`${styles['rank-number']} ${rank <= 3 ? styles[`rank-${rank}`] : ''}`}>
-                        {rank}
-                    </span>
-                )}
-
-                {/* Image với Play Button */}
-                <div className={styles['image-container']}>
-                    <img
-                        src={song.imageUrl}
-                        alt={song.title}
-                        className={styles['item-image']}
-                        onError={handleImgError}
-                    />
-                    <div className={`${styles['play-overlay']} ${isHovered ? styles['show'] : ''}`}>
-                        <button
-                            className={styles['play-button']}
-                            onClick={handlePlayClick}
-                            aria-label="Play"
-                        >
-                            <Play size={24} fill="currentColor" />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Info */}
-                <div className={styles['item-info']}>
-                    <h4
-                        className={styles['item-title']}
-                        onClick={handlePlayClick}
-                    >
-                        {song.title}
-                    </h4>
-                    <h4 className={styles['item-title']}>{song.title}</h4>
-                    <p className={styles['item-artist']}>{song.artist}</p>
-                </div>
-
-                {/* Premium Badge */}
-                {song.premium && (
-                    <span className={styles['premium-badge']}>PREMIUM</span>
-                )}
-
-                {/* Action Buttons */}
-                <div className={`${styles['action-buttons']} ${isHovered ? styles['show'] : ''}`}>
-                    <button
-                        className={styles['action-btn']}
-                        onClick={handleFavoriteClick}
-                        aria-label="Like"
-                    >
-                        <Heart size={20} />
-                    </button>
-                    <button
-                        className={styles['action-btn']}
-                        onClick={handleMenuClick}
-                        aria-label="More"
-                    >
-                        <MoreHorizontal size={20} />
-                    </button>
-                </div>
+                <Play size={24} fill="currentColor" />
+            </button>
             </div>
-        );
-    }
+        </div>
+
+        {/* Info */}
+        <div className={styles['item-info']}>
+            <Link 
+                to={`/song/${song.id}`}
+                className={styles['item-title']}
+            >
+                {song.title}
+            </Link>
+            <p className={styles['item-artist']}>
+                {artists.length > 0 ? (
+                    artists.map((artist, index) => (
+                        <React.Fragment key={artist.id || index}>
+                            <Link 
+                                to={`/artist/${artist.id}`}
+                                className={styles['artist-link']}
+                            >
+                                {artist.name}
+                            </Link>
+                            {index < artists.length - 1 && <span>, </span>}
+                        </React.Fragment>
+                    ))
+                ) : (
+                    'Unknown Artist'
+                )}
+            </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className={`${styles['action-buttons']} ${isHovered ? styles['show'] : ''}`}>
+            <button 
+                className={styles['action-btn']}
+                onClick={handleFavoriteClick}
+                aria-label="Like"
+            >
+                <Heart size={20} />
+            </button>
+            <button 
+                className={styles['action-btn']}
+                onClick={handleMenuClick}
+                aria-label="More"
+            >
+                <MoreHorizontal size={20} />
+            </button>
+        </div>
+    </div>
+    );
 };
 
 export default ItemTopCharts;
