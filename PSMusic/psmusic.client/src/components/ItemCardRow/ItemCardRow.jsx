@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './ItemCardRow.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
 
@@ -13,6 +14,7 @@ const handleImgError = (e) => {
 
 const ItemCardRow = ({ song }) => {
     const { playSong } = usePlayer();
+    const artists = song.artists || [];
 
     const handleClick = () => {
         if (song.mp3Url) {
@@ -31,17 +33,30 @@ const ItemCardRow = ({ song }) => {
         >
             <img src={song.imageUrl} alt={song.title} className={styles['item-card-row-image']} onError={handleImgError} />
             <div className={styles['item-card-row-info']}>
-                <h4 
+                <Link
+                    to={`/song/${song.id}`}
                     className={styles['item-card-row-title']}
-                    onClick={handleClick}
                 >
                     {song.title}
-                </h4>
-                <p className={styles['item-card-row-artist']}>{song.artist}</p>
+                </Link>
+                <p className={styles['item-card-row-artist']}>
+                    {artists.length > 0 ? (
+                        artists.map((artist, index) => (
+                            <React.Fragment key={artist.id || index}>
+                                <Link 
+                                    to={`/artist/${artist.id}`}
+                                    className={styles['artist-link']}
+                                >
+                                    {artist.name}
+                                </Link>
+                                {index < artists.length - 1 && <span>, </span>}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        'Unknown Artist'
+                    )}
+                </p>
             </div>
-            {song.premium && (
-                <span className={styles['premium-tag']}>PREMIUM</span>
-            )}
         </div>
     );
 };

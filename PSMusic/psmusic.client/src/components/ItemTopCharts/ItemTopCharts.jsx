@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Play, Heart, MoreHorizontal } from 'lucide-react';
 import styles from './ItemTopCharts.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
@@ -15,6 +16,7 @@ const handleImgError = (e) => {
 const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
     const [isHovered, setIsHovered] = useState(false);
     const { playSong } = usePlayer();
+    const artists = song.artists || [];
 
     const handlePlayClick = (e) => {
         e.stopPropagation();

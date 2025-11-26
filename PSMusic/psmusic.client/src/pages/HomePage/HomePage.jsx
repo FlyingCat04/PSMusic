@@ -144,15 +144,6 @@ const HomePage = () => {
           </Link>
         </div>
         <div className={styles['scrollable-container']}>
-          {/* {artists.length > 5 && (
-            <button 
-              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-left']}`}
-              onClick={() => handleScroll(artistsScrollRef, 'left')}
-              aria-label="Scroll left"
-            >
-              <ChevronLeft />
-            </button>
-          )} */}
           <div className={styles['songs-grid-column-scrollable']} ref={artistsScrollRef}>
             {artists.length > 0 ? (
               artists.map((artist) => (
@@ -171,15 +162,6 @@ const HomePage = () => {
               <p style={{ color: 'var(--text-secondary)' }}>Không có nghệ sĩ nào</p>
             )}
           </div>
-          {/* {artists.length > 5 && (
-            <button 
-              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
-              onClick={() => handleScroll(artistsScrollRef, 'right')}
-              aria-label="Scroll right"
-            >
-              <ChevronRight />
-            </button>
-          )} */}
         </div>
       </section>
       
@@ -201,9 +183,9 @@ const HomePage = () => {
                   item={{
                     id: song.id || song.songId,
                     title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames) 
-                      ? song.artistNames.join(', ') 
-                      : (song.artistName || song.artist || 'Unknown Artist'),
+                    artists: Array.isArray(song.artists) 
+                      ? song.artists 
+                      : [{ name: 'Unknown Artist' }],
                     imageUrl: song.avatarUrl || 'https://via.placeholder.com/200',
                     mp3Url: song.mp3Url
                   }}
@@ -235,9 +217,9 @@ const HomePage = () => {
                   item={{
                     id: song.id || song.songId,
                     title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames) 
-                      ? song.artistNames.join(', ') 
-                      : (song.artistName || song.artist || 'Unknown Artist'),
+                    artists: Array.isArray(song.artists) 
+                      ? song.artists 
+                      : [{ name: 'Unknown Artist' }],
                     imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
                     mp3Url: song.mp3Url
                   }}
@@ -269,9 +251,9 @@ const HomePage = () => {
                   item={{
                     id: song.id || song.songId,
                     title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames) 
-                      ? song.artistNames.join(', ') 
-                      : (song.artistName || song.artist || 'Unknown Artist'),
+                    artists: Array.isArray(song.artists) 
+                      ? song.artists 
+                      : [{ name: 'Unknown Artist' }],
                     imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
                     mp3Url: song.mp3Url
                   }}
@@ -282,152 +264,6 @@ const HomePage = () => {
               <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
             )}
           </div>
-        </div>
-      </section>
-
-      {/* Pop Songs Section */}
-      <section className={styles['content-section']}>
-        <div className={styles['section-header']}>
-          <h2 className={styles['section-title']}>Nhạc Pop Thịnh Hành</h2>
-          <Link to="/charts/pop" className={styles['see-all-link']}>
-            Tất cả
-            <ChevronRight />
-          </Link>
-        </div>
-        <div className={styles['scrollable-container']}>
-          <div className={styles['songs-grid-column-scrollable']} ref={popSongsScrollRef}>
-            {popSongs.length > 0 ? (
-              popSongs.map((song) => (
-                <ItemCardColumn 
-                  key={song.id || song.songId} 
-                  item={{
-                    id: song.id || song.songId,
-                    title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames) 
-                      ? song.artistNames.join(', ') 
-                      : (song.artistName || song.artist || 'Unknown Artist'),
-                    imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                    premium: song.premium || false
-                  }}
-                  type="song"
-                />
-              ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Youth Songs Section */}
-      <section className={styles['content-section']}>
-        <div className={styles['section-header']}>
-          <h2 className={styles['section-title']}>Nhạc Trẻ Thịnh Hành</h2>
-          <Link to="/charts" className={styles['see-all-link']}>
-            Tất cả
-            <ChevronRight />
-          </Link>
-        </div>
-        <div className={styles['scrollable-container']}>
-          <div className={styles['songs-grid-column-scrollable']} ref={youthSongsScrollRef}>
-            {youthSongs.length > 0 ? (
-              youthSongs.map((song) => (
-                <ItemCardColumn 
-                  key={song.id || song.songId} 
-                  item={{
-                    id: song.id || song.songId,
-                    title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames) 
-                      ? song.artistNames.join(', ') 
-                      : (song.artistName || song.artist || 'Unknown Artist'),
-                    imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                    premium: song.premium || false
-                  }}
-                  type="song"
-                />
-              ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Pop Songs Section */}
-      <section className={styles['content-section']}>
-        <div className={styles['section-header']}>
-          <h2 className={styles['section-title']}>Nhạc Pop Thịnh Hành</h2>
-          <Link to="/charts/pop" className={styles['see-all-link']}>
-            Tất cả
-            <ChevronRight />
-          </Link>
-        </div>
-        <div className={styles['scrollable-container']}>
-          <div className={styles['songs-grid-column-scrollable']} ref={popSongsScrollRef}>
-            {popSongs.length > 0 ? (
-              popSongs.map((song) => (
-                <ItemCardColumn 
-                  key={song.id || song.songId} 
-                  item={{
-                    id: song.id || song.songId,
-                    title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames) 
-                      ? song.artistNames.join(', ') 
-                      : (song.artistName || song.artist || 'Unknown Artist'),
-                    imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                    premium: song.premium || false
-                  }}
-                  type="song"
-                />
-              ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Youth Songs Section */}
-      <section className={styles['content-section']}>
-        <div className={styles['section-header']}>
-          <h2 className={styles['section-title']}>Nhạc Trẻ Thịnh Hành</h2>
-          <Link to="/charts" className={styles['see-all-link']}>
-            Tất cả
-            <ChevronRight />
-          </Link>
-        </div>
-        <div className={styles['scrollable-container']}>
-          <div className={styles['songs-grid-column-scrollable']} ref={youthSongsScrollRef}>
-            {youthSongs.length > 0 ? (
-              youthSongs.map((song) => (
-                <ItemCardColumn 
-                  key={song.id || song.songId} 
-                  item={{
-                    id: song.id || song.songId,
-                    title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames) 
-                      ? song.artistNames.join(', ') 
-                      : (song.artistName || song.artist || 'Unknown Artist'),
-                    imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
-                    premium: song.premium || false
-                  }}
-                  type="song"
-                />
-              ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
-            )}
-          </div>
-          {/* {songs.length > 5 && (
-            <button 
-              className={`${styles['scroll-arrow']} ${styles['scroll-arrow-right']}`}
-              onClick={() => handleScroll(songsScrollRef, 'right')}
-              aria-label="Scroll right"
-            >
-              <ChevronRight />
-            </button>
-          )} */}
-
         </div>
       </section>
     </div>

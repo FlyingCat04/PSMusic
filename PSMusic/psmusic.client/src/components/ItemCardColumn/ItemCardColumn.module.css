@@ -113,6 +113,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-decoration: none;
+    display: block;
+    transition: color 0.2s ease;
 }
 
 .item-card-column-title:hover {
@@ -129,7 +132,13 @@
     white-space: nowrap;
 }
 
-.item-card-column-artist:hover {
+.artist-link {
+    color: var(--text-secondary, #9ca3af);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.artist-link:hover {
     color: var(--primary-purple);
 }
 
