@@ -178,7 +178,7 @@ const Header = () => {
                               className={styles.suggestItem}
                               onMouseDown={() => {
                                   if (s.type === "artist") {
-                                      navigate(`/artist/${s.name}`);
+                                      navigate(`/artist/${s.id}`);
                                   } else {
                                       navigate(`/song/${s.id}`);
                                   }
@@ -200,7 +200,7 @@ const Header = () => {
                               className={styles.suggestItem}
                               onMouseDown={() => {
                                   if (s.type === "artist") {
-                                      navigate(`/artist/${s.name}`);
+                                      navigate(`/artist/${s.id}`);
                                   } else {
                                       navigate(`/song/${s.id}`);
                                   }
