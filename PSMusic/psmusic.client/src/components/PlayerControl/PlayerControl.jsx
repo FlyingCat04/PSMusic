@@ -2,6 +2,7 @@
 //PlayerControl.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import RatingModal from "../Modal/RatingModal";
 import "../../pages/MusicPlayerPage/MusicPlayerPage.css"; // dùng lại CSS gốc
@@ -10,7 +11,7 @@ import { usePlayer } from "../../contexts/PlayerContext";
 
 export default function PlayerControl() {
     
-
+    const navigate = useNavigate();
     const { currentSong, isPlaying, togglePlay, currentTime, duration, volume, setVolume, audioRef, playNextSong, playPrevSong } = usePlayer();
     const id  = 1;
 
@@ -72,6 +73,15 @@ export default function PlayerControl() {
         }
 
         return fullName;
+    };
+
+    const formatSongTitle = (title, maxLength = 10) => {
+
+        if (title.length > maxLength) {
+            return title.slice(0, maxLength) + "...";
+        }
+
+        return title;
     };
 
     const toggleFavorite = () => {
@@ -183,8 +193,8 @@ export default function PlayerControl() {
                             className="singer-avatar"
                         />
                         <div className="song-title-artist">
-                            <span className="song-title">{song.title}</span>
-                            <span className="song-artist">{formatArtists(song.artist)}</span>
+                            <span onClick={() => navigate(`song/${song.id}`)} className="song-title">{formatSongTitle(song.title)}</span>
+                            <span className="song-artist">{formatArtists(song.artistNames)}</span>
                         </div>
                         <div
                             className="icon-button"

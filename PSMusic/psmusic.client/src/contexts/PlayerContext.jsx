@@ -137,7 +137,18 @@ export function PlayerProvider({ children }) {
 
 
     // phát 1 bài hát mới
-    const playSong = (song) => {
+    const playSong = async (song) => {
+        //const tmp = await PlayerControlService.getNextBatch();
+        //console.log(tmp.data);
+        //nếu chưa có bài sẵn trong queue
+        if (queueIndex >= queue.length - 1) {
+            const res = await PlayerControlService.getNextBatch();
+            console.log(res.data)
+            if (res.data.length > 0) {
+                setQueue(res.data);
+                setQueueIndex(0);
+            }
+        }
         setCurrentSong(song);
         setIsPlayerVisible(true); // bật player khi lần đầu play
         setTimeout(() => {
