@@ -136,6 +136,7 @@ namespace PSMusic.Server.Repositories.Implementations
                     Title = s.Name,
                     ImageUrl = s.AvatarUrl,
                     LyricUrl = s.LrcUrl ?? "", 
+                    AudioUrl = s.Mp3Url ?? "",
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
                     Favorite = s.Favorites.Count(f => f.IsFavorite),
                     Reviews = s.Ratings.Count(),
@@ -195,6 +196,7 @@ namespace PSMusic.Server.Repositories.Implementations
                     Title = s.Name,
                     ImageUrl = s.AvatarUrl, 
                     LyricUrl = s.LrcUrl ?? "", 
+                    AudioUrl = s.Mp3Url ?? "",
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name))
                 })
                 .ToListAsync();
