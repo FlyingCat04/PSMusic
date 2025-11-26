@@ -7,6 +7,8 @@
 .image-wrapper {
     position: relative;
     width: 100%;
+    overflow: hidden;
+    border-radius: 4px;
 }
 
 .item-card-column-image {
@@ -15,7 +17,7 @@
     object-fit: cover;
     border-radius: 4px;
     background-color: var(--sidebar-bg);
-    transition: filter 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .item-card-column-image.image-placeholder {
@@ -23,35 +25,83 @@
 }
 
 .image-wrapper:hover .item-card-column-image {
-    filter: brightness(0.8);
+    filter: brightness(0.7);
+    transform: scale(1.05);
 }
 
-.play-button-overlay {
+.favorite-button {
     position: absolute;
-    bottom: 12px;
+    top: 8px;
     right: 8px;
-    width: 48px;
-    height: 48px;
-    background-color: var(--primary-purple, #8b5cf6);
+    width: 36px;
+    height: 36px;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
+    cursor: pointer;
     opacity: 0;
-    transform: translateY(8px);
+    transform: scale(0.8);
     transition: all 0.3s ease;
+    z-index: 2;
 }
 
-.image-wrapper:hover .play-button-overlay {
+.favorite-button.show {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
+}
+
+.favorite-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: var(--primary-purple);
+    transform: scale(1.05);
+}
+
+.favorite-button:active {
+    transform: scale(0.9);
+}
+
+.play-button-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 56px;
+    height: 56px;
+    background-color: var(--primary-purple);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.play-button-overlay.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.play-button-overlay:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.play-button-overlay:active {
+    transform: translate(-50%, -50%) scale(0.95);
 }
 
 .play-icon {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     color: white;
-    margin-left: 2px;
+    margin-left: 3px;
 }
 
 .item-card-column-title {
@@ -83,7 +133,6 @@
     color: var(--primary-purple);
 }
 
-/* Skeleton loading states */
 .item-card-column-image-skeleton {
     width: 100%;
     padding-bottom: 100%;

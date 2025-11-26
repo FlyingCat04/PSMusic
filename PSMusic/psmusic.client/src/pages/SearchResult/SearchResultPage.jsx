@@ -7,7 +7,9 @@ import SquareCard from "../../components/SquareCard/SquareCard";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import Pagination from "../../components/Pagination/Pagination";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
-import axiosInstance from "../../services/axiosInstance"; 
+import TrackTable from "../../components/TrackTable/TrackTable";
+import axiosInstance from "../../services/axiosInstance";
+import { usePlayer } from "../../contexts/PlayerContext";
 
 const TAB_TO_TYPE = {
     "Tất cả": "all",
@@ -79,7 +81,8 @@ const SearchResultPage = () => {
     const [activeTab, setActiveTab] = useState(TYPE_TO_TAB[type] || "Tất cả");
     const [page, setPage] = useState(pageFromUrl);
 
-    const [playingSongId, setPlayingSongId] = useState(null);
+    //const [playingSongId, setPlayingSongId] = useState(null);
+    const { playSong, currentSong, isPlaying } = usePlayer();
 
     // dữ liệu từ backend
     const [topResult, setTopResult] = useState(null); // { kind: "song"/"artist", ...mapped }
@@ -264,11 +267,16 @@ const SearchResultPage = () => {
                                 item={{
                                     id: topResult.id,
                                     title: topResult.title,
-                                    artist: topResult.artist,
+                                    artists: topResult.artists,
                                     imageUrl: topResult.imageUrl,
                                 }}
-                                showPlayingIcon={topResult.id === playingSongId}
-                                onPlay={() => setPlayingSongId(topResult.id)}
+                                showPlayingIcon={currentSong?.id === topResult.id && isPlaying}
+                                onPlay={() => playSong({
+                                    ...topResult,
+                                    audioUrl: topResult.mp3Url,
+                                    coverUrl: topResult.imageUrl,
+                                    artists: topResult.artists?.map(a => a.name) || [],
+                                })}
                                 onTitleClick={handleTitleClick}
                                 onAddToPlaylist={handleAddToPlaylist}
                                 onViewArtist={handleViewArtist}
@@ -309,8 +317,13 @@ const SearchResultPage = () => {
                                     <SongRow
                                         key={s.id}
                                         item={s}
-                                        showPlayingIcon={s.id === playingSongId}
-                                        onPlay={() => setPlayingSongId(s.id)}
+                                        showPlayingIcon={currentSong?.id === s.id && isPlaying}
+                                        onPlay={() => playSong({
+                                            ...s,
+                                            audioUrl: s.mp3Url,
+                                            coverUrl: s.imageUrl,
+                                            artist: s.artists?.map(a => a.name) || [],
+                                        })}
                                         onTitleClick={handleTitleClick}
                                         onAddToPlaylist={handleAddToPlaylist}
                                         onViewArtist={handleViewArtist}
@@ -323,8 +336,13 @@ const SearchResultPage = () => {
                                     <SongRow
                                         key={s.id}
                                         item={s}
-                                        showPlayingIcon={s.id === playingSongId}
-                                        onPlay={() => setPlayingSongId(s.id)}
+                                        showPlayingIcon={currentSong?.id === s.id && isPlaying}
+                                        onPlay={() => playSong({
+                                            ...s,
+                                            audioUrl: s.mp3Url,
+                                            coverUrl: s.imageUrl,
+                                            artist: s.artists?.map(a => a.name) || [],
+                                        })}
                                         onTitleClick={handleTitleClick}
                                         onAddToPlaylist={handleAddToPlaylist}
                                         onViewArtist={handleViewArtist}
@@ -337,23 +355,19 @@ const SearchResultPage = () => {
 
                     {/* bảng + phân trang cho tab Bài hát */}
                     {activeTab === "Bài hát" && (
-                        <div className={styles.songsTable}>
-                            <div className={styles.songsHeader}>
-                                <span>Title</span>
-                                <span>Artist</span>
-                            </div>
-                            {songs.map((s) => (
-                                <SongRow
-                                    key={s.id}
-                                    item={s}
-                                    showPlayingIcon={s.id === playingSongId}
-                                    onPlay={() => setPlayingSongId(s.id)}
-                                    onTitleClick={handleTitleClick}
-                                    onAddToPlaylist={handleAddToPlaylist}
-                                    onViewArtist={handleViewArtist}
-                                    activeTab={activeTab}
-                                />
-                            ))}
+                        <div className={styles.songList}>
+
+                            <TrackTable
+                                songs={songs}
+                                currentSong={currentSong}
+                                isPlaying={isPlaying}
+                                onPlay={playSong}
+                                onTitleClick={handleTitleClick}
+                                onAddToPlaylist={handleAddToPlaylist}
+                                onViewArtist={handleViewArtist}
+                                page={page}
+                                pageSize={PAGE_SIZE}
+                            />
 
                             <Pagination
                                 page={page}

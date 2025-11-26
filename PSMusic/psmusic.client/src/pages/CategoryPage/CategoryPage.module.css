@@ -1,6 +1,5 @@
 .page {
     min-height: 100vh;
-    background: linear-gradient( to bottom, color-mix(in srgb, var(--bg-hero), transparent), var(--background-dark) );
     color: #fff;
     border-radius: 8px;
 }
@@ -17,8 +16,8 @@
 .heroBg {
     position: absolute;
     inset: -40px;
-    background: var(--bg-hero) 30%;
-    opacity: 0.55;
+    /*    background: var(--bg-hero) 30%;*/
+    background: linear-gradient( to bottom, color-mix(in srgb, var(--primary-purple), transparent 40%), color-mix(in srgb, var(--sidebar-bg), transparent 45%) );
 }
 
 .heroOverlay {
@@ -40,13 +39,8 @@
 
 /* SECTION */
 .section {
-    padding: 24px 48px;
-}
-
-.result-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 24px;
+    padding: 24px 24px;
+    margin-bottom: 0px;
 }
 
 .previewSongs {
@@ -59,4 +53,10 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.resultGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
 }

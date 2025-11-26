@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PSMusic.Server.Helpers;
 using PSMusic.Server.Models.DTO.Category;
 using PSMusic.Server.Services.Interfaces;
 
@@ -44,17 +45,26 @@ namespace PSMusic.Server.Controllers
             if (mainCategory == null) return Ok();
 
             var result = await _artistService.GetArtistsByMainCategory(mainCategory.Id);
-            var filteredResult = result.Select(a => a.Id != id);
+            var filteredResult = result?.Where(a => a.Id != id);
             return Ok(filteredResult);
         }
         
         // GET: api/artist/1/artists
         [HttpGet("{id}/artists")]
         [Authorize]
-        public async Task<ActionResult> GetSongArtists(int id)
+        public async Task<IActionResult> GetSongArtists(int id)
         {
             var artists = await _artistService.GetArtistsBySongId(id);
             return Ok(artists);
+        }
+
+        [HttpGet("category/{id:int}")]
+        //[Authorize]
+        public async Task<IActionResult> GetArtistByMainCategory(int id, int page = 1, int size = 10)
+        {
+            var artists = await _artistService.GetArtistsByMainCategory(id);
+            var result = artists?.Paginate(page, size);
+            return Ok(result);
         }
     }
 }

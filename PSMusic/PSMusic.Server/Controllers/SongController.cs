@@ -10,10 +10,12 @@ namespace PSMusic.Server.Controllers
     public class SongController : ControllerBase
     {
         private readonly ISongService _songService;
+        private readonly IArtistService _artistService;
 
-        public SongController(ISongService songService)
+        public SongController(ISongService songService, IArtistService artistService)
         {
             _songService = songService;
+            _artistService = artistService;
         }
 
         // GET api/song?page=1&size=20
@@ -45,10 +47,17 @@ namespace PSMusic.Server.Controllers
         }
 
         [HttpGet("next-batch")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetNextBatch(int size = 10)
         {
             var randomSongs = await _songService.GetBatch(size);
+            foreach (var s in randomSongs)
+            {
+                s.Likes = await _songService.GetFavoriteCount(s.Id);
+                var mainArtist = await _artistService.GetArtistsBySongId(s.Id);
+                s.SingerUrl = mainArtist.FirstOrDefault()?.AvatarUrl ?? string.Empty;
+            }
+
             return Ok(randomSongs);
         }
 

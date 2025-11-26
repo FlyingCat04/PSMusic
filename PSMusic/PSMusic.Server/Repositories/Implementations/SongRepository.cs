@@ -89,6 +89,8 @@ namespace PSMusic.Server.Repositories.Implementations
         public async Task<IEnumerable<Song>> GetRandomSongsAsync(int count)
         {
             return await _dbContext.Song
+                .Include(s => s.SongArtists)
+                    .ThenInclude(sa => sa.Artist)
                 .OrderBy(s => EF.Functions.Random())
                 .Take(count)
                 .ToListAsync();
@@ -198,5 +200,11 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<int> GetFavoriteCount(int songId)
+        {
+            return await _dbContext.Favorite
+                .Where(f => f.SongId == songId && f.IsFavorite)
+                .CountAsync();
+        }
     }
 }

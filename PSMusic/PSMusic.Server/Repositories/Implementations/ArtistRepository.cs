@@ -87,7 +87,6 @@ namespace PSMusic.Server.Repositories.Implementations
                 .Where(sa => sa.SongId == songId)
                 .Select(sa => sa.Artist)
                 .ToListAsync();
-                
         }
 
     }
