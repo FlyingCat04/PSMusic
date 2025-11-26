@@ -27,6 +27,9 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
             playSong(songData);
         }
         
+
+    const handlePlayClick = (e) => {
+        e.stopPropagation();
         if (onPlay) onPlay(song);
     };
 
@@ -80,6 +83,7 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
             >
                 {song.title}
             </h4>
+            <h4 className={styles['item-title']}>{song.title}</h4>
             <p className={styles['item-artist']}>{song.artist}</p>
         </div>
 

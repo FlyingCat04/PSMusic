@@ -11,7 +11,7 @@ const SectionHeader = ({ title, onMore }) => (
                 className={styles["see-all-link"]}
                 onClick={onMore}
             >
-                Thêm
+                Xem tất cả
                 <svg viewBox="0 0 24 24" width="16" height="16" style={{ marginLeft: 4 }}>
                     <path fill="currentColor" d="M9 18l6-6-6-6v12z" />
                 </svg>
