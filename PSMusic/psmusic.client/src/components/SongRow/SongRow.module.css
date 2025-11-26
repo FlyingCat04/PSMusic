@@ -15,7 +15,6 @@
         background: var(--component-hover-bg);
         border-color: var(--primary-purple);
         box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-        transform: translateY(-1px);
     }
 
 /* Song row khi ở tab Bài hát: 4 cột bằng nhau
@@ -37,7 +36,6 @@
     background: var(--component-hover-bg);
     border-color: var(--primary-purple);
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-    transform: translateY(-1px);
 }
 
 
@@ -428,7 +426,7 @@
     justify-content: center;
     /* hơi làm tối ảnh phía sau cho nổi bars */
     background: radial-gradient(circle, rgba(0,0,0,0.15), rgba(0,0,0,0.55));
-    border-radius: 22px;
+    border-radius: 8px;
 }
 
 .sr-eq {

@@ -179,7 +179,6 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                             className={styles["sr-avatar-wrapper"]}
                             onMouseEnter={() => setIsHoverCover(true)}
                             onMouseLeave={() => setIsHoverCover(false)}
-                            onClick={() => onPlay?.(item)} 
                         >
                             <img
                                 className={styles["sr-cover"]}
@@ -187,7 +186,6 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                                 alt=""
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onPlay?.(item);   // Bấm 1 lần là play luôn
                                 }}
                             />
 
@@ -206,6 +204,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                                 <button
                                     type="button"
                                     className={styles["sr-play-overlay"]}
+                                    onClick={() => onPlay?.(item)}
                                 >
                                     <span className={styles["sr-play-icon"]}>▶</span>
                                 </button>
