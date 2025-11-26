@@ -3,6 +3,7 @@ using PSMusic.Server.Models.DTO.Artist;
 using PSMusic.Server.Models.DTO.Category;
 using PSMusic.Server.Models.DTO.Song;
 using PSMusic.Server.Models.DTO.User;
+using PSMusic.Server.Models.DTO.Rating;
 using PSMusic.Server.Models.Entities;
 
 namespace PSMusic.Server.Mapping
@@ -71,6 +72,12 @@ namespace PSMusic.Server.Mapping
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.AvatarUrl))
                 .ForMember(dest => dest.Mp3Url, opt => opt.MapFrom(src => src.Mp3Url));
+
+            // Map CreateRatingDTO -> Entity Rating
+            CreateMap<CreateRatingDTO, Rating>()
+                .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Rating))   // Map Rating -> Value
+                .ForMember(dest => dest.Review, opt => opt.MapFrom(src => src.Comment)) // Map Comment -> Review
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
         }
     }
 }

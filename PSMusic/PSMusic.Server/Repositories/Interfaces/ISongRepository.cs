@@ -17,5 +17,6 @@ namespace PSMusic.Server.Repositories.Interfaces
         Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id);
         Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId);
         Task<int> GetFavoriteCount(int songId);
+        Task<bool> ToggleFavorite(int songId, int userId);
     }
 }

@@ -290,5 +290,11 @@ namespace PSMusic.Server.Services.Implementations
         {
             return await _songRepository.GetFavoriteCount(songId);
         }
+
+        public async Task<bool> ToggleFavorite(int songId, int userId)
+        {
+            return await _songRepository.ToggleFavorite(songId, userId);
+        }
+
     }
 }
