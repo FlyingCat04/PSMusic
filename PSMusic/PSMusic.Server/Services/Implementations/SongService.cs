@@ -296,5 +296,10 @@ namespace PSMusic.Server.Services.Implementations
             return await _songRepository.ToggleFavorite(songId, userId);
         }
 
+        public async Task<bool> AddStream(int songId, int userId)
+        {
+            var result = await _songRepository.AddStream(songId, userId);
+            return result;
+        }
     }
 }

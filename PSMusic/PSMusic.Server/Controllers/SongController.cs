@@ -85,14 +85,14 @@ namespace PSMusic.Server.Controllers
             var test = await _songService.GetPopularSongWithCategory(id, page, size);
             return Ok(test);
         }
-        
+
         // GET api/song/1/detail
         [HttpGet("{songId}/detail")]
         [Authorize]
         public async Task<IActionResult> GetSongDetail(int songId)
         {
             var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            int userId = userId_str != null ? int.Parse(userId_str) : 0 ;    // Default 0 if userId is not provided
+            int userId = userId_str != null ? int.Parse(userId_str) : 0;    // Default 0 if userId is not provided
             var result = await _songService.GetSongDetail(songId, userId);
             if (result == null) return NotFound(new { message = "Không tìm thấy bài hát" });
             return Ok(result);
@@ -118,11 +118,11 @@ namespace PSMusic.Server.Controllers
 
         // GET: api/song/favorites
         [HttpGet("favorites")]
-        [Authorize]        
+        [Authorize]
         public async Task<ActionResult> GetFavoriteSongs()
         {
             var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            int userId = userId_str != null ? int.Parse(userId_str) : 0 ;    // Default 0 if userId is not provided
+            int userId = userId_str != null ? int.Parse(userId_str) : 0;    // Default 0 if userId is not provided
 
             if (userId <= 0) return BadRequest(new { message = "UserId không hợp lệ" });
             var songs = await _songService.GetFavoriteSongs(userId);
@@ -131,24 +131,35 @@ namespace PSMusic.Server.Controllers
 
         // POST: api/song/1/favorite-toggle
         [HttpPost("{id}/favorite-toggle")]
-        [Authorize]        
+        [Authorize]
         public async Task<ActionResult> ToggleFavorite(int id)
         {
             var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            int userId = userId_str != null ? int.Parse(userId_str) : 0 ;    // Default 0 if userId is not provided
+            int userId = userId_str != null ? int.Parse(userId_str) : 0;    // Default 0 if userId is not provided
 
             if (userId <= 0) return BadRequest(new { message = "UserId không hợp lệ" });
             try {
                 bool isFavorited = await _songService.ToggleFavorite(id, userId);
 
-                return Ok(new { 
+                return Ok(new {
                     message = isFavorited ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích",
-                    isFavorited = isFavorited 
+                    isFavorited = isFavorited
                 });
             } catch (Exception ex) {
                 return BadRequest(new { message = "Lỗi xử lý: " + ex.Message });
             }
         }
 
+        // POST: api/song/stream/1
+        [HttpPost("stream/{songId:int}")]
+        [Authorize]
+        public async Task<IActionResult> AddStream(int songId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return BadRequest(new { message = "UserId không hợp lệ" });
+            var result = await _songService.AddStream(songId, int.Parse(userId));
+            if (result) return Ok();
+            else return BadRequest();
+        }
     }
 }

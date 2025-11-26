@@ -228,9 +228,25 @@ namespace PSMusic.Server.Repositories.Implementations
             return favorite.IsFavorite;
         }
 
+        public async Task<bool> AddStream(int songId, int userId)
+        {
+            try
+            {
+                var stream = new PSMusic.Server.Models.Entities.Stream
+                {
+                    SongId = songId,
+                    UserId = userId,
+                };
+                await _dbContext.Stream
+                    .AddAsync(stream);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
 
-
-
-
+        }
     }
 }

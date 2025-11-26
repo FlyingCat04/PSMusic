@@ -22,5 +22,6 @@ namespace PSMusic.Server.Services.Interfaces
         Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId);
         Task<int> GetFavoriteCount(int songId);
         Task<bool> ToggleFavorite(int songId, int userId);
+        Task<bool> AddStream(int songId, int userId);
     }
 }
