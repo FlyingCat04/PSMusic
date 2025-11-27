@@ -26,6 +26,8 @@ export function PlayerProvider({ children }) {
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(0);
   const [originalQueue, setOriginalQueue] = useState([]);
+  const [hasStreamed, setHasStreamed] = useState(false);
+
 
   const playSong = async (song) => {
     if (queueIndex >= queue.length - 1) {
@@ -36,6 +38,7 @@ export function PlayerProvider({ children }) {
       }
     }
     setCurrentSong(song);
+    setHasStreamed(false);
     setIsPlayerVisible(true);
     setTimeout(() => {
       if (audioRef.current) {
@@ -258,6 +261,16 @@ export function PlayerProvider({ children }) {
       audio.removeEventListener("loadedmetadata", handleLoaded);
     };
   }, []);
+
+  useEffect(() => {
+      if (!currentSong) return;
+
+      if (!hasStreamed && currentTime >= 20) {
+          PlayerControlService.streamSong(currentSong.id)
+
+          setHasStreamed(true);
+      }
+  }, [currentTime, currentSong, hasStreamed]);
 
   const value = {
     audioRef,
