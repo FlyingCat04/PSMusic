@@ -52,6 +52,8 @@ namespace PSMusic.Server.Models.DTO.Song
         public int Likes { get; set; }                          // Đổi tên từ FavoriteCount thành Likes cho khớp Client
         public string AudioUrl { get; set; } = string.Empty;    // Mp3Url
         public string LyricUrl { get; set; } = string.Empty;    // LrcUrl
+        public bool IsFavorited { get; set; } 
+        public bool IsReviewed { get; set; }         
     }
 
 }

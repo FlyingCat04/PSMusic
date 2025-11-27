@@ -18,8 +18,9 @@ namespace PSMusic.Server.Services.Interfaces
         Task<PagedResult<SongDTO>?> GetPopularSongWithCategory(int id, int page, int size);
         Task<SongDetail2DTO?> GetSongDetail(int songId, int userId);
         Task<List<RelatedSongDTO>> GetRelatedSongs(int songId);
-        Task<SongPlayerDTO?> GetSongForPlayer(int id);
+        Task<SongPlayerDTO?> GetSongForPlayer(int id, int userId);
         Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId);
         Task<int> GetFavoriteCount(int songId);
+        Task<bool> ToggleFavorite(int songId, int userId);
     }
 }

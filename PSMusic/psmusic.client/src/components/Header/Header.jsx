@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import SettingsDropdown from '../SettingsDropdown/SettingsDropdown';
 import UserDropdown from '../UserDropdown/UserDropdown';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
@@ -47,6 +47,12 @@ const Header = () => {
         if (e.key === "Enter" && query.trim() !== "") {
             navigate(`/search?q=${encodeURIComponent(query.trim())}`);
         }
+    };
+
+    const handleClearSearch = () => {
+        setQuery("");
+        setSuggestions([]);
+        setTopResults([]);
     };
 
     useEffect(() => {
@@ -125,85 +131,92 @@ const Header = () => {
             <ChevronRight />
           </button>
         </div>
-        <div className={styles['search-bar']}>
-          <div className={styles['search-icon']}>
-            <Search />
-           </div>
-          <input
-            type="text"
-            placeholder="Tìm kiếm bài hát, nghệ sĩ, lời bài hát..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => {
-                setTimeout(() => setIsFocused(false), 150);
-            }}
-          />
-
-            {isFocused && query.trim() && (
-                <div className={styles.suggestBox}>
-                    {loadingSuggest && (
-                        <div className={styles.suggestItemMuted}>Đang tìm gợi ý...</div>
-                    )}
-
-                    {!loadingSuggest && 
-                        suggestions.length === 0 && 
-                        topResults.length === 0 && (
-                        <div className={styles.suggestItemMuted}>Không có gợi ý phù hợp</div>
-                    )}
-
-                    {!loadingSuggest && topResults.length > 0 &&
-                        topResults.map((s) => (
-                            <button
-                                key={s.id}
-                                type="button"
-                                className={styles.suggestItem}
-                                onMouseDown={() => {
-                                    if (s.type === "artist") {
-                                        navigate(`/artist/${s.name}`);
-                                    } else {
-                                        navigate(`/song/${s.id}`);
-                                    }
-                                }}
-                            >
-                                <div className={styles.suggestTitle}>{s.title}</div>
-                                {s.artist && (
-                                    <div className={styles.suggestSubtitle}>{s.artist}</div>
-                                )}
-                            </button>
-                        ))
-                    }
-
-                    {!loadingSuggest && suggestions.length > 0 &&
-                        suggestions.map((s) => (
-                            <button
-                                key={s.id}
-                                type="button"
-                                className={styles.suggestItem}
-                                onMouseDown={() => {
-                                    if (s.type === "artist") {
-                                        navigate(`/artist/${s.name}`);
-                                    } else {
-                                        navigate(`/song/${s.id}`);
-                                    }
-                                }}
-                            >
-                                <div className={styles.suggestTitle}>{s.title}</div>
-                                {s.artist && (
-                                    <div className={styles.suggestSubtitle}>{s.artist}</div>
-                                )}
-                            </button>
-                        ))
-                    }
-                </div>
-            )}
-        </div>
-        {/* <input
+      </div>
+      
+      <div className={styles['search-bar']}>
+        <div className={styles['search-icon']}>
+          <Search />
+         </div>
+        <input
           type="text"
           placeholder="Tìm kiếm bài hát, nghệ sĩ, lời bài hát..."
-        /> */}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+              setTimeout(() => setIsFocused(false), 150);
+          }}
+        />
+        {query && (
+          <button 
+            className={styles['clear-button']} 
+            onClick={handleClearSearch}
+            type="button"
+          >
+            <X size={16} />
+          </button>
+        )}
+
+          {isFocused && query.trim() && (
+              <div className={styles.suggestBox}>
+                  {loadingSuggest && (
+                      <div className={styles.suggestItemMuted}>Đang tìm gợi ý...</div>
+                  )}
+
+                  {!loadingSuggest && 
+                      suggestions.length === 0 && 
+                      topResults.length === 0 && (
+                      <div className={styles.suggestItemMuted}>Không có gợi ý phù hợp</div>
+                  )}
+
+                  {!loadingSuggest && topResults.length > 0 &&
+                      topResults.map((s) => (
+                          <button
+                              key={s.id}
+                              type="button"
+                              className={styles.suggestItem}
+                              onMouseDown={() => {
+                                  if (s.type === "artist") {
+                                      navigate(`/artist/${s.id}`);
+                                  } else {
+                                      navigate(`/song/${s.id}`);
+                                  }
+                              }}
+                          >
+                              <div className={styles.suggestTitle}>{s.title}</div>
+                              {s.artist && (
+                                  <div className={styles.suggestSubtitle}>{s.artist}</div>
+                              )}
+                          </button>
+                      ))
+                  }
+
+                  {!loadingSuggest && suggestions.length > 0 &&
+                      suggestions.map((s) => (
+                          <button
+                              key={s.id}
+                              type="button"
+                              className={styles.suggestItem}
+                              onMouseDown={() => {
+                                  if (s.type === "artist") {
+                                      navigate(`/artist/${s.id}`);
+                                  } else {
+                                      navigate(`/song/${s.id}`);
+                                  }
+                              }}
+                          >
+                              <div className={styles.suggestTitle}>{s.title}</div>
+                              {s.artist && (
+                                  <div className={styles.suggestSubtitle}>{s.artist}</div>
+                              )}
+                          </button>
+                      ))
+                  }
+              </div>
+          )}
       </div>
+      
       <div className={styles['header-right']}>
         <SettingsDropdown />
         

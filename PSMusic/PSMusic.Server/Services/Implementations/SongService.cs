@@ -274,9 +274,9 @@ namespace PSMusic.Server.Services.Implementations
             return _mapper.Map<List<RelatedSongDTO>>(songEntities);
         }
 
-        public async Task<SongPlayerDTO?> GetSongForPlayer(int id)
+        public async Task<SongPlayerDTO?> GetSongForPlayer(int id, int userId)
         {
-            var result = await _songRepository.GetSongForPlayer_DTO(id);
+            var result = await _songRepository.GetSongForPlayer_DTO(id, userId);
             return result;
         }
 
@@ -290,5 +290,11 @@ namespace PSMusic.Server.Services.Implementations
         {
             return await _songRepository.GetFavoriteCount(songId);
         }
+
+        public async Task<bool> ToggleFavorite(int songId, int userId)
+        {
+            return await _songRepository.ToggleFavorite(songId, userId);
+        }
+
     }
 }

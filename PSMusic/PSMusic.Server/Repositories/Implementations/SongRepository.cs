@@ -134,7 +134,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 .Select(s => new SongDetail2DTO {
                     Id = s.Id,
                     Title = s.Name,
-                    ImageUrl = s.AvatarUrl,
+                    ImageUrl = s.AvatarUrl ?? "",
                     LyricUrl = s.LrcUrl ?? "", 
                     AudioUrl = s.Mp3Url ?? "",
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
@@ -164,7 +164,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync(); 
         } 
 
-        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id)
+        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id, int userId)
         {
             return await _dbContext.Song
                 .AsNoTracking()
@@ -172,14 +172,16 @@ namespace PSMusic.Server.Repositories.Implementations
                 .Select(s => new SongPlayerDTO {
                     Id = s.Id,
                     Title = s.Name,
-                    CoverUrl = s.AvatarUrl,
+                    CoverUrl = s.AvatarUrl ?? "",
                     AudioUrl = s.Mp3Url ?? "",
                     LyricUrl = s.LrcUrl ?? "",
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
                     SingerUrl = s.SongArtists
                         .Select(sa => sa.Artist.AvatarUrl)
                         .FirstOrDefault() ?? "",
-                    Likes = s.Favorites.Count(f => f.IsFavorite)
+                    Likes = s.Favorites.Count(f => f.IsFavorite),
+                    IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
+                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId)
                 })
                 .FirstOrDefaultAsync();
         }
@@ -190,11 +192,11 @@ namespace PSMusic.Server.Repositories.Implementations
                 .AsNoTracking()
                 .Where(f => f.UserId == userId && f.IsFavorite)
                 .Select(f => f.Song) 
-                .Select(s => new FavoriteSongDTO
+                .Select(s => new FavoriteSongDTO 
                 {
                     Id = s.Id,
                     Title = s.Name,
-                    ImageUrl = s.AvatarUrl, 
+                    ImageUrl = s.AvatarUrl ?? "", 
                     LyricUrl = s.LrcUrl ?? "", 
                     AudioUrl = s.Mp3Url ?? "",
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name))
@@ -208,5 +210,29 @@ namespace PSMusic.Server.Repositories.Implementations
                 .Where(f => f.SongId == songId && f.IsFavorite)
                 .CountAsync();
         }
+
+        public async Task<bool> ToggleFavorite(int songId, int userId)
+        {
+            var favorite = await _dbContext.Favorite.FindAsync(userId, songId);
+            if (favorite == null) {
+                favorite = new Favorite {
+                    UserId = userId,
+                    SongId = songId,
+                    IsFavorite = true
+                };
+                await _dbContext.Favorite.AddAsync(favorite);
+            } else {
+                favorite.IsFavorite = !favorite.IsFavorite;
+                _dbContext.Favorite.Update(favorite);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return favorite.IsFavorite;
+        }
+
+
+
+
+
     }
 }

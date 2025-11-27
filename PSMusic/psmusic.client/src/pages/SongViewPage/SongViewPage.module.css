@@ -1,5 +1,4 @@
 .song-view-container {
-  padding: 24px;
   color: white;
 }
 
@@ -42,7 +41,7 @@
   align-items: center;
   gap: 6px;
   opacity: 0.9;
-  cursor: pointer;
+  cursor: default;
   font-size: 16px;
   height: 24px;
 }

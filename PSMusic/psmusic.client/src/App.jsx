@@ -8,7 +8,10 @@ import MusicPlayerPage from './pages/MusicPlayerPage/MusicPlayerPage';
 import AuthPage from './pages/Auth/AuthPage';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import SearchResultPage from './pages/SearchResult/SearchResultPage';
+import ArtistPage from './pages/ArtistPage/ArtistPage';
 import TopChartsPage from './pages/TopChartsPage/TopChartsPage';
+import ExploreCategoriesPage from './pages/ExploreCategoriesPage/ExploreCategoriesPage';
+import CategoryPage from './pages/CategoryPage/CategoryPage';
 import './App.css';
 
 const App = () => {
@@ -25,12 +28,15 @@ const App = () => {
             >
                 <Route index element={<HomePage />} />
                 <Route path="discover" element={<HomePage />} />
-                <Route path="genres" element={<div>Chủ Đề & Thể Loại</div>} />
+                <Route path="genres" element={<ExploreCategoriesPage />} />
                 <Route path="charts" element={<TopChartsPage />} />
                 <Route path="for-you" element={<div>Dành cho bạn</div>} />
                 {/* <Route path="favorites" element={<div>Bài Hát Yêu Thích</div>} /> */}
                 <Route path="recent" element={<div>Nghe Gần Đây</div>} />
                 <Route path="/song/:songId" element={<SongViewPage />} />
+                <Route path="/artist/:id" element={<ArtistPage />} />
+                <Route path="/category/:id" element={<CategoryPage />} />
+                <Route path="artist/:id" element={<ArtistPage />} />
                 <Route path="/favorites" element={<FavoriteSongsPage />} />
                 <Route path="/player/:id" element={<MusicPlayerPage />} />
                 <Route path="/search" element={<SearchResultPage />} />

@@ -1,0 +1,272 @@
+.player-controls-new {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: #222;
+  border-top: 1px solid #333;
+  padding: 20px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  box-sizing: border-box;
+  color: white;
+  z-index: 101;
+}
+
+.player-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  color: #e1e1e1;
+}
+
+.control-btn,
+.rating-btn,
+.download-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 5px;
+  transition: opacity 0.2s;
+}
+
+.control-btn:hover {
+  opacity: 1;
+}
+
+.control-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+.play-pause-btn {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
+  border-radius: 50%;
+  background-color: white;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.play-pause-btn:hover {
+  transform: scale(1.05);
+}
+
+.play-pause-btn svg {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
+  stroke: none;
+  margin-left: 2px;
+  margin-top: 1px;
+}
+
+.seek-bar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 700px;
+  gap: 10px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.current-time-display,
+.duration-display {
+  width: 45px;
+  text-align: center;
+}
+
+.seek-range-input {
+  flex-grow: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #555;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.seek-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+}
+
+.seek-range-input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+}
+
+.player-info-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 30%;
+  max-width: 250px;
+  position: relative;
+  top: 10px;
+}
+
+.singer-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+}
+
+.song-title-artist {
+  display: flex;
+  flex-direction: column;
+}
+
+.song-title {
+  width: 200px;
+  font-weight: 600;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.song-artist {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.player-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 30%;
+  max-width: 250px;
+  justify-content: flex-end;
+}
+
+.volume-control-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-range-input {
+  width: 80px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #555;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.volume-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+}
+
+.volume-range-input::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+}
+
+.control-btn.active {
+  color: #1db954;
+}
+
+.control-btn:hover {
+  color: #1db954;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+.shuffle-btn.active,
+.repeat-btn.active {
+  color: #1db954;
+}
+
+.repeat-btn {
+  position: relative;
+}
+
+.repeat-btn::after {
+  content: attr(data-repeat-mode);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.repeat-btn[data-repeat-mode="Repeat All"]::after {
+  content: "Repeat All";
+}
+
+.repeat-btn[data-repeat-mode="Repeat One"]::after {
+  content: "Repeat One";
+}
+
+.rating-btn.rated {
+  color: #fff;
+}
+
+.rating-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

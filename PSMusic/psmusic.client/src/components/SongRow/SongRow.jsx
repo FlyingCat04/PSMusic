@@ -1,20 +1,36 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./SongRow.module.css";
 
-const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab }) => {
+const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab = "", hideInnerArtist= false}) => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [artistMenuOpen, setArtistMenuOpen] = useState(false);
+    const [isHoverCover, setIsHoverCover] = useState(false);
+    //const [artistMenuOpen, setArtistMenuOpen] = useState(false);
 
-    const [playlistMenuOpen, setPlaylistMenuOpen] = useState(false);
-    const [playlistQuery, setPlaylistQuery] = useState("");
+    //const [playlistMenuOpen, setPlaylistMenuOpen] = useState(false);
+    //const [playlistQuery, setPlaylistQuery] = useState("");
 
-    const [playlistMenuPlacement, setPlaylistMenuPlacement] = useState("right");
-    const playlistMenuRef = useRef(null);
+    const [duration, setDuration] = useState(null);
 
-    const [artistMenuPlacement, setArtistMenuPlacement] = useState("right"); // "right" | "left"
-    const artistMenuRef = useRef(null);
+    //const [playlistMenuPlacement, setPlaylistMenuPlacement] = useState("right");
+    //const playlistMenuRef = useRef(null);
+
+    //const [artistMenuPlacement, setArtistMenuPlacement] = useState("right"); // "right" | "left"
+    //const artistMenuRef = useRef(null);
 
     const menuRef = useRef(null);
+
+    const mp3Url = item?.mp3Url || null;
+    const activeTabChose = activeTab || "";
+    
+
+    const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
+
+    const formatDuration = (seconds) => {
+        if (!seconds && seconds !== 0) return "";
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s.toString().padStart(2, "0")}`;
+    };
 
     const handleRowStyle = () => { 
         return activeTab === "Bài hát" ? "sr-song-tab" : "sr-row";
@@ -28,21 +44,48 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
         return activeTab === "Bài hát" ? "sr-title-tab" : "sr-title";
     };
 
-    const playlists = [
-        { id: 1, name: "My 2024 Playlist in a Bottle" },
-        { id: 2, name: "THE 8" },
-        { id: 3, name: "Lộn xộn" },
-        { id: 4, name: "hopeless romantic" },
-        { id: 5, name: "Wishing" },
-        { id: 6, name: "Shadow of you" },
-        { id: 7, name: "Shadow of you" },
-        { id: 8, name: "Shadow of you" },
-        { id: 9, name: "Shadow of you" },
-    ];
+    //const playlists = [
+    //    { id: 1, name: "My 2024 Playlist in a Bottle" },
+    //    { id: 2, name: "THE 8" },
+    //    { id: 3, name: "Lộn xộn" },
+    //    { id: 4, name: "hopeless romantic" },
+    //    { id: 5, name: "Wishing" },
+    //    { id: 6, name: "Shadow of you" },
+    //    { id: 7, name: "Shadow of you" },
+    //    { id: 8, name: "Shadow of you" },
+    //    { id: 9, name: "Shadow of you" },
+    //];
 
-    const filteredPlaylists = playlists.filter((pl) =>
-        pl.name.toLowerCase().includes(playlistQuery.toLowerCase())
-    );
+    //const filteredPlaylists = playlists.filter((pl) =>
+    //    pl.name.toLowerCase().includes(playlistQuery.toLowerCase())
+    //);
+
+    useEffect(() => {
+        if (activeTabChose !== "Bài hát") {
+            setDuration(null);
+            return;
+        }
+        if (!mp3Url) return;
+
+        let audio = new Audio();
+        audio.src = mp3Url;
+        audio.preload = "metadata";
+
+        const handleLoaded = () => {
+            if (!isNaN(audio.duration)) {
+                setDuration(Math.floor(audio.duration));
+            }
+        };
+
+        audio.addEventListener("loadedmetadata", handleLoaded);
+
+        return () => {
+            audio.removeEventListener("loadedmetadata", handleLoaded);
+            audio.pause();
+            audio.src = "";
+            audio = null;
+        };
+    }, [activeTabChose, mp3Url]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -60,202 +103,339 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
         };
     }, [menuOpen]);
 
-    useEffect(() => {
-        if (!artistMenuOpen) return;
-        if (artistMenuPlacement === "left") return;
+    //useEffect(() => {
+    //    if (!artistMenuOpen) return;
+    //    if (artistMenuPlacement === "left") return;
 
-        const raf = window.requestAnimationFrame(() => {
-            if (!artistMenuRef.current) return;
-            const rect = artistMenuRef.current.getBoundingClientRect();
-            const vw = window.innerWidth || document.documentElement.clientWidth;
+    //    const raf = window.requestAnimationFrame(() => {
+    //        if (!artistMenuRef.current) return;
+    //        const rect = artistMenuRef.current.getBoundingClientRect();
+    //        const vw = window.innerWidth || document.documentElement.clientWidth;
 
-            // Nếu chạm mép phải (chừa 30px), thì cho submenu mở sang trái
-            if (rect.right > vw - 30) {
-                setArtistMenuPlacement("left");
-            } else {
-                setArtistMenuPlacement("right");
-            }
-        });
+    //        // Nếu chạm mép phải (chừa 30px), thì cho submenu mở sang trái
+    //        if (rect.right > vw - 30) {
+    //            setArtistMenuPlacement("left");
+    //        } else {
+    //            setArtistMenuPlacement("right");
+    //        }
+    //    });
 
-        return () => window.cancelAnimationFrame(raf);
-    }, [artistMenuOpen, artistMenuPlacement]);
+    //    return () => window.cancelAnimationFrame(raf);
+    //}, [artistMenuOpen, artistMenuPlacement]);
 
-    useEffect(() => {
-        if (!playlistMenuOpen) return;
-        if (playlistMenuPlacement === "left") return;
+    //useEffect(() => {
+    //    if (!playlistMenuOpen) return;
+    //    if (playlistMenuPlacement === "left") return;
 
-        const raf = window.requestAnimationFrame(() => {
-            if (!playlistMenuRef.current) return;
-            const rect = playlistMenuRef.current.getBoundingClientRect();
-            const vw = window.innerWidth || document.documentElement.clientWidth;
+    //    const raf = window.requestAnimationFrame(() => {
+    //        if (!playlistMenuRef.current) return;
+    //        const rect = playlistMenuRef.current.getBoundingClientRect();
+    //        const vw = window.innerWidth || document.documentElement.clientWidth;
 
-            if (rect.right > vw - 15) {
-                setPlaylistMenuPlacement("left");
-            } else {
-                setPlaylistMenuPlacement("right");
-            }
-        });
+    //        if (rect.right > vw - 15) {
+    //            setPlaylistMenuPlacement("left");
+    //        } else {
+    //            setPlaylistMenuPlacement("right");
+    //        }
+    //    });
 
-        return () => window.cancelAnimationFrame(raf);
-    }, [playlistMenuOpen, playlistMenuPlacement]);
+    //    return () => window.cancelAnimationFrame(raf);
+    //}, [playlistMenuOpen, playlistMenuPlacement]);
 
 
-    const toggleMenu = (e) => {
-        e.stopPropagation();          // không trigger click vào cả row
-        setMenuOpen((prev) => !prev);
-    };
+    //const toggleMenu = (e) => {
+    //    e.stopPropagation();          // không trigger click vào cả row
+    //    setMenuOpen((prev) => !prev);
+    //};
 
-    const handleMenuAction = (action, payload) => {
-        switch (action) {
-            case "play":
-                onPlay?.(item);
-                break;
+    //const handleMenuAction = (action, payload) => {
+    //    switch (action) {
+    //        case "play":
+    //            onPlay?.(item);
+    //            break;
 
-            case "add-to-playlist":
-                if (onAddToPlaylist) onAddToPlaylist(item, payload);
-                break;
+    //        case "add-to-playlist":
+    //            if (onAddToPlaylist) onAddToPlaylist(item, payload);
+    //            break;
 
-            case "view-artist":
-                if (onViewArtist) onViewArtist(item.artistId);
-                break;
-            default:
-                console.warn("No handler for action:", action);
-        }
-        setMenuOpen(false);
-    };
+    //        case "view-artist":
+    //            if (onViewArtist) onViewArtist(item.artistId);
+    //            break;
+    //        default:
+    //            console.warn("No handler for action:", action);
+    //    }
+    //    setMenuOpen(false);
+    //};
 
     return (
 
         <div className={styles[handleRowStyle(activeTab)]}>
+            {/* COVER + TITLE + ARTIST */}
+            {activeTab === "Bài hát" ? (
+                <>
+                    {/* Cột 1: avatar + tên bài hát */}
+                    <div className={styles["sr-col-cover-title"]} onClick={() => onPlay?.(item)}>
+                        <div
+                            className={styles["sr-avatar-wrapper"]}
+                            onMouseEnter={() => setIsHoverCover(true)}
+                            onMouseLeave={() => setIsHoverCover(false)}
+                        >
+                            <img
+                                className={styles["sr-cover"]}
+                                src={item.imageUrl}
+                                alt=""
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                }}
+                            />
 
-            {/* AVATAR + ICON isPlaying overlay */}
-            <div className={styles["sr-avatar-wrapper"]}>
-                <img className={styles["sr-cover"]} src={item.imageUrl} alt="" />
-
-
-                {showPlayingIcon && (
-                    <div className={styles["sr-cover-playing"]}>
-                        <div className={styles["sr-eq"]}>
-                            <span />
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* META */}
-            <div className={styles[handleMetaStyle(activeTab)]}>
-                <button className={styles[handleTitleStyle(activeTab)]}
-                    onClick={() => onTitleClick?.(item)}
-                >
-                    {item.title}
-                </button>
-                <div className={styles["sr-subtitle"]}>{item.artist}</div>
-            </div>
-
-            {/* ACTIONS */}
-            <div className={styles["sr-right"]}>
-                <button
-                    type="button"
-                    className={styles["sr-dotsButton"]}
-                    onClick={toggleMenu}
-                >
-                    <span className={styles["sr-dotsIcon"]}><div></div></span>
-                </button>
-            </div>
-
-            {menuOpen && (
-                <div className={styles["sr-menu"]} ref={menuRef}>
-                    <button className={styles["sr-menuItem"]} onClick={() => handleMenuAction("play")}>Phát bài này</button>
-                    <div
-                        className={`${styles["sr-menuItem"]} ${styles["sr-menuItemHasSub"]}`}
-                        onMouseEnter={() => setPlaylistMenuOpen(true)}
-                        onMouseLeave={() => setPlaylistMenuOpen(false)}
-                    >
-                        <span>Thêm vào playlist</span>
-                        <span className={styles["sr-menuItemArrow"]}>›</span>
-
-                        {playlistMenuOpen && (
-                            <div
-                                ref={playlistMenuRef}
-                                className={`${styles["sr-subMenu"]} ${playlistMenuPlacement === "left"
-                                        ? styles["sr-subMenuLeft"]
-                                        : styles["sr-subMenuRight"]
-                                    } ${styles["sr-subMenuPlaylists"]}`}
-                            >
-                                {/* Ô search */}
-                                <div className={styles["sr-subMenuSearch"]}>
-                                    <input
-                                        type="text"
-                                        className={styles["sr-subMenuInput"]}
-                                        placeholder="Tìm playlist"
-                                        value={playlistQuery}
-                                        onChange={(e) => setPlaylistQuery(e.target.value)}
-                                    />
+                            {showPlayingIcon && (
+                                <div className={styles["sr-cover-playing"]}>
+                                    <div className={styles["sr-eq"]}>
+                                        <span />
+                                        <span />
+                                        <span />
+                                    </div>
                                 </div>
+                            )}
 
-                                {/* New playlist */}
+                            {/* Nếu KHÔNG phát và đang hover → hiện nút play */}
+                            {!showPlayingIcon && isHoverCover && (
                                 <button
                                     type="button"
-                                    className={styles["sr-subMenuItemPrimary"]}
-                                    onClick={() => handleMenuAction("add-to-playlist", { id: "new" })}
+                                    className={styles["sr-play-overlay"]}
+                                    onClick={() => onPlay?.(item)}
                                 >
-                                    + Playlist mới
+                                    <span className={styles["sr-play-icon"]}>▶</span>
                                 </button>
+                            )}
 
-                                <div className={styles["sr-subMenuDivider"]} />
+                        </div>
 
-                                {/* Danh sách playlist – có scroll */}
-                                <div className={styles["sr-subMenuScroll"]}>
-                                    {filteredPlaylists.map((pl) => (
-                                        <button
-                                            key={pl.id}
-                                            type="button"
-                                            className={styles["sr-subMenuItem"]}
-                                            onClick={() => handleMenuAction("add-to-playlist", pl)}
+                        <button
+                            className={styles["sr-title-songtab"]}
+                            onClick={() => onTitleClick?.(item)}
+                        >
+                            {item.title}
+                        </button>
+                    </div>
+
+                    {/* Cột 2: nghệ sĩ */}
+                    <div className={styles["sr-col-artist"]}>
+                        {item.artists && item.artists.length > 0 ? (() => { 
+                            const maxArtists = 3; 
+                            const displayed = item.artists.slice(0, maxArtists);
+                            const hasMore = item.artists.length > maxArtists;
+                            return (
+                                <>
+                                    {displayed.map((a, idx) => (
+                                        <span
+                                            key={a.id}
+                                            className={styles.artistName}
+                                            onClick={() => onViewArtist?.(a.id)}
                                         >
-                                            {pl.name}
-                                        </button>
+                                            {a.name}
+                                            {idx < displayed.length - 1 ? ", " : ""}
+                                        </span>
                                     ))}
 
-                                    {filteredPlaylists.length === 0 && (
-                                        <div className={styles["sr-subMenuEmpty"]}>Không tìm thấy playlist</div>
-                                    )}
+                                    {hasMore && <span className={styles.moreArtists}>…</span>}
+                                </>
+                            );
+                        })() : item.artistText}
+                    </div>
+                </>
+            ) : (
+                <>
+                    {/* layout cũ cho tab khác */}
+                        <div className={styles["sr-avatar-wrapper"]}
+                            onClick={() => onPlay?.(item)}
+                            onMouseEnter={() => setIsHoverCover(true)}
+                            onMouseLeave={() => setIsHoverCover(false)}
+                        >
+                        <img
+                            className={styles["sr-cover"]}
+                            onClick={() => onPlay?.(item)} 
+                            src={item.imageUrl}
+                            alt=""
+                            onError={(e) => {
+                                e.target.src = DEFAULT_SONG_IMAGE;
+                            }}
+                        />
+
+                        {showPlayingIcon && (
+                            <div className={styles["sr-cover-playing"]}>
+                                <div className={styles["sr-eq"]}>
+                                    <span />
+                                    <span />
+                                    <span />
                                 </div>
                             </div>
                         )}
-                    </div>
-                    <div
-                        className={`${styles["sr-menuItem"]} ${styles["sr-menuItemHasSub"]}`}
-                        onMouseEnter={() => setArtistMenuOpen(true)}
-                        onMouseLeave={() => setArtistMenuOpen(false)}
-                    >
-                        <span>Xem nghệ sĩ</span>
 
-                        <span
-                            className={`${styles["sr-menuItemArrow"]}`}
-                        >
-                            ›
-                        </span>
-
-                        {artistMenuOpen && (
-                            <div
-                                ref={artistMenuRef}
-                                className={`${styles["sr-subMenu"]} ${artistMenuPlacement === "left"
-                                    ? styles["sr-subMenuLeft"]
-                                    : styles["sr-subMenuRight"]
-                                    }`}
+                        {/* Nếu KHÔNG phát và đang hover → hiện nút play */}
+                        {!showPlayingIcon && isHoverCover && (
+                            <button
+                                type="button"
+                                className={styles["sr-play-overlay"]}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onPlay?.(item);   // Bấm 1 lần là play luôn
+                                }}
                             >
-                                <button
-                                    className={styles["sr-subMenuItem"]}
-                                    onClick={() => handleMenuAction("view-artist")}
-                                >
-                                    {item.artist}
-                                </button>
+                                <span className={styles["sr-play-icon"]}>▶</span>
+                            </button>
+                        )}
+                    </div>
+
+                    {/* META */}
+                    <div className={styles[handleMetaStyle(activeTab)]}>
+                        <button
+                            className={styles[handleTitleStyle(activeTab)]}
+                            onClick={() => onTitleClick?.(item)}
+                        >
+                            {item.title}
+                        </button>
+                        {!hideInnerArtist && (
+                            <div className={styles["sr-subtitle"]}>
+                            {(() => {
+                                const maxArtists = 2;
+                                const displayed = item.artists.slice(0, maxArtists);
+                                const hasMore = item.artists.length > maxArtists;
+
+                                return (
+                                    <>
+                                        {displayed.map((a, idx) => (
+                                            <span
+                                                key={a.id}
+                                                className={styles.artistName}
+                                                onClick={() => onViewArtist?.(a.id)}
+                                            >
+                                                {a.name}
+                                                {idx < displayed.length - 1 ? ", " : ""}
+                                            </span>
+                                        ))}
+
+                                        {hasMore && <span className={styles.moreArtists}>…</span>}
+                                    </>
+                                );
+                            })()}
                             </div>
                         )}
                     </div>
-                </div>
+                </>
             )}
+             
+
+            {/* ACTIONS */}
+            {activeTab === "Bài hát" && duration && (
+                <span className={styles["sr-duration"]}>
+                    {formatDuration(duration)}
+                </span>
+            )}
+            {/*<div className={styles["sr-right"]}>*/}
+            {/*    <button*/}
+            {/*        type="button"*/}
+            {/*        className={styles["sr-dotsButton"]}*/}
+            {/*        onClick={toggleMenu}*/}
+            {/*    >*/}
+            {/*        <span className={styles["sr-dotsIcon"]}><div></div></span>*/}
+            {/*    </button>*/}
+            {/*</div>*/}
+
+            {/*{menuOpen && (*/}
+            {/*    <div className={styles["sr-menu"]} ref={menuRef}>*/}
+            {/*        <button className={styles["sr-menuItem"]} onClick={() => handleMenuAction("play")}>Phát bài này</button>*/}
+            {/*        <div*/}
+            {/*            className={`${styles["sr-menuItem"]} ${styles["sr-menuItemHasSub"]}`}*/}
+            {/*            onMouseEnter={() => setPlaylistMenuOpen(true)}*/}
+            {/*            onMouseLeave={() => setPlaylistMenuOpen(false)}*/}
+            {/*        >*/}
+            {/*            <span>Thêm vào playlist</span>*/}
+            {/*            <span className={styles["sr-menuItemArrow"]}>›</span>*/}
+
+            {/*            {playlistMenuOpen && (*/}
+            {/*                <div*/}
+            {/*                    ref={playlistMenuRef}*/}
+            {/*                    className={`${styles["sr-subMenu"]} ${playlistMenuPlacement === "left"*/}
+            {/*                            ? styles["sr-subMenuLeft"]*/}
+            {/*                            : styles["sr-subMenuRight"]*/}
+            {/*                        } ${styles["sr-subMenuPlaylists"]}`}*/}
+            {/*                >*/}
+            {/*                    */}{/* Ô search */}
+            {/*                    <div className={styles["sr-subMenuSearch"]}>*/}
+            {/*                        <input*/}
+            {/*                            type="text"*/}
+            {/*                            className={styles["sr-subMenuInput"]}*/}
+            {/*                            placeholder="Tìm playlist"*/}
+            {/*                            value={playlistQuery}*/}
+            {/*                            onChange={(e) => setPlaylistQuery(e.target.value)}*/}
+            {/*                        />*/}
+            {/*                    </div>*/}
+
+            {/*                    */}{/* New playlist */}
+            {/*                    <button*/}
+            {/*                        type="button"*/}
+            {/*                        className={styles["sr-subMenuItemPrimary"]}*/}
+            {/*                        onClick={() => handleMenuAction("add-to-playlist", { id: "new" })}*/}
+            {/*                    >*/}
+            {/*                        + Playlist mới*/}
+            {/*                    </button>*/}
+
+            {/*                    <div className={styles["sr-subMenuDivider"]} />*/}
+
+            {/*                    */}{/* Danh sách playlist – có scroll */}
+            {/*                    <div className={styles["sr-subMenuScroll"]}>*/}
+            {/*                        {filteredPlaylists.map((pl) => (*/}
+            {/*                            <button*/}
+            {/*                                key={pl.id}*/}
+            {/*                                type="button"*/}
+            {/*                                className={styles["sr-subMenuItem"]}*/}
+            {/*                                onClick={() => handleMenuAction("add-to-playlist", pl)}*/}
+            {/*                            >*/}
+            {/*                                {pl.name}*/}
+            {/*                            </button>*/}
+            {/*                        ))}*/}
+
+            {/*                        {filteredPlaylists.length === 0 && (*/}
+            {/*                            <div className={styles["sr-subMenuEmpty"]}>Không tìm thấy playlist</div>*/}
+            {/*                        )}*/}
+            {/*                    </div>*/}
+            {/*                </div>*/}
+            {/*            )}*/}
+            {/*        </div>*/}
+            {/*        <div*/}
+            {/*            className={`${styles["sr-menuItem"]} ${styles["sr-menuItemHasSub"]}`}*/}
+            {/*            onMouseEnter={() => setArtistMenuOpen(true)}*/}
+            {/*            onMouseLeave={() => setArtistMenuOpen(false)}*/}
+            {/*        >*/}
+            {/*            <span>Xem nghệ sĩ</span>*/}
+
+            {/*            <span*/}
+            {/*                className={`${styles["sr-menuItemArrow"]}`}*/}
+            {/*            >*/}
+            {/*                ›*/}
+            {/*            </span>*/}
+
+            {/*            {artistMenuOpen && (*/}
+            {/*                <div*/}
+            {/*                    ref={artistMenuRef}*/}
+            {/*                    className={`${styles["sr-subMenu"]} ${artistMenuPlacement === "left"*/}
+            {/*                        ? styles["sr-subMenuLeft"]*/}
+            {/*                        : styles["sr-subMenuRight"]*/}
+            {/*                        }`}*/}
+            {/*                >*/}
+            {/*                    <button*/}
+            {/*                        className={styles["sr-subMenuItem"]}*/}
+            {/*                        onClick={() => handleMenuAction("view-artist")}*/}
+            {/*                    >*/}
+            {/*                        {item.artist}*/}
+            {/*                    </button>*/}
+            {/*                </div>*/}
+            {/*            )}*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </div>
     );
 };

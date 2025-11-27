@@ -8,6 +8,7 @@
     position: relative;
     background-color: transparent;
     width: 100%;
+    cursor: pointer;
 }
 
 .item-top-charts:hover {
@@ -105,7 +106,7 @@
 }
 
 .item-title {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
@@ -113,14 +114,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
     transition: color 0.2s ease;
+    text-decoration: none;
+    display: block;
 }
 
-.item-top-charts:hover .item-title {
-    color: var(--primary-purple, #8b5cf6);
+.item-title:hover {
+    color: var(--primary-purple);
 }
 
 .item-artist {
-    font-size: 12px;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     margin: 0;
     white-space: nowrap;
@@ -128,16 +131,14 @@
     text-overflow: ellipsis;
 }
 
-.premium-badge {
-    padding: 4px 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 12px;
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+.artist-link {
+    color: var(--text-secondary, #9ca3af);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.artist-link:hover {
+    color: var(--primary-purple);
 }
 
 .action-buttons {
@@ -235,11 +236,6 @@
 
     .item-artist {
         font-size: 10px;
-    }
-
-    .premium-badge {
-        font-size: 9px;
-        padding: 3px 10px;
     }
 
     .action-btn {

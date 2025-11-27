@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Heart, Star, Download } from "lucide-react";
-import "./SongViewPage.css";
+import styles from "./SongViewPage.module.css";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import { usePlayer } from "../../contexts/PlayerContext";
 import axiosInstance from "../../services/axiosInstance";
@@ -105,22 +105,24 @@ export default function SongViewPage() {
 
   const handleDownloadSong = () => {
     if (!songDetail || !songDetail.audioUrl) return;
-    
+
     try {
       setDownloading(true);
-      
-      const downloadLink = document.createElement('a');
+
+      const downloadLink = document.createElement("a");
       downloadLink.href = songDetail.audioUrl;
-      downloadLink.download = `${songDetail.title}.mp3`.replace(/[^a-zA-Z0-9._-]/g, '_');
-      downloadLink.style.display = 'none';
-      
+      downloadLink.download = `${songDetail.title}.mp3`.replace(
+        /[^a-zA-Z0-9._-]/g,
+        "_"
+      );
+      downloadLink.style.display = "none";
+
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
-      
     } catch (error) {
-      console.error('Lỗi khi tải bài hát:', error);
-      alert('Có lỗi xảy ra khi tải bài hát');
+      console.error("Lỗi khi tải bài hát:", error);
+      alert("Có lỗi xảy ra khi tải bài hát");
     } finally {
       setDownloading(false);
     }
@@ -130,19 +132,16 @@ export default function SongViewPage() {
   if (!songDetail) return <p>Không tìm thấy bài hát</p>;
 
   return (
-    <div className="song-view-container">
-      <div className="song-header">
-        <img src={songDetail.imageUrl} alt="" className="song-cover" />
+    <div className={styles["song-view-container"]}>
+      <div className={styles["song-header"]}>
+        <img src={songDetail.imageUrl} alt="" className={styles["song-cover"]} />
 
-        <div className="song-info">
-          <h1 className="song-title">{songDetail.title}</h1>
-          <p className="song-artist">{songDetail.artist}</p>
+        <div className={styles["song-info"]}>
+          <h1 className={styles["song-title"]}>{songDetail.title}</h1>
+          <p className={styles["song-artist"]}>{songDetail.artist}</p>
 
-          <div className="action-buttons">
-            <div
-              className="icon-button"
-              onClick={() => setIsFavorited(!isFavorited)}
-            >
+          <div className={styles["action-buttons"]}>
+            <div className={styles["icon-button"]}>
               <Heart
                 size={20}
                 color="white"
@@ -151,10 +150,7 @@ export default function SongViewPage() {
               {songDetail.favorite} Favorite
             </div>
 
-            <div
-              className="icon-button"
-              onClick={() => setIsReviewed(!isReviewed)}
-            >
+            <div className={styles["icon-button"]}>
               <Star
                 size={20}
                 color="white"
@@ -164,33 +160,33 @@ export default function SongViewPage() {
             </div>
           </div>
 
-          <div className="play-buttons">
-            <button className="btn-play" onClick={() => playSong(songDetail)}>
+          <div className={styles["play-buttons"]}>
+            <button className={styles["btn-play"]} onClick={() => playSong(songDetail)}>
               Phát
             </button>
 
-            <button 
-              className="btn-download" 
+            <button
+              className={styles["btn-download"]}
               onClick={handleDownloadSong}
               disabled={downloading}
             >
-              <Download /> 
+              <Download />
               {downloading ? "Đang tải..." : "Tải về"}
             </button>
           </div>
         </div>
       </div>
 
-      <div className="lyrics-artists-wrapper">
-        <div className="lyrics-card">
-          <div className="lyrics-header">
+      <div className={styles["lyrics-artists-wrapper"]}>
+        <div className={styles["lyrics-card"]}>
+          <div className={styles["lyrics-header"]}>
             <span>Lyrics</span>
           </div>
           <hr />
 
           <div
-            className={`lyrics-content-scroller ${
-              showFullLyrics ? "lyrics-expanded" : "lyrics-collapsed"
+            className={`${styles["lyrics-content-scroller"]} ${
+              showFullLyrics ? styles["lyrics-expanded"] : styles["lyrics-collapsed"]
             }`}
             ref={lyricsRef}
           >
@@ -204,7 +200,9 @@ export default function SongViewPage() {
                 return (
                   <p
                     key={index}
-                    className={`lyric-line ${isCurrent ? "active-lyric" : ""}`}
+                    className={`${styles["lyric-line"]} ${
+                      isCurrent ? styles["active-lyric"] : ""
+                    }`}
                   >
                     {line.text || "\u00A0"}
                   </p>
@@ -217,7 +215,7 @@ export default function SongViewPage() {
 
           {lyrics.length > 0 && (
             <button
-              className="btn-toggle-lyrics"
+              className={styles["btn-toggle-lyrics"]}
               onClick={() => setShowFullLyrics(!showFullLyrics)}
             >
               {showFullLyrics ? "Thu gọn" : "Hiển thị thêm"}
@@ -225,15 +223,15 @@ export default function SongViewPage() {
           )}
         </div>
 
-        <div className="artist-list">
+        <div className={styles["artist-list"]}>
           <h2>Nghệ sĩ</h2>
 
           {relatedArtists.length > 0 ? (
             relatedArtists.map((artist) => (
-              <div key={artist.id} className="artist-row">
-                <img src={artist.avatarUrl} className="artist-avatar" />
-                <div className="artist-info">
-                  <p className="artist-name">{artist.name}</p>
+              <div key={artist.id} className={styles["artist-row"]}>
+                <img src={artist.avatarUrl} className={styles["artist-avatar"]} />
+                <div className={styles["artist-info"]}>
+                  <p className={styles["artist-name"]}>{artist.name}</p>
                 </div>
               </div>
             ))
@@ -243,25 +241,25 @@ export default function SongViewPage() {
         </div>
       </div>
 
-      <div className="other-songs-section">
+      <div className={styles["other-songs-section"]}>
         <h2>Bài hát khác của {songDetail.artist.split(",")[0]}</h2>
 
         {otherSongs.map((s) => (
           <div
             key={s.id}
-            className="song-row"
+            className={styles["song-row"]}
             onClick={() => navigate(`/song/${s.id}`)}
             style={{ cursor: "pointer" }}
           >
-            <div className="song-left">
+            <div className={styles["song-left"]}>
               {s.imageUrl && (
-                <img src={s.imageUrl} className="song-thumbnail" />
+                <img src={s.imageUrl} className={styles["song-thumbnail"]} />
               )}
-              <span className="song-title-text">{s.title}</span>
+              <span className={styles["song-title-text"]}>{s.title}</span>
             </div>
 
-            <div className="song-right">
-              <span className="song-duration">{s.duration || "00:00"}</span>
+            <div className={styles["song-right"]}>
+              <span className={styles["song-duration"]}>{s.duration || "00:00"}</span>
             </div>
           </div>
         ))}

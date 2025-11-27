@@ -1,6 +1,6 @@
 ﻿namespace PSMusic.Server.Models.DTO.Song
 {
-    public class SongWithArtistRole : SongDTO
+    public class SongWithArtistRole : SongSearchDetailDTO
     {
         public string _type = "Main";
 

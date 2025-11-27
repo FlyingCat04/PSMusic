@@ -12,25 +12,26 @@ const TopChartsPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Cấu hình các category cần hiển thị
+    const categoryConfigs = [
+        { id: 26, key: 'usaSongs', title: 'Top Nhạc Âu Mỹ', route: '/charts/usa' },
+        { id: 10, key: 'vnSongs', title: 'Top Nhạc Việt', route: '/charts/vietnam' },
+        { id: 1, key: 'popSongs', title: 'Top Nhạc Pop', route: '/charts/pop' },
+        { id: 2, key: 'youngSongs', title: 'Top Nhạc Trẻ', route: '/charts/young' },
+        { id: 31, key: 'rapSongs', title: 'Top Rap Việt', route: '/charts/rap' },
+    ];
+
     // State cho các danh sách
     const [popularArtists, setPopularArtists] = useState([]);
     const [popularCategories, setPopularCategories] = useState([]);
-    const [usaSongs, setUsaSongs] = useState([]);
-    const [vnSongs, setVnSongs] = useState([]);
-    const [popSongs, setPopSongs] = useState([]);
-    const [youngSongs, setYoungSongs] = useState([]);
-    const [rapSongs, setRapSongs] = useState([]);
+    const [categorySongs, setCategorySongs] = useState({});
 
     useEffect(() => {
         const cachedData = getTopChartsData();
         if (cachedData) {
             setPopularArtists(cachedData.popularArtists || []);
             setPopularCategories(cachedData.popularCategories || []);
-            setUsaSongs(cachedData.usaSongs || []);
-            setVnSongs(cachedData.vnSongs || []);
-            setPopSongs(cachedData.popSongs || []);
-            setYoungSongs(cachedData.youngSongs || []);
-            setRapSongs(cachedData.rapSongs || []);
+            setCategorySongs(cachedData.categorySongs || {});
         } else {
             fetchAllData();
         }
@@ -38,38 +39,36 @@ const TopChartsPage = () => {
 
     const fetchAllData = async () => {
         try {
-        setLoading(true);
-        setError(null);
+            setLoading(true);
+            setError(null);
 
-        // Gọi tất cả các API song song
-        const [artistsRes, categoriesRes, usaRes, vnRes, popRes, youngRes, rapRes] =
-            await Promise.all([
-            topChartsService.getPopularArtists(1, 10),
-            topChartsService.getPopularCategories(1, 10),
-            topChartsService.getPopularSongsByCategory(26, 1, 10), // Nhạc Âu Mỹ
-            topChartsService.getPopularSongsByCategory(10, 1, 10), // Nhạc Việt
-            topChartsService.getPopularSongsByCategory(1, 1, 10), // Nhạc Pop
-            topChartsService.getPopularSongsByCategory(2, 1, 10), // Nhạc Trẻ
-            topChartsService.getPopularSongsByCategory(31, 1, 10), // Rap Việt
-            ]);
+            // Gọi tất cả các API song song
+            const apiCalls = [
+                topChartsService.getPopularArtists(1, 10),
+                topChartsService.getPopularCategories(1, 10),
+                ...categoryConfigs.map(config => 
+                    topChartsService.getPopularSongsByCategory(config.id, 1, 10)
+                )
+            ];
+
+            const results = await Promise.all(apiCalls);
+            const [artistsRes, categoriesRes, ...categoryResults] = results;
+
+            // Map kết quả theo key của từng category
+            const songsData = {};
+            categoryConfigs.forEach((config, index) => {
+                songsData[config.key] = categoryResults[index]?.items || [];
+            });
 
             const data = {
                 popularArtists: artistsRes?.items || [],
                 popularCategories: categoriesRes?.items || [],
-                usaSongs: usaRes?.items || [],
-                vnSongs: vnRes?.items || [],
-                popSongs: popRes?.items || [],
-                youngSongs: youngRes?.items || [],
-                rapSongs: rapRes?.items || [],
+                categorySongs: songsData,
             };
 
             setPopularArtists(data.popularArtists);
             setPopularCategories(data.popularCategories);
-            setUsaSongs(data.usaSongs);
-            setVnSongs(data.vnSongs);
-            setPopSongs(data.popSongs);
-            setYoungSongs(data.youngSongs);
-            setRapSongs(data.rapSongs);
+            setCategorySongs(data.categorySongs);
 
             setTopChartsData(data);
         } catch (err) {
@@ -97,218 +96,68 @@ const TopChartsPage = () => {
         );
     }
 
+    // Render một section cho category
+    const renderCategorySection = (config, isDualColumn = false) => {
+        const songs = categorySongs[config.key] || [];        
+        const content = (
+            <>
+                <div className={styles["section-header"]}>
+                    <h2 className={styles["section-title"]}>{config.title}</h2>
+                    <Link to={config.route} className={styles["see-all-link"]}>
+                        Xem tất cả
+                        <ChevronRight />
+                    </Link>
+                </div>
+                <div className={styles["items-list"]}>
+                    {songs.length > 0 ? (
+                        songs.map((song, index) => (
+                            <ItemTopCharts
+                                key={song.id || song.songId}
+                                rank={index + 1}
+                                song={{
+                                    id: song.id || song.songId,
+                                    title: song.name || song.title,
+                                    artists: Array.isArray(song.artists) 
+                                        ? song.artists 
+                                        : [{ name: 'Unknown Artist' }],
+                                    imageUrl:
+                                        song.avatarUrl ||
+                                        song.imageUrl ||
+                                        "https://via.placeholder.com/100",
+                                    mp3Url: song.mp3Url
+                                }}
+                            />
+                        ))
+                    ) : (
+                        <p className={styles["no-data"]}>Không có dữ liệu</p>
+                    )}
+                </div>
+            </>
+        );
+
+        return isDualColumn ? (
+            <div className={styles["column"]} key={config.key}>
+                {content}
+            </div>
+        ) : (
+            <section className={styles["content-section"]} key={config.key}>
+                {content}
+            </section>
+        );
+    };
+
     return (
-    <div className={styles["charts-main-content"]}>
-        {/* Top Nghệ Sĩ */}
-        {/* <section className={styles["content-section"]}>
-            <div className={styles["section-header"]}>
-            <h2 className={styles["section-title"]}>Top Nghệ Sĩ</h2>
-            <Link to="/charts/artists" className={styles["see-all-link"]}>
-                Xem tất cả
-                <ChevronRight />
-            </Link>
-            </div>
-            <div className={styles["items-grid"]}>
-            {popularArtists.length > 0 ? (
-                popularArtists.map((artist, index) => (
-                <ItemTopCharts
-                    key={artist.id || artist.artistId}
-                    rank={index + 1}
-                    song={{
-                    id: artist.id || artist.artistId,
-                    title: artist.name,
-                    artist: artist.bio || "Nghệ sĩ",
-                    imageUrl:
-                        artist.avatarUrl || "https://via.placeholder.com/100",
-                    }}
-                />
-                ))
-            ) : (
-                <p className={styles["no-data"]}>Không có dữ liệu</p>
-            )}
-            </div>
-        </section> */}
+        <div className={styles["charts-main-content"]}>
+            {/* Top Nhạc Âu Mỹ và Nhạc Việt - Dual Column */}
+            <section className={styles["content-section"]}>
+                <div className={styles["dual-column-container"]}>
+                    {categoryConfigs.slice(0, 2).map(config => renderCategorySection(config, true))}
+                </div>
+            </section>
 
-        {/* Top Nhạc Âu Mỹ và Nhạc Việt */}
-        <section className={styles["content-section"]}>
-        <div className={styles["dual-column-container"]}>
-            {/* Nhạc Âu Mỹ */}
-            <div className={styles["column"]}>
-                <div className={styles["section-header"]}>
-                <h2 className={styles["section-title"]}>Top Nhạc Âu Mỹ</h2>
-                <Link to="/charts/usa" className={styles["see-all-link"]}>
-                    Xem tất cả
-                    <ChevronRight />
-                </Link>
-                </div>
-                <div className={styles["items-list"]}>
-                {usaSongs.length > 0 ? (
-                    usaSongs.map((song, index) => (
-                    <ItemTopCharts
-                        key={song.id || song.songId}
-                        rank={index + 1}
-                    song={{
-                        id: song.id || song.songId,
-                        title: song.title || song.name,
-                        artist: Array.isArray(song.artistNames)
-                            ? song.artistNames.join(", ")
-                            : song.artistName || song.artist || "Unknown Artist",
-                        imageUrl:
-                            song.avatarUrl ||
-                            song.imageUrl ||
-                            "https://via.placeholder.com/100",
-                        premium: song.premium || false,
-                        }}
-                    />
-                    ))
-                ) : (
-                    <p className={styles["no-data"]}>Không có dữ liệu</p>
-                )}
-                </div>
-            </div>
-
-            {/* Nhạc Việt */}
-            <div className={styles["column"]}>
-                <div className={styles["section-header"]}>
-                <h2 className={styles["section-title"]}>Top Nhạc Việt</h2>
-                <Link to="/charts/vietnam" className={styles["see-all-link"]}>
-                    Xem tất cả
-                    <ChevronRight />
-                </Link>
-                </div>
-                <div className={styles["items-list"]}>
-                {vnSongs.length > 0 ? (
-                    vnSongs.map((song, index) => (
-                    <ItemTopCharts
-                        key={song.id || song.songId}
-                        rank={index + 1}
-                        song={{
-                        id: song.id || song.songId,
-                        title: song.title || song.name,
-                        artist: Array.isArray(song.artistNames)
-                            ? song.artistNames.join(", ")
-                            : song.artistName || song.artist || "Unknown Artist",
-                        imageUrl:
-                            song.avatarUrl ||
-                            song.imageUrl ||
-                            "https://via.placeholder.com/100",
-                        premium: song.premium || false,
-                        }}
-                    />
-                    ))
-                ) : (
-                    <p className={styles["no-data"]}>Không có dữ liệu</p>
-                )}
-                </div>
-            </div>
+            {/* Các category còn lại - Single Column */}
+            {categoryConfigs.slice(2).map(config => renderCategorySection(config, false))}
         </div>
-        </section>
-
-        {/* Top Nhạc Pop */}
-        <section className={styles["content-section"]}>
-            <div className={styles["section-header"]}>
-            <h2 className={styles["section-title"]}>Top Nhạc Pop</h2>
-            <Link to="/charts/pop" className={styles["see-all-link"]}>
-                Xem tất cả
-                <ChevronRight />
-            </Link>
-            </div>
-            <div className={styles["items-list"]}>
-            {popSongs.length > 0 ? (
-                popSongs.map((song, index) => (
-                <ItemTopCharts
-                    key={song.id || song.songId}
-                    rank={index + 1}
-                    song={{
-                    id: song.id || song.songId,
-                    title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames)
-                        ? song.artistNames.join(", ")
-                        : song.artistName || song.artist || "Unknown Artist",
-                    imageUrl:
-                        song.avatarUrl ||
-                        song.imageUrl ||
-                        "https://via.placeholder.com/100",
-                    premium: song.premium || false,
-                    }}
-                />
-                ))
-            ) : (
-                <p className={styles["no-data"]}>Không có dữ liệu</p>
-            )}
-            </div>
-        </section>
-
-        {/* Top Nhạc Trẻ */}
-        <section className={styles["content-section"]}>
-            <div className={styles["section-header"]}>
-            <h2 className={styles["section-title"]}>Top Nhạc Trẻ</h2>
-            <Link to="/charts/young" className={styles["see-all-link"]}>
-                Xem tất cả
-                <ChevronRight />
-            </Link>
-            </div>
-            <div className={styles["items-list"]}>
-            {youngSongs.length > 0 ? (
-                youngSongs.map((song, index) => (
-                <ItemTopCharts
-                    key={song.id || song.songId}
-                    rank={index + 1}
-                    song={{
-                    id: song.id || song.songId,
-                    title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames)
-                        ? song.artistNames.join(", ")
-                        : song.artistName || song.artist || "Unknown Artist",
-                    imageUrl:
-                        song.avatarUrl ||
-                        song.imageUrl ||
-                        "https://via.placeholder.com/100",
-                    premium: song.premium || false,
-                    }}
-                />  
-                ))
-            ) : (
-                <p className={styles["no-data"]}>Không có dữ liệu</p>
-            )}
-            </div>
-        </section>
-
-        {/* Top Rap Việt */}
-        <section className={styles["content-section"]}>
-            <div className={styles["section-header"]}>
-            <h2 className={styles["section-title"]}>Top Rap Việt</h2>
-            <Link to="/charts/rap" className={styles["see-all-link"]}>
-                Xem tất cả
-                <ChevronRight />
-            </Link>
-            </div>
-            <div className={styles["items-list"]}>
-            {rapSongs.length > 0 ? (
-                rapSongs.map((song, index) => (
-                <ItemTopCharts
-                    key={song.id || song.songId}
-                    rank={index + 1}
-                    song={{
-                    id: song.id || song.songId,
-                    title: song.title || song.name,
-                    artist: Array.isArray(song.artistNames)
-                        ? song.artistNames.join(", ")
-                        : song.artistName || song.artist || "Unknown Artist",
-                    imageUrl:
-                        song.avatarUrl ||
-                        song.imageUrl ||
-                        "https://via.placeholder.com/100",
-                    premium: song.premium || false,
-                    }}
-                />
-                ))
-            ) : (
-                <p className={styles["no-data"]}>Không có dữ liệu</p>
-            )}
-            </div>
-        </section>
-    </div>
     );
 };
 

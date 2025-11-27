@@ -128,30 +128,7 @@
     cursor: default;
 }
 
-
-.section-header {
+.songList {
     display: flex;
-    align-items: center;
-    justify-content: space-between; /* tiêu đề bên trái, Thêm bên phải */
-    margin-bottom: 5px;
+    flex-direction: column;
 }
-
-.section-title {
-    font-size: 30px;
-    font-weight: 700;
-}
-
-.see-all-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 15px;
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-}
-
-    .see-all-link:hover {
-        color: var(--accent, #c7a4ff);
-    }

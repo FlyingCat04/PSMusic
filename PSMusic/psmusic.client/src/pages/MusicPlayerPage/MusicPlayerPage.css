@@ -51,7 +51,9 @@
   font-size: 24px;
   font-weight: 500;
   opacity: 0.6;
-  transition: opacity 0.3s, font-size 0.3s;
+  transition:
+    opacity 0.3s,
+    font-size 0.3s;
   line-height: 1.4;
 }
 
@@ -72,7 +74,7 @@
 .player-controls-new {
   position: fixed;
   bottom: 0;
-  left: 240px;
+  /*  left: 240px;*/
   right: 0;
   background-color: #222;
   border-top: 1px solid #333;
@@ -81,9 +83,11 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  width: calc(100% - 240px);
+  /*  width: calc(100% - 240px);*/
+  width: 100%;
   box-sizing: border-box;
   color: white;
+  z-index: 101;
 }
 
 .player-main-row {
@@ -102,8 +106,8 @@
 }
 
 .control-btn,
-.rating-btn, 
-.download-btn  {
+.rating-btn,
+.download-btn {
   background: none;
   border: none;
   color: inherit;
@@ -201,6 +205,8 @@
   gap: 10px;
   width: 30%;
   max-width: 250px;
+  position: relative;
+  top: 10px;
 }
 
 .singer-avatar {
@@ -218,6 +224,7 @@
   width: 200px;
   font-weight: 600;
   font-size: 25px;
+  cursor: pointer;
 }
 
 .song-artist {
@@ -229,9 +236,9 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  width: 30%; 
+  width: 30%;
   max-width: 250px;
-  justify-content: flex-end; 
+  justify-content: flex-end;
 }
 
 .volume-control-container {
@@ -241,7 +248,7 @@
 }
 
 .volume-range-input {
-  width: 80px; 
+  width: 80px;
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
@@ -267,3 +274,46 @@
   border: none;
 }
 
+.control-btn.active {
+  color: #1db954;
+}
+
+.control-btn:hover {
+  color: #1db954;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+.shuffle-btn.active,
+.repeat-btn.active {
+  color: #1db954;
+}
+
+.repeat-btn {
+  position: relative;
+}
+
+.repeat-btn::after {
+  content: attr(data-repeat-mode);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.repeat-btn[data-repeat-mode="Repeat All"]::after {
+  content: "Repeat All";
+}
+
+.repeat-btn[data-repeat-mode="Repeat One"]::after {
+  content: "Repeat One";
+}

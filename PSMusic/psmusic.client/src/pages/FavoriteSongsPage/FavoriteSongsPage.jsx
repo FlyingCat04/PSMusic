@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Download } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import axiosInstance from "../../services/axiosInstance";
-import "../SongViewPage/SongViewPage.css";
+import styles from "../SongViewPage/SongViewPage.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 
@@ -10,16 +10,15 @@ export default function FavoritePlaylistPage() {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
-  const { playSong, currentSong, playPlaylist } = usePlayer();
+  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist } =
+    usePlayer();
 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
         setLoading(true);
 
-        const resFavorited = await axiosInstance.get("/song/favorites", {
-          params: { userId: 1 },
-        });
+        const resFavorited = await axiosInstance.get("/song/favorites");
 
         const fetchedSongs = resFavorited.data || [];
 
@@ -64,30 +63,32 @@ export default function FavoritePlaylistPage() {
 
   const handleDownloadPlaylist = async () => {
     if (!songs.length) return;
-    
+
     try {
       setDownloading(true);
-      
+
       for (let i = 0; i < songs.length; i++) {
         const song = songs[i];
-        
-        const downloadLink = document.createElement('a');
+
+        const downloadLink = document.createElement("a");
         downloadLink.href = song.audioUrl;
-        downloadLink.download = `${song.title}.mp3`.replace(/[^a-zA-Z0-9._-]/g, '_');
-        downloadLink.style.display = 'none';
-        
+        downloadLink.download = `${song.title}.mp3`.replace(
+          /[^a-zA-Z0-9._-]/g,
+          "_"
+        );
+        downloadLink.style.display = "none";
+
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-        
+
         if (i < songs.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
-      
     } catch (error) {
-      console.error('Lỗi khi tải playlist:', error);
-      alert('Có lỗi xảy ra khi tải playlist');
+      console.error("Lỗi khi tải playlist:", error);
+      alert("Có lỗi xảy ra khi tải playlist");
     } finally {
       setDownloading(false);
     }
@@ -152,50 +153,51 @@ export default function FavoritePlaylistPage() {
     newOrder.splice(result.destination.index, 0, removed);
 
     setSongs(newOrder);
+    updateCurrentPlaylist(newOrder);
   };
 
   if (loading) return <p>Đang tải playlist...</p>;
   if (!songs.length) return <p>Không có bài hát yêu thích nào.</p>;
 
   return (
-    <div className="song-view-container">
-      <div className="song-header">
+    <div className={styles["song-view-container"]}>
+      <div className={styles["song-header"]}>
         <img
-          src={currentSongCover.imageUrl}
+          src={currentSongCover.imageUrl || null}
           alt={currentSongCover.title}
-          className="song-cover"
+          className={styles["song-cover"]}
         />
 
-        <div className="song-info">
-          <h1 className="song-title">Playlist yêu thích</h1>
-          <p className="song-artist">
+        <div className={styles["song-info"]}>
+          <h1 className={styles["song-title"]}>Playlist yêu thích</h1>
+          <p className={styles["song-artist"]}>
             Nghệ sĩ nổi bật: <strong>{popularArtists}</strong>
           </p>
 
-          <div className="play-buttons">
-            <button className="btn-play" onClick={handlePlayAll}>
+          <div className={styles["play-buttons"]}>
+            <button className={styles["btn-play"]} onClick={handlePlayAll}>
               Phát tất cả
             </button>
-            <button 
-              className="btn-download" 
+            <button
+              className={styles["btn-download"]}
               onClick={handleDownloadPlaylist}
               disabled={downloading}
             >
-              <Download /> 
+              <Download />
               {downloading ? "Đang tải..." : "Tải playlist"}
             </button>
           </div>
         </div>
       </div>
 
-      <div className="other-songs-section">
+      <div className={styles["other-songs-section"]}>
         <h2>Kéo thả để sắp xếp thứ tự phát</h2>
 
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="playlist">
             {(provided) => (
               <div
-                className="song-list"
+                className={styles["song-list"]}
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
@@ -207,15 +209,15 @@ export default function FavoritePlaylistPage() {
                   >
                     {(provided, snapshot) => (
                       <div
-                        className={`song-row ${
-                          snapshot.isDragging ? "dragging" : ""
+                        className={`${styles["song-row"]} ${
+                          snapshot.isDragging ? styles["dragging"] : ""
                         }`}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
                         <div
-                          className="song-content"
+                          className={styles["song-content"]}
                           onClick={() => handlePlaySong(song, index)}
                           style={{
                             cursor: "pointer",
@@ -225,24 +227,24 @@ export default function FavoritePlaylistPage() {
                             width: "100%",
                           }}
                         >
-                          <div className="song-left">
+                          <div className={styles["song-left"]}>
                             <img
-                              src={song.imageUrl}
-                              className="song-thumbnail"
+                              src={song.imageUrl || null}
+                              className={styles["song-thumbnail"]}
                               alt=""
                             />
-                            <div className="song-mid">
-                              <span className="song-title-text">
+                            <div className={styles["song-mid"]}>
+                              <span className={styles["song-title-text"]}>
                                 {song.title}
                               </span>
-                              <span className="song-artist-text">
+                              <span className={styles["song-artist-text"]}>
                                 {song.artist}
                               </span>
                             </div>
                           </div>
 
-                          <div className="song-right">
-                            <span className="song-duration">
+                          <div className={styles["song-right"]}>
+                            <span className={styles["song-duration"]}>
                               {song.duration}
                             </span>
                           </div>
@@ -261,4 +263,4 @@ export default function FavoritePlaylistPage() {
       {currentSong && <PlayerControl />}
     </div>
   );
-} 
+}
