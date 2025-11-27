@@ -164,7 +164,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync(); 
         } 
 
-        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id)
+        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id, int userId)
         {
             return await _dbContext.Song
                 .AsNoTracking()
@@ -179,7 +179,9 @@ namespace PSMusic.Server.Repositories.Implementations
                     SingerUrl = s.SongArtists
                         .Select(sa => sa.Artist.AvatarUrl)
                         .FirstOrDefault() ?? "",
-                    Likes = s.Favorites.Count(f => f.IsFavorite)
+                    Likes = s.Favorites.Count(f => f.IsFavorite),
+                    IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
+                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId)
                 })
                 .FirstOrDefaultAsync();
         }

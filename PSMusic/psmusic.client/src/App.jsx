@@ -31,9 +31,9 @@ const App = () => {
                 <Route path="genres" element={<ExploreCategoriesPage />} />
                 <Route path="charts" element={<TopChartsPage />} />
                 <Route path="for-you" element={<div>Dành cho bạn</div>} />
-                <Route path="favorites" element={<div>Bài Hát Yêu Thích</div>} />
+                {/* <Route path="favorites" element={<div>Bài Hát Yêu Thích</div>} /> */}
                 <Route path="recent" element={<div>Nghe Gần Đây</div>} />
-                <Route path="/song/:id" element={<SongViewPage />} />
+                <Route path="/song/:songId" element={<SongViewPage />} />
                 <Route path="/artist/:id" element={<ArtistPage />} />
                 <Route path="/category/:id" element={<CategoryPage />} />
                 <Route path="artist/:id" element={<ArtistPage />} />

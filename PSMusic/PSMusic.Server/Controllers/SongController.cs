@@ -112,7 +112,12 @@ namespace PSMusic.Server.Controllers
         [Authorize]
         public async Task<ActionResult> GetSongForPlayer(int songId)
         {
-            var song = await _songService.GetSongForPlayer(songId);
+            var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = userId_str != null ? int.Parse(userId_str) : 0 ;    // Default 0 if userId is not provided
+
+            if (userId <= 0) return BadRequest(new { message = "UserId không hợp lệ" });
+
+            var song = await _songService.GetSongForPlayer(songId, userId);
             return Ok(song);
         }
 

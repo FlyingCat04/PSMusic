@@ -175,11 +175,11 @@ namespace PSMusic.Server.Services.Implementations
         //        // Total = pagedResults.Count + (TopResult != null ? 1 : 0)
         //    };
         //}
-        public async Task<PagedResult<SongSearchDetailDTO>> GetPopularSongs(int page, int size)
+        public async Task<PagedResult<SongDTO>> GetPopularSongs(int page, int size)
         {
             var query = _songRepository.GetSongsWithStreamsLast7Days();
 
-            var songs = query.Select(s => _mapper.Map<SongSearchDetailDTO>(s));
+            var songs = query.Select(s => _mapper.Map<SongDTO>(s));
             return await songs.PaginateAsync(page, size);
         }
 
@@ -253,12 +253,12 @@ namespace PSMusic.Server.Services.Implementations
             return result.Paginate(page, size);
         }
 
-        public async Task<PagedResult<SongSearchDetailDTO>?> GetPopularSongWithCategory(int id, int page, int size)
+        public async Task<PagedResult<SongDTO>?> GetPopularSongWithCategory(int id, int page, int size)
         {
             var results = await _songRepository.GetPopularSongWithCategory(id);
             if (results == null) return null;
 
-            var songs = results.Select(s => _mapper.Map<SongSearchDetailDTO>(s));
+            var songs = results.Select(s => _mapper.Map<SongDTO>(s));
             return songs.Paginate(page, size);
         }
 
@@ -274,9 +274,9 @@ namespace PSMusic.Server.Services.Implementations
             return _mapper.Map<List<RelatedSongDTO>>(songEntities);
         }
 
-        public async Task<SongPlayerDTO?> GetSongForPlayer(int id)
+        public async Task<SongPlayerDTO?> GetSongForPlayer(int id, int userId)
         {
-            var result = await _songRepository.GetSongForPlayer_DTO(id);
+            var result = await _songRepository.GetSongForPlayer_DTO(id, userId);
             return result;
         }
 

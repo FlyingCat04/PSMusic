@@ -1,188 +1,271 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Heart, Star, Download } from "lucide-react";
-import "./SongViewPage.css";
-import { Link } from "react-router-dom";
-
-const MOCK_SONG = {
-  id: 1,
-  title: "Em Thua Cô Ta (ACV Remix #2)",
-  artist: "Huyền Trang, tlinh",
-  imageUrl: "https://picsum.photos/seed/songdetail/400/400",
-  favorite: 33871,
-  reviews: 1124,
-  isFavorited: true,
-  isReviewed: false,
-  lyricUrl:
-    "https://psmusic.s3.ap-southeast-2.amazonaws.com/songs/LRC/Ch%E1%BB%9D%20Anh%20Nh%C3%A9%20-%20Ho%C3%A0ng%20D%C5%A9ng.lrc",
-};
-
-const ARTISTS = [
-  {
-    name: "tlinh",
-    avatarURL: "https://picsum.photos/seed/tlinh/200",
-  },
-  {
-    name: "HIEUTHUHAI",
-    avatarURL: "https://picsum.photos/seed/hieu/200",
-  },
-];
-
-const OTHER_SONGS_BY_ARTIST = [
-  {
-    id: 1,
-    title: "Chăm Hoa",
-    imageUrl: "https://picsum.photos/seed/song1/100",
-    duration: "03:31",
-  },
-  {
-    id: 2,
-    title: "Waiting For You",
-    imageUrl: "https://picsum.photos/seed/song2/100",
-    duration: "04:25",
-  },
-  {
-    id: 3,
-    title: "Em Xinh",
-    imageUrl: "https://picsum.photos/seed/song3/100",
-    duration: "03:03",
-  },
-  {
-    id: 4,
-    title: "Em Là",
-    imageUrl: "https://picsum.photos/seed/song4/100",
-    duration: "03:17",
-  },
-];
+import styles from "./SongViewPage.module.css";
+import PlayerControl from "../../components/PlayerControl/PlayerControl";
+import { usePlayer } from "../../contexts/PlayerContext";
+import axiosInstance from "../../services/axiosInstance";
 
 export default function SongViewPage() {
-  const [showFull, setShowFull] = useState(false);
+  const { songId } = useParams();
 
-  const [isFavorited, setIsFavorited] = useState(MOCK_SONG.isFavorited);
-  const [isReviewed, setIsReviewed] = useState(MOCK_SONG.isReviewed);
+  const [songDetail, setSongDetail] = useState(null);
+  const [otherSongs, setOtherSongs] = useState([]);
+  const [relatedArtists, setRelatedArtists] = useState([]);
+  const [lyrics, setLyrics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showFullLyrics, setShowFullLyrics] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const lyricsRef = useRef(null);
+  const { playSong, currentTime, currentSong } = usePlayer();
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isReviewed, setIsReviewed] = useState(false);
+  const navigate = useNavigate();
 
-  const [lyrics, setLyrics] = useState("");
   useEffect(() => {
-    const fetchLyrics = async () => {
+    const fetchSongData = async () => {
       try {
-        const res = await fetch(MOCK_SONG.lyricUrl);
-        let text = await res.text();
+        setLoading(true);
 
-        const cleaned = text.replace(/\[\d{1,2}:\d{2}(?:\.\d{1,2})?\]/g, "");
+        const resDetail = await axiosInstance.get(`/song/${songId}/detail`, {
+          params: { userId: 1 },
+        });
 
-        setLyrics(cleaned.trim());
+        const song = resDetail.data;
+        setSongDetail(song);
+        setIsFavorited(song.isFavorited);
+        setIsReviewed(song.isReviewed);
+
+        const resOther = await axiosInstance.get(`/song/${song.id}/related`);
+        let related = resOther.data || [];
+
+        const formatTime = (sec) => {
+          if (!sec) return "00:00";
+          const m = Math.floor(sec / 60);
+          const s = Math.floor(sec % 60);
+          return `${m.toString().padStart(2, "0")}:${s
+            .toString()
+            .padStart(2, "0")}`;
+        };
+
+        const withDuration = await Promise.all(
+          related.map(async (item) => {
+            if (!item.mp3Url) return { ...item, duration: "00:00" };
+
+            return new Promise((resolve) => {
+              const audio = new Audio(item.mp3Url);
+              audio.addEventListener("loadedmetadata", () => {
+                resolve({
+                  ...item,
+                  duration: formatTime(audio.duration),
+                });
+              });
+
+              audio.addEventListener("error", () =>
+                resolve({
+                  ...item,
+                  duration: "00:00",
+                })
+              );
+            });
+          })
+        );
+
+        setOtherSongs(withDuration);
+
+        const resArtists = await axiosInstance.get(`/artist/${songId}/artists`);
+        setRelatedArtists(resArtists.data || []);
+
+        if (song.lyricUrl) {
+          const resLyric = await fetch(song.lyricUrl);
+          const text = await resLyric.text();
+
+          const parsed = text
+            .split("\n")
+            .map((line) => {
+              const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+              if (!match) return null;
+              const minutes = parseInt(match[1], 10);
+              const seconds = parseFloat(match[2]);
+              return { time: minutes * 60 + seconds, text: match[3].trim() };
+            })
+            .filter(Boolean);
+
+          setLyrics(parsed);
+        }
       } catch (err) {
-        console.error("Lỗi tải lyric:", err);
-        setLyrics("Không thể tải lời bài hát.");
+        console.error("Lỗi khi tải dữ liệu:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchLyrics();
-  }, []);
+    fetchSongData();
+  }, [songId]);
 
-  const LIMIT = 160;
-  const isLong = lyrics.length > LIMIT;
-  const text = showFull
-    ? lyrics
-    : lyrics.slice(0, LIMIT) + (isLong ? "..." : "");
+  const handleDownloadSong = () => {
+    if (!songDetail || !songDetail.audioUrl) return;
+
+    try {
+      setDownloading(true);
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = songDetail.audioUrl;
+      downloadLink.download = `${songDetail.title}.mp3`.replace(
+        /[^a-zA-Z0-9._-]/g,
+        "_"
+      );
+      downloadLink.style.display = "none";
+
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } catch (error) {
+      console.error("Lỗi khi tải bài hát:", error);
+      alert("Có lỗi xảy ra khi tải bài hát");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  if (loading) return <p>Đang tải...</p>;
+  if (!songDetail) return <p>Không tìm thấy bài hát</p>;
 
   return (
-    <div className="song-view-container">
-      <div className="song-header">
-        <img src={MOCK_SONG.imageUrl} alt="" className="song-cover" />
+    <div className={styles["song-view-container"]}>
+      <div className={styles["song-header"]}>
+        <img src={songDetail.imageUrl} alt="" className={styles["song-cover"]} />
 
-        <div className="song-info">
-          <h1 className="song-title">{MOCK_SONG.title}</h1>
-          <p className="song-artist">{MOCK_SONG.artist}</p>
+        <div className={styles["song-info"]}>
+          <h1 className={styles["song-title"]}>{songDetail.title}</h1>
+          <p className={styles["song-artist"]}>{songDetail.artist}</p>
 
-          <div className="action-buttons">
-            <div
-              className="icon-button"
-              onClick={() => setIsFavorited(!isFavorited)}
-            >
+          <div className={styles["action-buttons"]}>
+            <div className={styles["icon-button"]}>
               <Heart
                 size={20}
                 color="white"
                 fill={isFavorited ? "white" : "transparent"}
               />
-              {MOCK_SONG.favorite} Favorite
+              {songDetail.favorite} Favorite
             </div>
 
-            <div
-              className="icon-button"
-              onClick={() => setIsReviewed(!isReviewed)}
-            >
+            <div className={styles["icon-button"]}>
               <Star
                 size={20}
                 color="white"
                 fill={isReviewed ? "white" : "transparent"}
               />
-              {MOCK_SONG.reviews} Review
+              {songDetail.reviews} Review
             </div>
           </div>
 
-          <div className="play-buttons">
-            <button className="btn-play"><Link to='/player/1'>Phát</Link></button>
-            <button className="btn-download">
-              <Download /> Tải về
+          <div className={styles["play-buttons"]}>
+            <button className={styles["btn-play"]} onClick={() => playSong(songDetail)}>
+              Phát
+            </button>
+
+            <button
+              className={styles["btn-download"]}
+              onClick={handleDownloadSong}
+              disabled={downloading}
+            >
+              <Download />
+              {downloading ? "Đang tải..." : "Tải về"}
             </button>
           </div>
         </div>
       </div>
 
-      <div className="lyrics-artists-wrapper">
-        <div className="lyrics-card">
-          <div className="lyrics-header">
+      <div className={styles["lyrics-artists-wrapper"]}>
+        <div className={styles["lyrics-card"]}>
+          <div className={styles["lyrics-header"]}>
             <span>Lyrics</span>
           </div>
           <hr />
 
-          <div className="lyrics-content">
-            {text.split("\n").map((line, idx) => (
-              <p key={idx}>{line}</p>
-            ))}
+          <div
+            className={`${styles["lyrics-content-scroller"]} ${
+              showFullLyrics ? styles["lyrics-expanded"] : styles["lyrics-collapsed"]
+            }`}
+            ref={lyricsRef}
+          >
+            {lyrics.length ? (
+              lyrics.map((line, index) => {
+                const isCurrent =
+                  line.time <= currentTime + 0.15 &&
+                  (index === lyrics.length - 1 ||
+                    lyrics[index + 1].time > currentTime);
+
+                return (
+                  <p
+                    key={index}
+                    className={`${styles["lyric-line"]} ${
+                      isCurrent ? styles["active-lyric"] : ""
+                    }`}
+                  >
+                    {line.text || "\u00A0"}
+                  </p>
+                );
+              })
+            ) : (
+              <p>Đang tải lời bài hát...</p>
+            )}
           </div>
 
-          {isLong && (
+          {lyrics.length > 0 && (
             <button
-              className="lyrics-toggle-btn"
-              onClick={() => setShowFull(!showFull)}
+              className={styles["btn-toggle-lyrics"]}
+              onClick={() => setShowFullLyrics(!showFullLyrics)}
             >
-              {showFull ? "Ẩn bớt ▲" : "Xem thêm ▼"}
+              {showFullLyrics ? "Thu gọn" : "Hiển thị thêm"}
             </button>
           )}
         </div>
 
-        <div className="artist-list">
+        <div className={styles["artist-list"]}>
           <h2>Nghệ sĩ</h2>
 
-          {ARTISTS.map((art, index) => (
-            <div key={index} className="artist-row">
-              <img src={art.avatarURL} className="artist-avatar" />
-
-              <div className="artist-info">
-                <p className="artist-name">{art.name}</p>
+          {relatedArtists.length > 0 ? (
+            relatedArtists.map((artist) => (
+              <div key={artist.id} className={styles["artist-row"]}>
+                <img src={artist.avatarUrl} className={styles["artist-avatar"]} />
+                <div className={styles["artist-info"]}>
+                  <p className={styles["artist-name"]}>{artist.name}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>Không có nghệ sĩ liên quan</p>
+          )}
         </div>
       </div>
 
-      <div className="other-songs-section">
-        <h2>Bài hát khác của {ARTISTS[0].name}</h2>
+      <div className={styles["other-songs-section"]}>
+        <h2>Bài hát khác của {songDetail.artist.split(",")[0]}</h2>
 
-        {OTHER_SONGS_BY_ARTIST.map((song) => (
-          <div key={song.id} className="song-row">
-            <div className="song-left">
-              <img src={song.imageUrl} className="song-thumbnail" />
-              <span className="song-title-text">{song.title}</span>
+        {otherSongs.map((s) => (
+          <div
+            key={s.id}
+            className={styles["song-row"]}
+            onClick={() => navigate(`/song/${s.id}`)}
+            style={{ cursor: "pointer" }}
+          >
+            <div className={styles["song-left"]}>
+              {s.imageUrl && (
+                <img src={s.imageUrl} className={styles["song-thumbnail"]} />
+              )}
+              <span className={styles["song-title-text"]}>{s.title}</span>
             </div>
 
-            <div className="song-right">
-              <span className="song-duration">{song.duration}</span>
+            <div className={styles["song-right"]}>
+              <span className={styles["song-duration"]}>{s.duration || "00:00"}</span>
             </div>
           </div>
         ))}
       </div>
+
+      {currentSong && <PlayerControl />}
     </div>
   );
 }

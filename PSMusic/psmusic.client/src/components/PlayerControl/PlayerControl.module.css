@@ -1,80 +1,6 @@
-.music-player-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 80px 20px;
-  background-color: #121212;
-  color: white;
-  min-height: 100vh;
-}
-
-.main-view-new-layout {
-  display: flex;
-  gap: 40px;
-  width: 100%;
-  max-width: 1000px;
-  margin-bottom: 50px;
-}
-
-.cover-container {
-  flex-shrink: 0;
-  width: 400px;
-  max-width: 40%;
-}
-
-.cover-image {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 15px;
-  box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
-}
-
-.lyrics-display-area {
-  max-height: 450px;
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-.lyrics-display-area::-webkit-scrollbar {
-  width: 8px;
-}
-
-.lyrics-display-area::-webkit-scrollbar-thumb {
-  background-color: #555;
-  border-radius: 4px;
-}
-
-.lyric-line {
-  margin: 15px 0;
-  font-size: 24px;
-  font-weight: 500;
-  opacity: 0.6;
-  transition:
-    opacity 0.3s,
-    font-size 0.3s;
-  line-height: 1.4;
-}
-
-.active-lyric {
-  opacity: 1;
-  font-size: 32px;
-  font-weight: 700;
-  color: #ff5252;
-}
-
-.no-lyrics {
-  font-size: 18px;
-  opacity: 0.5;
-  text-align: center;
-  padding-top: 50px;
-}
-
 .player-controls-new {
   position: fixed;
   bottom: 0;
-  /*  left: 240px;*/
   right: 0;
   background-color: #222;
   border-top: 1px solid #333;
@@ -83,7 +9,6 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  /*  width: calc(100% - 240px);*/
   width: 100%;
   box-sizing: border-box;
   color: white;
@@ -316,4 +241,32 @@
 
 .repeat-btn[data-repeat-mode="Repeat One"]::after {
   content: "Repeat One";
+}
+
+.rating-btn.rated {
+  color: #fff;
+}
+
+.rating-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
