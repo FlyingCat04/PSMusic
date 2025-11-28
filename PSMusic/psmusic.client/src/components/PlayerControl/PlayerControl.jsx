@@ -224,9 +224,15 @@ export default function PlayerControl() {
     if (audioRef.current) audioRef.current.currentTime = time;
   };
 
-  const formatArtists = (artists) => {
-    if (Array.isArray(artists)) return artists.join(", ");
-    return artists || "";
+  const formatArtists = (artists, maxLength = 15) => {
+    //if (Array.isArray(artists)) return artists.join(", ");
+    //return artists || "";
+    if (!artists) return "";
+    const formatedArtist = artists.join(", ");
+    if (formatedArtist.length > maxLength) {
+      return formatedArtist.slice(0, maxLength) + "...";
+    }
+    return formatedArtist;
   };
 
   const formatSongTitle = (title, maxLength = 25) => {
@@ -258,7 +264,7 @@ export default function PlayerControl() {
         <div className={styles["player-main-row"]}>
           <div className={styles["player-info-left"]}>
             <img
-              src={songToDisplay.singerUrl}
+              src={songToDisplay.coverUrl}
               alt={artistToDisplay}
               className={styles["singer-avatar"]}
             />
