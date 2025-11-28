@@ -117,7 +117,7 @@ const HomePage = () => {
         </div>
         <div className={styles['genre-grid']}>
           {categories.length > 0 ? (
-            categories.map((category) => (
+            categories.slice(0, 8).map((category) => (
               <GenreCard 
                 key={category.id || category.categoryId} 
                 genre={{
