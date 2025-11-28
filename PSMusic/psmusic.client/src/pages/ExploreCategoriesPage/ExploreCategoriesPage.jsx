@@ -16,7 +16,7 @@ const ExploreCategoriesPage = () => {
     const [categorySongs, setCategorySongs] = useState({});
 
     // Danh sách category IDs cần lấy songs
-    const FEATURED_CATEGORY_IDS = [1, 2, 8, 10, 26, 38, 39, 40];
+    const FEATURED_CATEGORY_IDS = [10, 26, 38, 1, 39, 2, 40];
 
     useEffect(() => {
         const cachedData = getExploreCategoriesData();
