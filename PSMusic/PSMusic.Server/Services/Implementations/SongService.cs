@@ -253,12 +253,12 @@ namespace PSMusic.Server.Services.Implementations
             return result.Paginate(page, size);
         }
 
-        public async Task<PagedResult<SongDTO>?> GetPopularSongWithCategory(int id, int page, int size)
+        public async Task<PagedResult<SongSearchDetailDTO>?> GetPopularSongWithCategory(int id, int page, int size)
         {
             var results = await _songRepository.GetPopularSongWithCategory(id);
             if (results == null) return null;
 
-            var songs = results.Select(s => _mapper.Map<SongDTO>(s));
+            var songs = results.Select(s => _mapper.Map<SongSearchDetailDTO>(s));
             return songs.Paginate(page, size);
         }
 
