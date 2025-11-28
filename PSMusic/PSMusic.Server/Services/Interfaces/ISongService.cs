@@ -10,7 +10,7 @@ namespace PSMusic.Server.Services.Interfaces
         Task<SongDetailDTO?> GetById(int id);
         Task<IEnumerable<SongSearchDetailDTO>?> SearchByName(string keyword);
         Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size);
-        Task<PagedResult<SongDTO>> GetPopularSongs(int page, int size);
+        Task<PagedResult<SongSearchDetailDTO>> GetPopularSongs(int page, int size);
         Task<IEnumerable<NextBatchSongDTO>> GetBatch(int size);
         Task<IEnumerable<SongDTO>?> GetByArtistId(int id);
         Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsMainArtistAsync(int id, int page, int size);
