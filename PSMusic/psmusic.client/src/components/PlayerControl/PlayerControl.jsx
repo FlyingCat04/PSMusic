@@ -10,6 +10,8 @@ export default function PlayerControl() {
   const navigate = useNavigate();
   const {
     currentSong,
+    playerData,
+    setPlayerData,
     isPlaying,
     togglePlay,
     currentTime,
@@ -25,93 +27,22 @@ export default function PlayerControl() {
     toggleRepeat,
   } = usePlayer();
 
-  const [songData, setSongData] = useState(null);
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [isRated, setIsRated] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [lastVolume, setLastVolume] = useState(0.5);
-  const [lyrics, setLyrics] = useState([]);
   const [updatingFavorite, setUpdatingFavorite] = useState(false);
 
-  const songToDisplay = songData || currentSong;
+  const songToDisplay = playerData || currentSong;
+  const isFavorited = !!playerData?.isFavorited;
+  const isRated = !!playerData?.isReviewed;
 
   useEffect(() => {
-    const fetchPlayerData = async () => {
-      if (!currentSong || !currentSong.id) {
-        setSongData(null);
-        setIsFavorited(false);
-        setIsRated(false);
-        return;
-      }
+    if (!playerData?.audioUrl || !audioRef.current) return;
 
-      try {
-        const res = await axiosInstance.get(`/song/${currentSong.id}/player`);
-
-        const data = res.data;
-        setSongData(data);
-        setIsFavorited(data.isFavorited || false);
-        setIsRated(data.isReviewed || false);
-
-        if (audioRef.current && data.audioUrl) {
-          if (audioRef.current.src !== data.audioUrl) {
-            audioRef.current.src = data.audioUrl;
-            if (isPlaying) {
-              audioRef.current
-                .play()
-                .catch((e) => console.error("Lỗi tự động phát:", e));
-            }
-          }
-        }
-
-        if (data.lyricUrl) {
-          const resLyric = await fetch(data.lyricUrl);
-          const text = await resLyric.text();
-
-          const parsed = text
-            .split("\n")
-            .map((line) => {
-              const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-              if (!match) return null;
-              const minutes = parseInt(match[1], 10);
-              const seconds = parseFloat(match[2]);
-              return {
-                time: minutes * 60 + seconds,
-                text: match[3].trim(),
-              };
-            })
-            .filter(Boolean);
-
-          setLyrics(parsed);
-        }
-      } catch (err) {
-        console.error("Lỗi tải player data:", err);
-        setSongData(null);
-        setIsFavorited(false);
-        setIsRated(false);
-      }
-    };
-
-    fetchPlayerData();
-  }, [currentSong, audioRef, isPlaying]);
-
-  useEffect(() => {
-    if (!isModalOpen && currentSong && currentSong.id) {
-      const refreshRatingStatus = async () => {
-        try {
-          const res = await axiosInstance.get(`/song/${currentSong.id}/player`);
-          const data = res.data;
-          setIsRated(data.isReviewed || false);
-          setIsFavorited(data.isFavorited || false);
-          console.log("🔄 Đã refresh trạng thái rating sau khi đóng modal");
-        } catch (err) {
-          console.error("Lỗi refresh rating status:", err);
-        }
-      };
-
-      refreshRatingStatus();
+    if (audioRef.current.src !== playerData.audioUrl) {
+      audioRef.current.src = playerData.audioUrl;
     }
-  }, [isModalOpen, currentSong]);
+  }, [playerData?.audioUrl]);
 
   const formatTime = (sec) => {
     if (!sec || isNaN(sec) || sec < 0) return "00:00";
@@ -121,12 +52,7 @@ export default function PlayerControl() {
   };
 
   const handlePlayPause = () => {
-    if (!audioRef.current || !songToDisplay) return;
-
-    if (!audioRef.current.src && songData && songData.audioUrl) {
-      audioRef.current.src = songData.audioUrl;
-    }
-
+    if (!audioRef.current || !playerData?.audioUrl) return;
     togglePlay();
   };
 
@@ -136,13 +62,11 @@ export default function PlayerControl() {
     try {
       setUpdatingFavorite(true);
 
-      const newFavoriteState = !isFavorited;
-      await axiosInstance.post(`/song/${currentSong.id}/favorite-toggle`, {
-        isFavorited: newFavoriteState,
-      });
+      await axiosInstance.post(`/song/${currentSong.id}/favorite-toggle`);
 
-      setIsFavorited(newFavoriteState);
-      console.log(`❤️ Favorite ${newFavoriteState ? "added" : "removed"}`);
+      setPlayerData((prev) =>
+        prev ? { ...prev, isFavorited: !prev.isFavorited } : prev
+      );
     } catch (err) {
       console.error("Lỗi toggle favorite:", err);
     } finally {
@@ -150,19 +74,8 @@ export default function PlayerControl() {
     }
   };
 
-  const toggleRating = async () => {
-    if (!currentSong?.id) return;
-
-    try {
-      const res = await axiosInstance.get(`/song/${currentSong.id}/player`);
-      const data = res.data;
-      setIsRated(data.isReviewed || false);
-
-      setIsModalOpen(true);
-    } catch (err) {
-      console.error("Lỗi refresh data trước khi mở modal:", err);
-      setIsModalOpen(true);
-    }
+  const toggleRating = () => {
+    setIsModalOpen(true);
   };
 
   const handleReviewSubmitted = (reviewData) => {
@@ -187,8 +100,6 @@ export default function PlayerControl() {
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
-
-      console.log("📥 Đang tải bài hát:", songToDisplay.title);
     } catch (error) {
       console.error("Lỗi khi tải bài hát:", error);
     }
@@ -272,7 +183,9 @@ export default function PlayerControl() {
               </span>
               <span className={styles["song-artist"]}>{artistToDisplay}</span>
             </div>
+          </div>
 
+          <div className={styles["control-buttons"]}>
             <div
               className={`${styles["icon-button"]} ${updatingFavorite ? styles["disabled"] : ""}`}
               onClick={toggleFavorite}
@@ -292,9 +205,6 @@ export default function PlayerControl() {
                 <div className={styles["loading-spinner"]}></div>
               )}
             </div>
-          </div>
-
-          <div className={styles["control-buttons"]}>
             <button
               className={`${styles["control-btn"]} ${styles["shuffle-btn"]} ${
                 shuffle ? styles["active"] : ""
@@ -308,10 +218,7 @@ export default function PlayerControl() {
               />
             </button>
 
-            <button
-              className={styles["control-btn prev-btn"]}
-              onClick={playPrevSong}
-            >
+            <button className={styles["control-btn"]} onClick={playPrevSong}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -364,10 +271,7 @@ export default function PlayerControl() {
               )}
             </button>
 
-            <button
-              className={styles["control-btn next-btn"]}
-              onClick={playNextSong}
-            >
+            <button className={styles["control-btn"]} onClick={playNextSong}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -410,55 +314,54 @@ export default function PlayerControl() {
           </div>
 
           <div className={styles["player-controls-right"]}>
-            <button
-              className={`${styles["control-btn"]} ${styles["rating-btn"]} ${
-                isRated ? styles["rated"] : ""
-              }`}
-              onClick={toggleRating}
-              disabled={!currentSong}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill={isRated ? "#fff" : "none"}
-                stroke={isRated ? "#fff" : "currentColor"}
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <div className={styles["right-controls-group"]}>
+              <button
+                className={`${styles["control-btn"]} ${styles["rating-btn"]} ${
+                  isRated ? styles["rated"] : ""
+                }`}
+                onClick={toggleRating}
+                disabled={!currentSong}
               >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill={isRated ? "#fff" : "none"}
+                  stroke={isRated ? "#fff" : "currentColor"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </button>
 
-            <button
-              className={styles["control-btn download-btn"]}
-              onClick={handleDownload}
-              disabled={!songToDisplay?.audioUrl}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <button
+                className={styles["control-btn"]}
+                onClick={handleDownload}
+                disabled={!songToDisplay?.audioUrl}
               >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </button>
+            </div>
 
             <div className={styles["volume-control-container"]}>
-              <button
-                className={styles["control-btn volume-btn"]}
-                onClick={toggleMute}
-              >
+              <button className={styles["control-btn"]} onClick={toggleMute}>
                 {isMuted || volume === 0 ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -504,6 +407,11 @@ export default function PlayerControl() {
                 value={volume}
                 onChange={handleVolumeChange}
                 className={styles["volume-range-input"]}
+                style={{
+                  background: `linear-gradient(to right, #fff ${volume * 100}%, #4d4d4d ${
+                    volume * 100
+                  }%)`,
+                }}
               />
             </div>
           </div>
@@ -521,6 +429,11 @@ export default function PlayerControl() {
             value={currentTime}
             onChange={handleSeek}
             className={styles["seek-range-input"]}
+            style={{
+              background: `linear-gradient(to right, #1db954 ${
+                (currentTime / (duration || 1)) * 100
+              }%, #4d4d4d ${(currentTime / (duration || 1)) * 100}%)`,
+            }}
           />
           <span className={styles["duration-display"]}>
             {formatTime(duration)}
