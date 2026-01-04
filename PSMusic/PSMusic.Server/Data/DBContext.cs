@@ -47,6 +47,8 @@ namespace PSMusic.Server.Data
                 entity.HasKey(entity => entity.Id);
                 entity.Property(entity => entity.Name).IsRequired();
                 entity.Ignore(entity => entity.Playlists);
+                entity.Property(entity => entity.Duration)
+                    .HasColumnType("interval");
             });
 
             modelBuilder.Entity<SongCategory>(entity => 

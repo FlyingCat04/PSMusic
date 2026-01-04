@@ -40,6 +40,8 @@ namespace PSMusic.Server.Models.DTO.Song
         public bool IsReviewed { get; set; } 
         public string LyricUrl { get; set; } = string.Empty;
         public string AudioUrl { get; set; } = string.Empty;
+        public TimeSpan Duration { get; set; }
+
     }
 
     public class SongPlayerDTO
@@ -53,7 +55,9 @@ namespace PSMusic.Server.Models.DTO.Song
         public string AudioUrl { get; set; } = string.Empty;    // Mp3Url
         public string LyricUrl { get; set; } = string.Empty;    // LrcUrl
         public bool IsFavorited { get; set; } 
-        public bool IsReviewed { get; set; }         
+        public bool IsReviewed { get; set; }    
+        public TimeSpan Duration { get; set; }
+
     }
 
 }
