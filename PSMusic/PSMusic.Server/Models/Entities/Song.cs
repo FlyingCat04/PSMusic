@@ -11,6 +11,8 @@ namespace PSMusic.Server.Models.Entities
         public string Mp3Url { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public TimeSpan? Duration { get; set; }
+
         public ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
         public ICollection<SongCategory> SongCategories { get; set; } = new List<SongCategory>();
         //public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
