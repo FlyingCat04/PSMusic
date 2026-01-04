@@ -39,39 +39,7 @@ export default function SongViewPage() {
         const resOther = await axiosInstance.get(`/song/${song.id}/related`);
         let related = resOther.data || [];
 
-        const formatTime = (sec) => {
-          if (!sec) return "00:00";
-          const m = Math.floor(sec / 60);
-          const s = Math.floor(sec % 60);
-          return `${m.toString().padStart(2, "0")}:${s
-            .toString()
-            .padStart(2, "0")}`;
-        };
-
-        const withDuration = await Promise.all(
-          related.map(async (item) => {
-            if (!item.mp3Url) return { ...item, duration: "00:00" };
-
-            return new Promise((resolve) => {
-              const audio = new Audio(item.mp3Url);
-              audio.addEventListener("loadedmetadata", () => {
-                resolve({
-                  ...item,
-                  duration: formatTime(audio.duration),
-                });
-              });
-
-              audio.addEventListener("error", () =>
-                resolve({
-                  ...item,
-                  duration: "00:00",
-                })
-              );
-            });
-          })
-        );
-
-        setOtherSongs(withDuration);
+        setOtherSongs(related);
 
         const resArtists = await axiosInstance.get(`/artist/${songId}/artists`);
         setRelatedArtists(resArtists.data || []);

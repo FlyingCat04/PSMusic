@@ -22,35 +22,7 @@ export default function FavoritePlaylistPage() {
 
         const fetchedSongs = resFavorited.data || [];
 
-        const formatTime = (sec) => {
-          if (!sec) return "00:00";
-          const m = Math.floor(sec / 60);
-          const s = Math.floor(sec % 60);
-          return `${m.toString().padStart(2, "0")}:${s
-            .toString()
-            .padStart(2, "0")}`;
-        };
-
-        const songsWithDuration = await Promise.all(
-          fetchedSongs.map(async (song) => {
-            if (!song.audioUrl) return { ...song, duration: "00:00" };
-
-            return new Promise((resolve) => {
-              const audio = new Audio(song.audioUrl);
-              audio.addEventListener("loadedmetadata", () => {
-                resolve({
-                  ...song,
-                  duration: formatTime(audio.duration),
-                });
-              });
-              audio.addEventListener("error", () => {
-                resolve({ ...song, duration: "00:00" });
-              });
-            });
-          })
-        );
-
-        setSongs(songsWithDuration);
+        setSongs(fetchedSongs);
       } catch (err) {
         console.error("Lỗi khi tải playlist yêu thích:", err);
       } finally {

@@ -11,6 +11,6 @@
         public int Likes { get; set; }
         public string AudioUrl { get; set; } = string.Empty;
         public string LyricUrl { get; set; } = string.Empty;
-        public TimeSpan Duration { get; set; }
+        public string Duration { get; set; } = "00:00";
     }
 }

@@ -14,7 +14,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public List<string> ArtistNames { get; set; } = new List<string>();
         //public List<int> CategoryIds { get; set; } = new List<int>();
         public List<string> CategoryNames { get; set; } = new List<string>();
-        public TimeSpan Duration { get; set; }
+        public string Duration { get; set; } = "00:00";
 
     }
 }

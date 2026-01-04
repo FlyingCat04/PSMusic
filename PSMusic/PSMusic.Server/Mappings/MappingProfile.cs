@@ -21,12 +21,18 @@ namespace PSMusic.Server.Mapping
                 .ForMember(dto => dto.ArtistNames,
                     opt => opt.MapFrom(e => e.SongArtists.Select(sa => sa.Artist.Name)))
                 .ForMember(dto => dto.CategoryNames,
-                    opt => opt.MapFrom(e => e.SongCategories.Select(sa => sa.Category.Name)));
+                    opt => opt.MapFrom(e => e.SongCategories.Select(sa => sa.Category.Name)))
+                .ForMember(dto => dto.Duration,
+                    opt => opt.MapFrom(src => src.Duration.HasValue ? src.Duration.Value.ToString(@"mm\:ss") : "00:00"));
+
             CreateMap<Song, SongDetailDTO>()
                 .ForMember(dto => dto.Artists,
                     opt => opt.Ignore())
                 .ForMember(dto => dto.Categories,
-                    opt => opt.Ignore());
+                    opt => opt.Ignore())
+                .ForMember(dto => dto.Duration,
+                    opt => opt.MapFrom(src => src.Duration.HasValue ? src.Duration.Value.ToString(@"mm\:ss") : "00:00"));
+
             CreateMap<Song, SongWithArtistRole>()
                 .ForMember(dto => dto.Type,
                     opt => opt.MapFrom((src, dest, destMember, context) =>
@@ -53,7 +59,10 @@ namespace PSMusic.Server.Mapping
                 .ForMember(dto => dto.AudioUrl,
                     opt => opt.MapFrom(e => e.Mp3Url))
                 .ForMember(dto => dto.LyricUrl,
-                    opt => opt.MapFrom(e => e.LrcUrl));
+                    opt => opt.MapFrom(e => e.LrcUrl))
+                .ForMember(dto => dto.Duration,
+                    opt => opt.MapFrom(src => src.Duration.HasValue ? src.Duration.Value.ToString(@"mm\:ss") : "00:00"));
+
             CreateMap<Song, SongSearchDetailDTO>()
                 .ForMember(dto => dto.Artists,
                     opt => opt.MapFrom(e => e.SongArtists.Select(sa => new PartialArtistDTO 
@@ -75,7 +84,8 @@ namespace PSMusic.Server.Mapping
             CreateMap<Song, RelatedSongDTO>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.AvatarUrl))
-                .ForMember(dest => dest.Mp3Url, opt => opt.MapFrom(src => src.Mp3Url));
+                .ForMember(dest => dest.Mp3Url, opt => opt.MapFrom(src => src.Mp3Url))
+                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.HasValue ? src.Duration.Value.ToString(@"mm\:ss") : "00:00"));
 
             // Map CreateRatingDTO -> Entity Rating
             CreateMap<CreateRatingDTO, Rating>()

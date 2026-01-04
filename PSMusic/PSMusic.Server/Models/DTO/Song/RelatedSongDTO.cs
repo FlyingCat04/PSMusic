@@ -6,7 +6,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public string Title { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
         public string Mp3Url { get; set; } = string.Empty;
-        public TimeSpan Duration { get; set; }
+        public string Duration { get; set; } = "00:00";
     }
 
     public class FavoriteSongDTO
@@ -17,6 +17,6 @@ namespace PSMusic.Server.Models.DTO.Song
         public string ImageUrl { get; set; } = string.Empty; // Map từ AvatarUrl
         public string LyricUrl { get; set; } = string.Empty;
         public string AudioUrl { get; set; } = string.Empty;
-        public TimeSpan Duration { get; set; }
+        public string Duration { get; set; } = "00:00";
     }
 }

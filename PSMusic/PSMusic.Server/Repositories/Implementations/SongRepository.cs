@@ -129,10 +129,10 @@ namespace PSMusic.Server.Repositories.Implementations
         }
         public async Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId)
         {
-            var songDto = await _dbContext.Song
+            var item = await _dbContext.Song
                 .Where(s => s.Id == songId)
-                .Select(s => new SongDetail2DTO {
-                    Id = s.Id,
+                .Select(s => new {
+                    s.Id,
                     Title = s.Name,
                     ImageUrl = s.AvatarUrl ?? "",
                     LyricUrl = s.LrcUrl ?? "", 
@@ -141,11 +141,26 @@ namespace PSMusic.Server.Repositories.Implementations
                     Favorite = s.Favorites.Count(f => f.IsFavorite),
                     Reviews = s.Ratings.Count(),
                     IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
-                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId)
+                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId),
+                    Duration = s.Duration
                 })
                 .FirstOrDefaultAsync();
 
-            return songDto;
+            if (item == null) return null;
+
+            return new SongDetail2DTO {
+                Id = item.Id,
+                Title = item.Title,
+                ImageUrl = item.ImageUrl,
+                LyricUrl = item.LyricUrl,
+                AudioUrl = item.AudioUrl,
+                Artist = item.Artist,
+                Favorite = item.Favorite,
+                Reviews = item.Reviews,
+                IsFavorited = item.IsFavorited,
+                IsReviewed = item.IsReviewed,
+                Duration = item.Duration.HasValue ? item.Duration.Value.ToString(@"mm\:ss") : "00:00"
+            };
         }
         
         public async Task<List<Song>> GetRelatedSongs(int songId)
@@ -166,11 +181,11 @@ namespace PSMusic.Server.Repositories.Implementations
 
         public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id, int userId)
         {
-            return await _dbContext.Song
+            var item = await _dbContext.Song
                 .AsNoTracking()
                 .Where(s => s.Id == id)
-                .Select(s => new SongPlayerDTO {
-                    Id = s.Id,
+                .Select(s => new {
+                    s.Id,
                     Title = s.Name,
                     CoverUrl = s.AvatarUrl ?? "",
                     AudioUrl = s.Mp3Url ?? "",
@@ -181,27 +196,57 @@ namespace PSMusic.Server.Repositories.Implementations
                         .FirstOrDefault() ?? "",
                     Likes = s.Favorites.Count(f => f.IsFavorite),
                     IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
-                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId)
+                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId),
+                    Duration = s.Duration
                 })
                 .FirstOrDefaultAsync();
+
+            if (item == null) return null;
+
+            return new SongPlayerDTO {
+                Id = item.Id,
+                Title = item.Title,
+                CoverUrl = item.CoverUrl,
+                AudioUrl = item.AudioUrl,
+                LyricUrl = item.LyricUrl,
+                Artist = item.Artist,
+                SingerUrl = item.SingerUrl,
+                Likes = item.Likes,
+                IsFavorited = item.IsFavorited,
+                IsReviewed = item.IsReviewed,
+                Duration = item.Duration.HasValue ? item.Duration.Value.ToString(@"mm\:ss") : "00:00"
+            };
         }
 
         public async Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId)
         {
-            return await _dbContext.Favorite
+            var songs = await _dbContext.Favorite
                 .AsNoTracking()
                 .Where(f => f.UserId == userId && f.IsFavorite)
                 .Select(f => f.Song) 
-                .Select(s => new FavoriteSongDTO 
+                .Select(s => new 
                 {
-                    Id = s.Id,
+                    s.Id,
                     Title = s.Name,
                     ImageUrl = s.AvatarUrl ?? "", 
                     LyricUrl = s.LrcUrl ?? "", 
                     AudioUrl = s.Mp3Url ?? "",
-                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name))
+                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
+                    Duration = s.Duration
                 })
                 .ToListAsync();
+
+            return songs.Select(s => new FavoriteSongDTO 
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    ImageUrl = s.ImageUrl, 
+                    LyricUrl = s.LyricUrl, 
+                    AudioUrl = s.AudioUrl,
+                    Artist = s.Artist,
+                    Duration = s.Duration.HasValue ? s.Duration.Value.ToString(@"mm\:ss") : "00:00"
+                })
+                .ToList();
         }
 
         public async Task<int> GetFavoriteCount(int songId)

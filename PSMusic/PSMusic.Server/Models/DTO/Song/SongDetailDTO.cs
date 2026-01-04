@@ -14,6 +14,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public string? AvatarUrl { get; set; } = string.Empty;
         public List<ArtistDTO> Artists { get; set; } = new List<ArtistDTO>();
         public List<CategoryDTO> Categories { get; set; } = new List<CategoryDTO>();
+        public string Duration { get; set; } = "00:00";
 
     }
 
@@ -40,7 +41,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public bool IsReviewed { get; set; } 
         public string LyricUrl { get; set; } = string.Empty;
         public string AudioUrl { get; set; } = string.Empty;
-        public TimeSpan Duration { get; set; }
+        public string Duration { get; set; } = "00:00";
 
     }
 
@@ -56,7 +57,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public string LyricUrl { get; set; } = string.Empty;    // LrcUrl
         public bool IsFavorited { get; set; } 
         public bool IsReviewed { get; set; }    
-        public TimeSpan Duration { get; set; }
+        public string Duration { get; set; } = "00:00";
 
     }
 
