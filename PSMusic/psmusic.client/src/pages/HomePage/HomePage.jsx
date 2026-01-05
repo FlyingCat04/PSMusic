@@ -106,7 +106,8 @@ const HomePage = () => {
 
   return (
     <div className={styles['home-main-content']}>
-      {/* Categories Section */}
+          {/* Categories Section */}
+      <div className="recommendSys"/>
       <section className={styles['content-section']}>
         <div className={styles['section-header']}>
           <h2 className={styles['section-title']}>Khám Phá Qua Thể Loại</h2>

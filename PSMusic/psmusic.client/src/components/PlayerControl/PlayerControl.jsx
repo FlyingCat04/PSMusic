@@ -430,7 +430,7 @@ export default function PlayerControl() {
             onChange={handleSeek}
             className={styles["seek-range-input"]}
             style={{
-              background: `linear-gradient(to right, #1db954 ${
+                background: `linear-gradient(to right, var(--primary-purple) ${
                 (currentTime / (duration || 1)) * 100
               }%, #4d4d4d ${(currentTime / (duration || 1)) * 100}%)`,
             }}
