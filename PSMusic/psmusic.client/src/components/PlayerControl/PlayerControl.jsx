@@ -80,6 +80,9 @@ export default function PlayerControl() {
 
   const handleReviewSubmitted = (reviewData) => {
     console.log("✅ Đánh giá đã được gửi:", reviewData);
+    setPlayerData((prev) =>
+      prev ? { ...prev, isReviewed: true } : prev
+    );
   };
 
   const handleDownload = () => {
