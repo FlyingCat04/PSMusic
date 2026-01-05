@@ -27,6 +27,7 @@ const RatingModal = ({
   songId,
   songTitle = "Bài Hát",
   isReviewed = false,
+  onReviewSubmitted,
 }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -135,6 +136,10 @@ const RatingModal = ({
       setReviews((prev) => [newReview, ...prev]);
 
       setSuccessMessage(`🎉 Đã gửi đánh giá ${rating} sao thành công!`);
+
+      if (onReviewSubmitted) {
+        onReviewSubmitted(savedReview);
+      }
 
       setRating(0);
       setComment("");
