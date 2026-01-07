@@ -72,15 +72,15 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                 />
                 
                 {/* Favorite Button - Top Right Corner - Only for songs */}
-                {type !== 'artist' && (
-                    <button 
-                        className={`${styles['favorite-button']} ${isHovered ? styles['show'] : ''}`}
-                        onClick={handleFavoriteClick}
-                        aria-label="Add to favorites"
-                    >
-                        <Heart size={20} />
-                    </button>
-                )}
+                {/*{type !== 'artist' && (*/}
+                {/*    <button */}
+                {/*        className={`${styles['favorite-button']} ${isHovered ? styles['show'] : ''}`}*/}
+                {/*        onClick={handleFavoriteClick}*/}
+                {/*        aria-label="Add to favorites"*/}
+                {/*    >*/}
+                {/*        <Heart size={20} />*/}
+                {/*    </button>*/}
+                {/*)}*/}
 
                 {/* Play Button - Center - Only for songs */}
                 {type !== 'artist' && (
