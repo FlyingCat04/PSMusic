@@ -314,3 +314,68 @@
 .btn-toggle-lyrics:hover {
   text-decoration: underline;
 }
+
+.tracklist {
+  width: 100%;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  padding: 16px 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.colIndex {
+  text-align: right;
+  padding-right: 8px;
+}
+
+.headerMain {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) auto;
+  column-gap: 20px;
+  align-items: center;
+}
+
+.colTitle {
+  padding-left: 64px;
+  white-space: nowrap;
+}
+
+.colArtist {
+  white-space: nowrap;
+  padding-left: 0px;
+}
+
+.colTime {
+  text-align: right;
+  padding-right: 15px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 16px;
+  padding: 0 16px 0 16px;
+}
+
+.row .colIndex {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.dragging {
+  opacity: 0.5;
+}

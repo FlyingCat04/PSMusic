@@ -1,11 +1,11 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { Play, Download } from "lucide-react";
+import { Play, Download, Clock3 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import axiosInstance from "../../services/axiosInstance";
 import styles from "./FavoriteSongsPage.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
-import ItemCardRow from "../../components/ItemCardRow/ItemCardRow";
+import SongRow from "../../components/SongRow/SongRow";
 
 export default function FavoritePlaylistPage() {
   const [songs, setSongs] = useState([]);
@@ -176,39 +176,59 @@ export default function FavoritePlaylistPage() {
       <div className={styles["other-songs-section"]}>
         <h2>Kéo thả để sắp xếp thứ tự phát</h2>
 
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="playlist">
-            {(provided) => (
-              <div
-                className={styles["song-list"]}
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {songs.map((song, index) => (
-                  <Draggable
-                    key={song.id}
-                    draggableId={song.id.toString()}
-                    index={index}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        className={`${styles["song-row"]} ${
-                          snapshot.isDragging ? styles["dragging"] : ""
-                        }`}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <ItemCardRow song={song} />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
+        <div className={styles["tracklist"]}>
+          {/* HEADER */}
+          <div className={styles["header"]}>
+            <div className={styles["colIndex"]}>#</div>
+            <div className={styles["headerMain"]}>
+              <div className={styles["colTitle"]}>Tên bài hát</div>
+              <div className={styles["colArtist"]}>Nghệ sĩ</div>
+              <div className={styles["colTime"]}>
+                <Clock3 size={16} />
               </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+            </div>
+          </div>
+
+          {/* BODY */}
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="playlist">
+              {(provided) => (
+                <div
+                  className={styles["body"]}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {songs.map((song, index) => (
+                    <Draggable
+                      key={song.id}
+                      draggableId={song.id.toString()}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          className={`${styles["row"]} ${
+                            snapshot.isDragging ? styles["dragging"] : ""
+                          }`}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <div className={styles["colIndex"]}>{index + 1}</div>
+                          <SongRow 
+                            item={song} 
+                            onPlay={() => handlePlaySong(song, index)}
+                            activeTab="Bài hát"
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </div>
       </div>
 
       {currentSong && <PlayerControl />}

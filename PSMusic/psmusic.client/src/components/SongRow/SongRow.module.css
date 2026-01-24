@@ -388,7 +388,7 @@
 }
 
 .sr-title-songtab {
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
