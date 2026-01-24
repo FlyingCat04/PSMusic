@@ -44,13 +44,36 @@ namespace PSMusic.Server.Controllers
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None
+                    Secure = true, // Set to true in production
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddMinutes(10080) // 7 days
                 };
-                Response.Cookies.Append("AccessToken", result.Token, cookieOptions);
-                return Ok(new { result.IsSuccess, result.Message });
+                if (result.RefreshToken != null)
+                {
+                    Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
+                }
+                
+                return Ok(new { result.IsSuccess, result.Message, result.Token });
             }
             else return BadRequest(new { result.IsSuccess, result.Message });
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var refreshToken = Request.Cookies["RefreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Ok(new { IsSuccess = false, Message = "Refresh token không tìm thấy" });
+            }
+
+            var result = await _authService.Refresh(refreshToken);
+            if (result.IsSuccess)
+            {
+                return Ok(new { result.IsSuccess, result.Message, result.Token });
+            }
+            
+            return Ok(new { result.IsSuccess, result.Message });
         }
 
         [HttpGet("me")]
@@ -74,15 +97,26 @@ namespace PSMusic.Server.Controllers
         }
 
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null) return Unauthorized();
+
+            var user = await _userService.GetUserById(int.Parse(userIdClaim));
+            if (user == null) return Unauthorized();
+
+            var refreshToken = Request.Cookies["RefreshToken"];
+
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
             };
+
             Response.Cookies.Delete("AccessToken", cookieOptions);
+            Response.Cookies.Delete("RefreshToken", cookieOptions);
             return Ok(new { IsSuccess = true, Message = "Đăng xuất thành công" });
         }
     }

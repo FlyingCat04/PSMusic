@@ -18,7 +18,7 @@ namespace PSMusic.Server.Controllers
 
         // GET api/category/popular?page=1&size=10
         [HttpGet("popular")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetPopularCategories(int page = 1, int size = 10)
         {
             var popularCategories = await _categoryService.GetPopularCategories(page, size);

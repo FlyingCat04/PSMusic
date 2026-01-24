@@ -22,7 +22,7 @@ namespace PSMusic.Server.Controllers
         // GET api/song?page=1&size=20
         // min size of a page is 10 elements
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetAll(int page = 1, int size = 10)
         {
             var result = await _songService.GetAll(page, size);
@@ -40,7 +40,7 @@ namespace PSMusic.Server.Controllers
 
         // GET api/song/popular?page=1&size=10
         [HttpGet("popular")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetPopularSong(int page = 1, int size = 10)
         {
             var popularSongs = await _songService.GetPopularSongs(page, size);
@@ -100,7 +100,7 @@ namespace PSMusic.Server.Controllers
 
         // GET: api/song/1/related
         [HttpGet("{id}/related")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> GetRelatedSongs(int id)
         {
             var songs = await _songService.GetRelatedSongs(id);

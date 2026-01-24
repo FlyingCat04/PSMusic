@@ -7,5 +7,6 @@ namespace PSMusic.Server.Services.Interfaces
     {
         Task<AuthResDTO> Login(AuthReqDTO user);
         Task<AuthResDTO> Register(CreateUserDTO user);
+        Task<AuthResDTO> Refresh(string refreshToken);
     }
 }

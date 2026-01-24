@@ -8,7 +8,6 @@ const authService = {
                 username,
                 password
             });
-            console.log(res);
             return res.data;
         } catch (error) {
             console.log(error.response);
@@ -30,7 +29,9 @@ const authService = {
             if (res.status === 200 && res.data) return { isSuccess: true, data: res.data };
             throw new Error("Không thể lấy thông tin người dùng");
         } catch (error) {
-            console.error("Get current user error:", error);
+            if (error.response?.status !== 401) {
+                console.error("Get current user error:", error);
+            }
 
             if (error.response?.status === 401) {
                 throw new Error("Chưa đăng nhập hoặc phiên đăng nhập đã hết hạn");
@@ -65,6 +66,21 @@ const authService = {
                 isSuccess: false,
                 message: error.response.data?.message || "Đăng ký thất bại"
             }
+        }
+    },
+
+    async refresh() {
+        try {
+            const res = await axiosInstance.post("/auth/refresh");
+            if (res.status === 200 && res.data) return res.data;
+        } catch (error) {
+            if (error.response?.status !== 401) {
+                console.error("Refresh token error:", error);
+            }
+            return {
+                isSuccess: false,
+                message: "Không thể làm mới phiên đăng nhập"
+            };
         }
     }
 }

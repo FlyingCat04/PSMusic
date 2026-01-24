@@ -1,10 +1,12 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useRef, useLayoutEffect } from "react";
 import axiosInstance from "../services/axiosInstance";
 import authService from "../services/authService";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({
     user: null,
     loading: true,
+    accessToken: null,
     login: () => { },
     logout: () => { },
 });
@@ -12,10 +14,58 @@ const AuthContext = createContext({
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [accessToken, setAccessToken] = useState(null);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const isRefreshing = useRef(false);
+    const failedQueue = useRef([]);
+
+    const processQueue = (error, token = null) => {
+        failedQueue.current.forEach((prom) => {
+            if (error) {
+                prom.reject(error);
+            } else {
+                prom.resolve(token);
+            }
+        });
+        failedQueue.current = [];
+    };
+
+    // useEffect(() => {
+    //     if (location.pathname.startsWith("/auth")) {
+    //         setLoading(false);
+    //         return;
+    //     }
+    //     checkAuth();
+    // }, [location.pathname]);
 
     useEffect(() => {
-        checkAuth();
+        const initializeAuth = async () => {
+            try {
+                const res = await authService.refresh();
+                if (res.isSuccess && res.token) {
+                    const newToken = res.token;
+                    setAccessToken(newToken);
+                    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+                    await checkAuth();
+                } else {
+                    setLoading(false);
+                }
+            } catch (error) {
+                setLoading(false);
+            }
+        };
+
+        initializeAuth();
     }, []);
+
+    useLayoutEffect(() => {
+        if (accessToken) {
+            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        } else {
+            delete axiosInstance.defaults.headers.common["Authorization"];
+        }
+    }, [accessToken]);
 
     const checkAuth = async () => {
         try {
@@ -24,7 +74,9 @@ const AuthProvider = ({ children }) => {
                 setUser(result.data);
             }
         } catch (error) {
-            console.error("Auth check failed:", error.message);
+            if (error.message !== "Chưa đăng nhập hoặc phiên đăng nhập đã hết hạn") {
+                console.error("Auth check failed:", error.message);
+            }
             setUser(null);
         } finally {
             setLoading(false);
@@ -35,6 +87,9 @@ const AuthProvider = ({ children }) => {
         const result = await authService.login(username, password);
         
         if (result.isSuccess) {
+            const token = result.token;
+            setAccessToken(token);
+            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             await checkAuth();
         }
         
@@ -44,15 +99,81 @@ const AuthProvider = ({ children }) => {
     const logout = async () => {
         await authService.logout();
         setUser(null);
+        setAccessToken(null);
+        delete axiosInstance.defaults.headers.common["Authorization"];
+        navigate("/discover");
     }
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     const interceptor = axiosInstance.interceptors.response.use(
+    //         (response) => response,
+    //         async (error) => {
+    //             if (error.response?.status === 401) {
+    //                 console.warn("Cần đăng nhập!!");
+    //             }
+    //             return Promise.reject(error);
+    //         }
+    //     );
+
+    //     return () => {
+    //         axiosInstance.interceptors.response.eject(interceptor);
+    //     };
+    // }, []);
+
+    useLayoutEffect(() => {
         const interceptor = axiosInstance.interceptors.response.use(
             (response) => response,
             async (error) => {
-                if (error.response?.status === 401) {
-                    console.warn("Cần đăng nhập!!");
+                const originalRequest = error.config;
+
+                if (originalRequest.url.includes("/refresh")) {
+                    return Promise.reject(error);
                 }
+
+                if (error.response?.status === 401 && !originalRequest._retry) {
+                    
+                    if (isRefreshing.current) {
+                        return new Promise(function (resolve, reject) {
+                            failedQueue.current.push({ resolve, reject });
+                        })
+                            .then((token) => {
+                                originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                                return axiosInstance(originalRequest);
+                            })
+                            .catch((err) => {
+                                return Promise.reject(err);
+                            });
+                    }
+
+                    originalRequest._retry = true;
+                    isRefreshing.current = true;
+
+                    try {
+                        const res = await authService.refresh(); 
+                        
+                        if (res.isSuccess && res.token) {
+                            const newToken = res.token;
+                            
+                            setAccessToken(newToken);
+                            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+                            
+                            processQueue(null, newToken);
+                            
+                            originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+                            return axiosInstance(originalRequest);
+                        } else {
+                            throw new Error("Refresh failed logic");
+                        }
+                    } catch (refreshError) {
+                        console.error("Refresh Token API Error:", refreshError);
+                        processQueue(refreshError, null);
+                        logout(); 
+                        return Promise.reject(refreshError);
+                    } finally {
+                        isRefreshing.current = false;
+                    }
+                }
+
                 return Promise.reject(error);
             }
         );
@@ -63,7 +184,7 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, checkAuth }}>
+        <AuthContext.Provider value={{ user, loading, accessToken, login, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     )

@@ -20,7 +20,7 @@ export default function FavoritePlaylistPage() {
         setLoading(true);
 
         const resFavorited = await axiosInstance.get("/song/favorites");
-
+        
         const fetchedSongs = (resFavorited.data || []).map(song => ({
           ...song,
           artists: song.artist 

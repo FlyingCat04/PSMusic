@@ -22,7 +22,7 @@ namespace PSMusic.Server.Controllers
 
         // GET api/artist/popular?page=1&size=10
         [HttpGet("popular")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetPopularArtists(int page = 1, int size = 10)
         {
             var result = await _artistService.GetPopularArtists(page, size);
@@ -51,7 +51,7 @@ namespace PSMusic.Server.Controllers
         
         // GET: api/artist/1/artists
         [HttpGet("{id}/artists")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetSongArtists(int id)
         {
             var artists = await _artistService.GetArtistsBySongId(id);

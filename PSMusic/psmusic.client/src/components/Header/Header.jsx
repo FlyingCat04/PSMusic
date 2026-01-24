@@ -12,7 +12,7 @@ import { useAuth } from '../../hooks/useAuth';
 const Header = () => {
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const [isFocused, setIsFocused] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [loadingSuggest, setLoadingSuggest] = useState(false);
@@ -220,18 +220,22 @@ const Header = () => {
       <div className={styles['header-right']}>
         <SettingsDropdown />
         
-        <UserDropdown 
-          avatarURL={avatarURL}
-          avatarError={avatarError}
-          handleImageError={handleImageError}
-        />
-
-        {/* <button className={`${styles['header-button']} ${styles.primary}`}>
-          Đăng nhập
-        </button>
-        <button className={`${styles['header-button']} ${styles.secondary}`}>
-          <span>Tạo tài khoản</span>
-        </button> */}
+        {loading ? (
+          null
+        ) : user ? (
+          <UserDropdown 
+            avatarURL={avatarURL}
+            avatarError={avatarError}
+            handleImageError={handleImageError}
+          />
+        ) : (
+          <button 
+            className={`${styles['header-button']} ${styles.primary}`}
+            onClick={() => navigate('/auth')}
+          >
+            Đăng nhập
+          </button>
+        )}
 
       </div>
     </header>

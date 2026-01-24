@@ -20,7 +20,7 @@ namespace PSMusic.Server.Controllers
 
         // GET: api/rating/1/reviews
         [HttpGet("{songId}/reviews")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> GetSongReviews(int songId)
         {
             var reviews = await _ratingService.GetSongReviews(songId);
