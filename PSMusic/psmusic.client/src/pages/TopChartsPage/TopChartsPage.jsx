@@ -147,6 +147,7 @@ const TopChartsPage = () => {
     };
 
     return (
+        window.scrollTo(0, 0),
         <div className={styles["charts-main-content"]}>
             {/* 2 category đầu tiên - Dual Column */}
             {popularCategories.length > 0 && (

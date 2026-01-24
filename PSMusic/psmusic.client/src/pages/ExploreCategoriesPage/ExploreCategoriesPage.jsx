@@ -73,6 +73,7 @@ const ExploreCategoriesPage = () => {
 
     if (error) {
         return (
+            window.scrollTo(0, 0),
             <div className={styles['explore-main-content']}>
                 <div className={styles['error-container']}>
                     <p>{error}</p>
@@ -85,6 +86,7 @@ const ExploreCategoriesPage = () => {
     }
 
     return (
+        window.scrollTo(0, 0),
         <div className={styles['explore-main-content']}>
             {/* Categories Grid Section */}
             <section className={styles['content-section']}>

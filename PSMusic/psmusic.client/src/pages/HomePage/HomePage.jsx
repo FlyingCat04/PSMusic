@@ -93,6 +93,7 @@ const HomePage = () => {
 
   if (error) {
     return (
+      window.scrollTo(0, 0),
       <div className={styles['home-main-content']}>
         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
           <p>{error}</p>
@@ -105,6 +106,7 @@ const HomePage = () => {
   }
 
   return (
+    window.scrollTo(0, 0),
     <div className={styles['home-main-content']}>
       {/* Categories Section */}
       <section className={styles['content-section']}>
