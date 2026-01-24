@@ -15,6 +15,7 @@ const SettingsDropdown = () => {
             '--component-bg': '#2c1e23',
             '--component-hover-bg': '#3a272d',
             '--primary-purple': '#e94560',
+            '--primary-purple-hover': '#d7374e',
             '--text-primary': '#ffffff',
             '--text-secondary': '#d8d8d8',
             '--text-tertiary': '#b9b9b9',
@@ -29,6 +30,7 @@ const SettingsDropdown = () => {
             '--component-bg': '#281f34',
             '--component-hover-bg': '#342845',
             '--primary-purple': '#9b4de0',
+            '--primary-purple-hover': '#8a44d0',
             '--text-primary': '#ffffff',
             '--text-secondary': '#d8d8d8',
             '--text-tertiary': '#b9b9b9',
@@ -43,6 +45,7 @@ const SettingsDropdown = () => {
             '--component-bg': '#162a38',
             '--component-hover-bg': '#1b3444',
             '--primary-purple': '#00b4ff',
+            '--primary-purple-hover': '#00a0e6',
             '--text-primary': '#ffffff',
             '--text-secondary': '#d8d8d8',
             '--text-tertiary': '#b9b9b9',
@@ -57,6 +60,7 @@ const SettingsDropdown = () => {
             '--component-bg': '#1e2c25',
             '--component-hover-bg': '#274135',
             '--primary-purple': '#00c896',
+            '--primary-purple-hover': '#00b383',
             '--text-primary': '#ffffff',
             '--text-secondary': '#d8d8d8',
             '--text-tertiary': '#b9b9b9',
@@ -71,6 +75,7 @@ const SettingsDropdown = () => {
             '--component-bg': '#332b21',
             '--component-hover-bg': '#403528',
             '--primary-purple': '#f5b301',
+            '--primary-purple-hover': '#e6a001',
             '--text-primary': '#ffffff',
             '--text-secondary': '#d8d8d8',
             '--text-tertiary': '#b9b9b9',
@@ -85,6 +90,7 @@ const SettingsDropdown = () => {
             '--component-bg': '#1f2a2d',
             '--component-hover-bg': '#283438',
             '--primary-purple': '#00adb5',
+            '--primary-purple-hover': '#009aa0',
             '--text-primary': '#ffffff',
             '--text-secondary': '#d8d8d8',
             '--text-tertiary': '#b9b9b9',
@@ -151,30 +157,7 @@ const SettingsDropdown = () => {
             </button>
         
             {isSettingsOpen && (
-                <div className={styles['dropdown-menu']}>
-                    <div className={styles['dropdown-section']}>
-                        <div className={styles['dropdown-header']}>
-                            <Globe size={16} />
-                            <span>Ngôn ngữ</span>
-                        </div>
-                        <div className={styles['dropdown-options']}>
-                            <button 
-                                className={styles['dropdown-option']}
-                                onClick={() => handleLanguageChange('vi')}
-                            >
-                                Tiếng Việt
-                            </button>
-                            <button 
-                                className={styles['dropdown-option']}
-                                onClick={() => handleLanguageChange('en')}
-                            >
-                                English
-                            </button>
-                        </div>
-                </div>
-                
-                <div className={styles['dropdown-divider']}></div>
-                
+                <div className={styles['dropdown-menu']}>                
                 <div className={styles['dropdown-section']}>
                     <div className={styles['dropdown-header']}>
                         <Palette size={16} />

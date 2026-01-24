@@ -15,9 +15,6 @@ const ExploreCategoriesPage = () => {
     const [categories, setCategories] = useState([]);
     const [categorySongs, setCategorySongs] = useState({});
 
-    // Danh sách category IDs cần lấy songs
-    const FEATURED_CATEGORY_IDS = [10, 26, 38, 1, 39, 2, 40];
-
     useEffect(() => {
         const cachedData = getExploreCategoriesData();
         if (cachedData) {
@@ -33,19 +30,22 @@ const ExploreCategoriesPage = () => {
             setLoading(true);
             setError(null);
 
-            // Lấy tất cả categories
+            // Lấy danh sách popular categories
             const categoriesRes = await exploreCategoriesService.getAllCategories(1, 100);
             const allCategories = categoriesRes?.items || [];
 
-            // Lấy songs cho các category được chọn
-            const songPromises = FEATURED_CATEGORY_IDS.map(id =>
+            // Lấy IDs từ popular categories
+            const featuredCategoryIds = allCategories.map(cat => cat.id);
+
+            // Lấy songs cho các category phổ biến
+            const songPromises = featuredCategoryIds.map(id =>
                 exploreCategoriesService.getSongsByCategory(id, 1, 10)
             );
             const songsResults = await Promise.all(songPromises);
 
             // Map results to category IDs
             const songsMap = {};
-            FEATURED_CATEGORY_IDS.forEach((id, index) => {
+            featuredCategoryIds.forEach((id, index) => {
                 songsMap[id] = songsResults[index]?.items || [];
             });
 
@@ -84,12 +84,6 @@ const ExploreCategoriesPage = () => {
         );
     }
 
-    // Lấy tên category theo ID
-    const getCategoryName = (id) => {
-        const category = categories.find(cat => cat.id === id);
-        return category?.name || `Category ${id}`;
-    };
-
     return (
         <div className={styles['explore-main-content']}>
             {/* Categories Grid Section */}
@@ -114,15 +108,15 @@ const ExploreCategoriesPage = () => {
             </section>
 
             {/* Category Songs Sections */}
-            {FEATURED_CATEGORY_IDS.map((categoryId) => {
-                const songs = categorySongs[categoryId] || [];
+            {categories.map((category) => {
+                const songs = categorySongs[category.id] || [];
                 if (songs.length === 0) return null;
 
                 return (
-                    <section key={categoryId} className={styles['content-section']}>
+                    <section key={category.id} className={styles['content-section']}>
                         <div className={styles['section-header']}>
-                            <h2 className={styles['section-title']}>Khám phá thể loại {getCategoryName(categoryId)}</h2>
-                            <Link to={`/category/${categoryId}`} className={styles['see-all-link']}>
+                            <h2 className={styles['section-title']}>Khám phá thể loại {category.name}</h2>
+                            <Link to={`/category/${category.id}`} className={styles['see-all-link']}>
                                 Tất cả
                                 <ChevronRight />
                             </Link>

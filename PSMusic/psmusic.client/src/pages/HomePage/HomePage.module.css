@@ -1,7 +1,11 @@
+.recommendSys {
+    margin-bottom: 32px;
+}
+
 .home-main-content {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .content-section {

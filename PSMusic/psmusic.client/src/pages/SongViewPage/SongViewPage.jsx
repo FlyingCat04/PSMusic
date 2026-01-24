@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Heart, Star, Download } from "lucide-react";
+import { Heart, Star, Play, Download } from "lucide-react";
 import styles from "./SongViewPage.module.css";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import { usePlayer } from "../../contexts/PlayerContext";
@@ -105,8 +105,25 @@ export default function SongViewPage() {
         <img src={songDetail.imageUrl} alt="" className={styles["song-cover"]} />
 
         <div className={styles["song-info"]}>
+          <div className={styles["song-subtitle"]}>Bài hát</div>
           <h1 className={styles["song-title"]}>{songDetail.title}</h1>
-          <p className={styles["song-artist"]}>{songDetail.artist}</p>
+          <p className={styles["song-artist"]}>
+            {relatedArtists.length > 0 ? (
+              relatedArtists.map((artist, index) => (
+                <React.Fragment key={artist.id || index}>
+                  <span 
+                    className={styles["artist-link"]}
+                    onClick={() => navigate(`/artist/${artist.id}`)}
+                  >
+                    {artist.name}
+                  </span>
+                  {index < relatedArtists.length - 1 && <span>, </span>}
+                </React.Fragment>
+              ))
+            ) : (
+              songDetail.artist
+            )}
+          </p>
 
           <div className={styles["action-buttons"]}>
             <div className={styles["icon-button"]}>
@@ -115,7 +132,7 @@ export default function SongViewPage() {
                 color="white"
                 fill={isFavorited ? "white" : "transparent"}
               />
-              {songDetail.favorite} Favorite
+              {songDetail.favorite} {songDetail.favorite > 1 ? "Favorites" : "Favorite"}
             </div>
 
             <div className={styles["icon-button"]}>
@@ -124,13 +141,16 @@ export default function SongViewPage() {
                 color="white"
                 fill={isReviewed ? "white" : "transparent"}
               />
-              {songDetail.reviews} Review
+              {songDetail.reviews} {songDetail.reviews > 1 ? "Reviews" : "Review"}
             </div>
           </div>
 
           <div className={styles["play-buttons"]}>
-            <button className={styles["btn-play"]} onClick={() => playSong(songDetail)}>
-              Phát
+            <button 
+              className={styles["btn-play"]} 
+              onClick={() => playSong(songDetail)}
+            >
+              <Play className={styles["button-icon"]} />Phát
             </button>
 
             <button
@@ -138,7 +158,7 @@ export default function SongViewPage() {
               onClick={handleDownloadSong}
               disabled={downloading}
             >
-              <Download />
+              <Download className={styles["button-icon"]} />
               {downloading ? "Đang tải..." : "Tải về"}
             </button>
           </div>
@@ -196,7 +216,12 @@ export default function SongViewPage() {
 
           {relatedArtists.length > 0 ? (
             relatedArtists.map((artist) => (
-              <div key={artist.id} className={styles["artist-row"]}>
+              <div 
+                key={artist.id} 
+                className={styles["artist-row"]}
+                onClick={() => navigate(`/artist/${artist.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <img src={artist.avatarUrl} className={styles["artist-avatar"]} />
                 <div className={styles["artist-info"]}>
                   <p className={styles["artist-name"]}>{artist.name}</p>
@@ -217,7 +242,6 @@ export default function SongViewPage() {
             key={s.id}
             className={styles["song-row"]}
             onClick={() => navigate(`/song/${s.id}`)}
-            style={{ cursor: "pointer" }}
           >
             <div className={styles["song-left"]}>
               {s.imageUrl && (

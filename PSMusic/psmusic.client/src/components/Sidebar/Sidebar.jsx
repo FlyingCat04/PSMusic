@@ -9,11 +9,12 @@ const mainNavItems = [
   { icon: <LayoutGrid />, label: 'Chủ Đề & Thể Loại', path: '/genres' },
   { icon: <BarChart3 />, label: 'Bảng Xếp Hạng', path: '/charts' },
   { icon: <BookHeart />, label: 'Dành cho bạn', path: '/for-you' },
+  { icon: <Heart />, label: 'Bài Hát Yêu Thích', path: '/favorites' },
 ];
 
 const secondaryNavItems = [
-  { icon: <Heart />, label: 'Bài Hát Yêu Thích', path: '/favorites' },
-  { icon: <History />, label: 'Nghe Gần Đây', path: '/recent' },
+  // { icon: <Heart />, label: 'Bài Hát Yêu Thích', path: '/favorites' },
+  // { icon: <History />, label: 'Nghe Gần Đây', path: '/recent' },
 ];
 
 const Sidebar = () => {
@@ -46,7 +47,7 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className={styles['sidebar-nav-title']}>Thư Viện</div>
+      {/* <div className={styles['sidebar-nav-title']}>Thư Viện</div>
 
       <nav className={styles['sidebar-nav']}>
         <ul>
@@ -62,20 +63,7 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
-      </nav>
-
-      <div className={styles['sidebar-nav-title']}>Playlist</div>
-      {/* <div className={styles['login-prompt']}>
-        <p>Đăng nhập để khám phá playlist dành riêng cho bạn</p>
-        <button className={styles['login-button']}>
-          ĐĂNG NHẬP
-        </button>
-      </div> */}
-
-      {/* <button className={styles['add-playlist-button']}>
-        <Plus />
-        <span>Tạo playlist mới</span>
-      </button> */}
+      </nav> */}
     </aside>
   );
 };

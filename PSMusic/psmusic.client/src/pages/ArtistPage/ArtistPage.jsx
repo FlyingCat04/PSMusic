@@ -393,11 +393,7 @@ const ArtistPage = () => {
                         </h1>
 
                         <div className={styles.actions}>
-                            <button className={styles.playButton}>Play</button>
-                            <button className={styles.secondaryButton}>
-                                Follow
-                            </button>
-                            <button className={styles.iconButton}>•••</button>
+                            <button className={styles.playButton}>Phát</button>
                         </div>
                     </div>
                 </div>

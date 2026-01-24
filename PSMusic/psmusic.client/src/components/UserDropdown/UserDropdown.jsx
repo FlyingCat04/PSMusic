@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { User, Music, Heart, LogOut } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './UserDropdown.module.css';
@@ -72,14 +73,10 @@ const UserDropdown = ({ avatarURL, avatarError, handleImageError }) => {
             <div className={styles['dropdown-divider']}></div>
 
             <div className={styles['dropdown-options']}>
-                <button className={styles['dropdown-option']}>
-                    <Music size={18} />
-                    <span>Playlist của tôi</span>
-                </button>
-                <button className={styles['dropdown-option']}>
+                <Link to="/favorites" className={styles['dropdown-option']}>
                     <Heart size={18} />
                     <span>Bài hát yêu thích</span>
-                </button>
+                </Link>
                 <button 
                     className={`${styles['dropdown-option']} ${styles['logout']}`}
                     onClick={handleLogout}

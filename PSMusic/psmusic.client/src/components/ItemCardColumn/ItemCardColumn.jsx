@@ -64,12 +64,25 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <img 
-                    src={imageUrl} 
-                    alt={title} 
-                    className={styles['item-card-column-image']}
-                    onError={handleImgError}
-                />
+                {type === 'artist' ? (
+                    <Link 
+                        to={`/artist/${item.id}`}
+                    >
+                        <img 
+                            src={imageUrl} 
+                            alt={title} 
+                            className={styles['item-card-column-image']}
+                            onError={handleImgError}
+                        />
+                    </Link>
+                ) : (
+                    <img 
+                        src={imageUrl}
+                        alt={title}
+                        className={styles['item-card-column-image']}
+                        onError={handleImgError}
+                    />
+                )}
                 
                 {/* Favorite Button - Top Right Corner - Only for songs */}
                 {/*{type !== 'artist' && (*/}

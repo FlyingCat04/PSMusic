@@ -12,15 +12,6 @@ const TopChartsPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Cấu hình các category cần hiển thị
-    const categoryConfigs = [
-        { id: 26, key: 'usaSongs', title: 'Top Nhạc Âu Mỹ', route: '/charts/usa' },
-        { id: 10, key: 'vnSongs', title: 'Top Nhạc Việt', route: '/charts/vietnam' },
-        { id: 1, key: 'popSongs', title: 'Top Nhạc Pop', route: '/charts/pop' },
-        { id: 2, key: 'youngSongs', title: 'Top Nhạc Trẻ', route: '/charts/young' },
-        { id: 31, key: 'rapSongs', title: 'Top Rap Việt', route: '/charts/rap' },
-    ];
-
     // State cho các danh sách
     const [popularArtists, setPopularArtists] = useState([]);
     const [popularCategories, setPopularCategories] = useState([]);
@@ -42,27 +33,36 @@ const TopChartsPage = () => {
             setLoading(true);
             setError(null);
 
-            // Gọi tất cả các API song song
+            // Lấy danh sách popular categories trước
+            const categoriesRes = await topChartsService.getPopularCategories(1, 10);
+            const categories = categoriesRes?.items || [];
+
+            // Sắp xếp: đưa Nhạc Việt (10) và Âu Mỹ (26) lên đầu
+            const sortedCategories = [
+                ...categories.filter(cat => cat.id === 10 || cat.id === 26).sort((a, b) => a.id - b.id),
+                ...categories.filter(cat => cat.id !== 10 && cat.id !== 26)
+            ];
+
+            // Gọi các API còn lại song song
             const apiCalls = [
                 topChartsService.getPopularArtists(1, 10),
-                topChartsService.getPopularCategories(1, 10),
-                ...categoryConfigs.map(config => 
-                    topChartsService.getPopularSongsByCategory(config.id, 1, 10)
+                ...sortedCategories.map(cat => 
+                    topChartsService.getPopularSongsByCategory(cat.id, 1, 10)
                 )
             ];
 
             const results = await Promise.all(apiCalls);
-            const [artistsRes, categoriesRes, ...categoryResults] = results;
+            const [artistsRes, ...categoryResults] = results;
 
-            // Map kết quả theo key của từng category
+            // Map kết quả theo ID của từng category
             const songsData = {};
-            categoryConfigs.forEach((config, index) => {
-                songsData[config.key] = categoryResults[index]?.items || [];
+            sortedCategories.forEach((cat, index) => {
+                songsData[cat.id] = categoryResults[index]?.items || [];
             });
 
             const data = {
                 popularArtists: artistsRes?.items || [],
-                popularCategories: categoriesRes?.items || [],
+                popularCategories: sortedCategories,
                 categorySongs: songsData,
             };
 
@@ -97,13 +97,13 @@ const TopChartsPage = () => {
     }
 
     // Render một section cho category
-    const renderCategorySection = (config, isDualColumn = false) => {
-        const songs = categorySongs[config.key] || [];        
+    const renderCategorySection = (category, isDualColumn = false) => {
+        const songs = categorySongs[category.id] || [];        
         const content = (
             <>
                 <div className={styles["section-header"]}>
-                    <h2 className={styles["section-title"]}>{config.title}</h2>
-                    <Link to={config.route} className={styles["see-all-link"]}>
+                    <h2 className={styles["section-title"]}>Top {category.name}</h2>
+                    <Link to={`/category/${category.id}`} className={styles["see-all-link"]}>
                         Xem tất cả
                         <ChevronRight />
                     </Link>
@@ -136,11 +136,11 @@ const TopChartsPage = () => {
         );
 
         return isDualColumn ? (
-            <div className={styles["column"]} key={config.key}>
+            <div className={styles["column"]} key={category.id}>
                 {content}
             </div>
         ) : (
-            <section className={styles["content-section"]} key={config.key}>
+            <section className={styles["content-section"]} key={category.id}>
                 {content}
             </section>
         );
@@ -148,15 +148,17 @@ const TopChartsPage = () => {
 
     return (
         <div className={styles["charts-main-content"]}>
-            {/* Top Nhạc Âu Mỹ và Nhạc Việt - Dual Column */}
-            <section className={styles["content-section"]}>
-                <div className={styles["dual-column-container"]}>
-                    {categoryConfigs.slice(0, 2).map(config => renderCategorySection(config, true))}
-                </div>
-            </section>
+            {/* 2 category đầu tiên - Dual Column */}
+            {popularCategories.length > 0 && (
+                <section className={styles["content-section"]}>
+                    <div className={styles["dual-column-container"]}>
+                        {popularCategories.slice(0, 2).map(category => renderCategorySection(category, true))}
+                    </div>
+                </section>
+            )}
 
             {/* Các category còn lại - Single Column */}
-            {categoryConfigs.slice(2).map(config => renderCategorySection(config, false))}
+            {popularCategories.slice(2).map(category => renderCategorySection(category, false))}
         </div>
     );
 };

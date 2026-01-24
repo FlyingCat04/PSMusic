@@ -106,8 +106,7 @@ const HomePage = () => {
 
   return (
     <div className={styles['home-main-content']}>
-          {/* Categories Section */}
-      <div className="recommendSys"/>
+      {/* Categories Section */}
       <section className={styles['content-section']}>
         <div className={styles['section-header']}>
           <h2 className={styles['section-title']}>Khám Phá Qua Thể Loại</h2>
@@ -133,7 +132,10 @@ const HomePage = () => {
             <p style={{ color: 'var(--text-secondary)' }}>Không có thể loại nào</p>
           )}
         </div>
-      </section>
+          </section>
+
+       <div className="recommendSys" />
+
 
       {/* Artists Section */}
       <section className={styles['content-section']}>
