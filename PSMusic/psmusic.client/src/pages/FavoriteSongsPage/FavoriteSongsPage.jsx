@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { Download } from "lucide-react";
+import { Play, Download } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import axiosInstance from "../../services/axiosInstance";
 import styles from "./FavoriteSongsPage.module.css";
@@ -158,6 +158,7 @@ export default function FavoritePlaylistPage() {
 
           <div className={styles["play-buttons"]}>
             <button className={styles["btn-play"]} onClick={handlePlayAll}>
+              <Play className={styles["play-icon"]} />
               Phát tất cả
             </button>
             <button

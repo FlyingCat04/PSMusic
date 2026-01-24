@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Play } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
 import { usePlayer } from "../../contexts/PlayerContext";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
@@ -393,7 +394,10 @@ const ArtistPage = () => {
                         </h1>
 
                         <div className={styles.actions}>
-                            <button className={styles.playButton}>Phát</button>
+                            <button className={styles.playButton}>
+                                <Play className={styles.playIcon} />
+                                Phát
+                            </button>
                         </div>
                     </div>
                 </div>

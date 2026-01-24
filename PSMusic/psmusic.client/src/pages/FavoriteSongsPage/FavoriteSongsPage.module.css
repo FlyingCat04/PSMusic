@@ -93,6 +93,11 @@
   background: var(--primary-purple-hover);
 }
 
+.play-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .btn-download {
   background: var(--component-bg);
   padding: 14px 24px;

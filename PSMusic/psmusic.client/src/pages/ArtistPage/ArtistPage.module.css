@@ -63,20 +63,27 @@
 }
 
 .playButton {
+    display: flex;
     border: none;
     border-radius: 999px;
-    padding: 12px 32px;
+    padding: 14px 32px;
     background: var(--primary-purple);
-    color: var(--artist-play-text, #000);
+    color: var(--text-primary);    
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     transition: transform 0.12s ease, filter 0.12s ease, background 0.2s ease;
 }
 
 .playButton:hover {
-    transform: scale(1.04);
-    filter: brightness(2.05);
+    background: var(--primary-purple-hover);
+}
+
+.playIcon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
 }
 
 .section {
