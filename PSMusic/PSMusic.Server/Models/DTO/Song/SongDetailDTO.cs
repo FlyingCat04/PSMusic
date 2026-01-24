@@ -27,6 +27,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public string Mp3Url { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; } = string.Empty;
         public List<PartialArtistDTO> Artists { get; set; } = new List<PartialArtistDTO>();
+        public bool IsFavorited { get; set; }
     }
 
     public class SongDetail2DTO

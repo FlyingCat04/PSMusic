@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import RatingModal from "../Modal/RatingModal";
 import styles from "./PlayerControl.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
+import { useDataCache } from "../../contexts/DataCacheContext";
 import axiosInstance from "../../services/axiosInstance";
 
 export default function PlayerControl() {
@@ -27,6 +28,8 @@ export default function PlayerControl() {
     toggleRepeat,
   } = usePlayer();
 
+  const { updateSongFavoriteStatus, lastFavoriteUpdate } = useDataCache();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [lastVolume, setLastVolume] = useState(0.5);
@@ -43,6 +46,15 @@ export default function PlayerControl() {
       audioRef.current.src = playerData.audioUrl;
     }
   }, [playerData?.audioUrl]);
+
+  // Sync favorite status from global event bus
+  useEffect(() => {
+    if (lastFavoriteUpdate && currentSong && lastFavoriteUpdate.songId === currentSong.id) {
+        setPlayerData(prev => 
+            prev ? { ...prev, isFavorited: lastFavoriteUpdate.isFavorited } : prev
+        );
+    }
+  }, [lastFavoriteUpdate, currentSong]);
 
   const formatTime = (sec) => {
     if (!sec || isNaN(sec) || sec < 0) return "00:00";
@@ -62,16 +74,24 @@ export default function PlayerControl() {
     try {
       setUpdatingFavorite(true);
 
-      await axiosInstance.post(`/song/${currentSong.id}/favorite-toggle`);
+      const res = await axiosInstance.post(`/song/${currentSong.id}/favorite-toggle`);
+      const newStatus = res.data.isFavorited;
 
-      setPlayerData((prev) =>
-        prev ? { ...prev, isFavorited: !prev.isFavorited } : prev
+      updateSongFavoriteStatus(currentSong.id, newStatus);
+
+      setPlayerData((prev) => 
+        prev ? { ...prev, isFavorited: newStatus } : prev
       );
     } catch (err) {
       console.error("Lỗi toggle favorite:", err);
     } finally {
       setUpdatingFavorite(false);
     }
+  };
+
+  const handleFavoriteSync = (songId, isFavorited) => {
+       // Call global sync
+       updateSongFavoriteStatus(songId, isFavorited);
   };
 
   const toggleRating = () => {

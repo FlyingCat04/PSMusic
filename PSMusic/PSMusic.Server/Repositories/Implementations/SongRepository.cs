@@ -121,6 +121,7 @@ namespace PSMusic.Server.Repositories.Implementations
                     .Any(st => st.SongId == s.Id))
                 .Include(s => s.SongArtists)
                     .ThenInclude(sa => sa.Artist)
+                .Include(s => s.Favorites)
                 .Include(s => s.SongCategories)
                     .ThenInclude(sc => sc.Category)
                 .OrderByDescending(s => _dbContext.Stream

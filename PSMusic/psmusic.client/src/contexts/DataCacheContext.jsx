@@ -23,6 +23,8 @@ export const DataCacheProvider = ({ children }) => {
         exploreCategories: null,
     });
 
+    const [lastFavoriteUpdate, setLastFavoriteUpdate] = useState(null);
+
     // Cache expiration time
     const CACHE_EXPIRATION = 15 * 60 * 1000;
 
@@ -69,6 +71,41 @@ export const DataCacheProvider = ({ children }) => {
         }
     };
 
+    const updateSongFavoriteStatus = (songId, status) => {
+        // Update TopCharts Cache
+        if (cache.topCharts && cache.topCharts.categorySongs) {
+            const currentData = cache.topCharts;
+            const updatedCategorySongs = { ...currentData.categorySongs };
+            
+            let hasChanges = false;
+            Object.keys(updatedCategorySongs).forEach(catId => {
+                updatedCategorySongs[catId] = updatedCategorySongs[catId].map(song => {
+                    const id = song.id || song.songId;
+                    if (id === songId) {
+                        hasChanges = true;
+                        return { ...song, isFavorited: status };
+                    }
+                    return song;
+                });
+            });
+
+            if (hasChanges) {
+                setCache(prev => ({
+                    ...prev,
+                    topCharts: {
+                        ...currentData,
+                        categorySongs: updatedCategorySongs
+                    }
+                }));
+            }
+        }
+        
+        // Future: Update other caches like HomePage or ExploreCategories if they contain the song
+        
+        // Trigger event for listeners
+        setLastFavoriteUpdate({ songId, isFavorited: status, timestamp: Date.now() });
+    };
+
     const value = {
         setHomePageData,
         setTopChartsData,
@@ -77,6 +114,10 @@ export const DataCacheProvider = ({ children }) => {
         getTopChartsData,
         getExploreCategoriesData,
         clearCache,
+        clearCache,
+        updateSongFavoriteStatus,
+        lastFavoriteUpdate,
+        topChartsData: isCacheValid('topCharts') ? cache.topCharts : null,
     };
 
     return (

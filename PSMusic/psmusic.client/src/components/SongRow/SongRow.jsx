@@ -233,7 +233,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                                 <>
                                     {displayed.map((a, idx) => (
                                         <span
-                                            key={a.id}
+                                            key={a.id || `artist-${idx}`} // Sử dụng index làm dự phòng nếu id null
                                             className={styles.artistName}
                                             onClick={() => onViewArtist?.(a.id)}
                                         >
@@ -312,7 +312,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                                     <>
                                         {displayed.map((a, idx) => (
                                             <span
-                                                key={a.id}
+                                                key={a.id || `inner-artist-${idx}`} // Khắc phục lỗi key null tại đây
                                                 className={styles.artistName}
                                                 onClick={() => onViewArtist?.(a.id)}
                                             >
