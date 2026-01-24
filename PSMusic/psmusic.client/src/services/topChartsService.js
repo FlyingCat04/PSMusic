@@ -35,6 +35,16 @@ const topChartsService = {
             console.error(`Error fetching popular songs for category ${categoryId}:`, error);
             throw error;
         }
+    },
+
+    async toggleFavorite(songId) {
+        try {
+            const res = await axiosInstance.post(`/song/${songId}/favorite-toggle`);
+            return res.data;
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+            throw error;
+        }
     }
 };
 

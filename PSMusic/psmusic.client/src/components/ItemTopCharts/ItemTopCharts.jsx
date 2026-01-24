@@ -108,7 +108,11 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
                 onClick={handleFavoriteClick}
                 aria-label="Like"
             >
-                <Heart size={20} />
+                <Heart 
+                    size={20} 
+                    fill={song.isFavorited ? "#ef4444" : "transparent"}
+                    color={song.isFavorited ? "#ef4444" : "currentColor"}
+                />
             </button>
         </div>
     </div>

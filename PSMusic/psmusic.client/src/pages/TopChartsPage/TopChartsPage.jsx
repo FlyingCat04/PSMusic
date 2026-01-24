@@ -8,7 +8,7 @@ import { useDataCache } from "../../contexts/DataCacheContext";
 import styles from "./TopChartsPage.module.css";
 
 const TopChartsPage = () => {
-    const { getTopChartsData, setTopChartsData } = useDataCache();
+    const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData } = useDataCache();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -27,6 +27,13 @@ const TopChartsPage = () => {
             fetchAllData();
         }
     }, []);
+
+    // Sync with global cache updates (e.g. from PlayerControl)
+    useEffect(() => {
+        if (topChartsData && topChartsData.categorySongs) {
+            setCategorySongs(topChartsData.categorySongs);
+        }
+    }, [topChartsData]);
 
     const fetchAllData = async () => {
         try {
@@ -96,6 +103,33 @@ const TopChartsPage = () => {
         );
     }
 
+    const handleToggleFavorite = async (song) => { 
+        const songId = song.id || song.songId;
+        try {
+            const res = await topChartsService.toggleFavorite(songId);
+            if (res && res.isFavorited !== undefined) {
+                // 1. Update local state
+                setCategorySongs(prev => {
+                    const next = { ...prev };
+                    Object.keys(next).forEach(catId => {
+                        next[catId] = next[catId].map(s => {
+                            if ((s.id || s.songId) === songId) {
+                                return { ...s, isFavorited: res.isFavorited };
+                            }
+                            return s;
+                        });
+                    });
+                    return next;
+                });
+
+                // 2. Update global cache for sync
+                updateSongFavoriteStatus(songId, res.isFavorited);
+            }
+        } catch (err) {
+            console.error("Toggle favorite error:", err);
+        }
+    };
+
     // Render một section cho category
     const renderCategorySection = (category, isDualColumn = false) => {
         const songs = categorySongs[category.id] || [];        
@@ -124,8 +158,10 @@ const TopChartsPage = () => {
                                         song.avatarUrl ||
                                         song.imageUrl ||
                                         "https://via.placeholder.com/100",
-                                    mp3Url: song.mp3Url
+                                    mp3Url: song.mp3Url,
+                                    isFavorited: song.isFavorited
                                 }}
+                                onFavorite={handleToggleFavorite}
                             />
                         ))
                     ) : (

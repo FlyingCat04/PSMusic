@@ -66,7 +66,10 @@ namespace PSMusic.Server.Controllers
         //[Authorize]
         public async Task<IActionResult> GetMainSongByArtistId(int id, int page = 1, int size = 10)
         {
-            var test = await _songService.GetPopularSongsAsMainArtistAsync(id, page, size);
+            var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int? userId = string.IsNullOrEmpty(userId_str) ? null : int.Parse(userId_str);
+
+            var test = await _songService.GetPopularSongsAsMainArtistAsync(id, userId, page, size);
             return Ok(test);
         }
 
@@ -74,7 +77,10 @@ namespace PSMusic.Server.Controllers
         //[Authorize]
         public async Task<IActionResult> GetCollabSongByArtistId(int id, int page = 1, int size = 10)
         {
-            var test = await _songService.GetPopularSongsAsCollaboratorAsync(id, page, size);
+            var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int? userId = string.IsNullOrEmpty(userId_str) ? null : int.Parse(userId_str);
+
+            var test = await _songService.GetPopularSongsAsCollaboratorAsync(id, userId, page, size);
             return Ok(test);
         }
 
@@ -82,7 +88,10 @@ namespace PSMusic.Server.Controllers
         //[Authorize]
         public async Task<IActionResult> GetPopularSongByCategory(int id, int page = 1, int size = 10)
         {
-            var test = await _songService.GetPopularSongWithCategory(id, page, size);
+            var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int? userId = string.IsNullOrEmpty(userId_str) ? null : int.Parse(userId_str);
+
+            var test = await _songService.GetPopularSongWithCategory(id, userId, page, size);
             return Ok(test);
         }
 

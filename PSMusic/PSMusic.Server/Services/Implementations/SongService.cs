@@ -197,7 +197,7 @@ namespace PSMusic.Server.Services.Implementations
             return _mapper.Map<IEnumerable<SongDTO>>(results);
         }
 
-        public async Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsMainArtistAsync(int id, int page = 1, int size = 10)
+        public async Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsMainArtistAsync(int id, int? userId, int page = 1, int size = 10)
         {
             if (page < 1) page = 1;
             if (size < 10) size = 10;
@@ -214,19 +214,24 @@ namespace PSMusic.Server.Services.Implementations
             var mainArtistSongs = await songAsMainArtist
                 .Include(s => s.SongArtists)
                     .ThenInclude(sa => sa.Artist)
+                .Include(s => s.Favorites)
                 .ToListAsync();
 
             var result = mainArtistSongs
-                .Select(s => _mapper.Map<SongWithArtistRole>(s, opt =>
-                {
-                    opt.Items["artistId"] = id;
-                }))
+                .Select(s => {
+                    var dto = _mapper.Map<SongWithArtistRole>(s, opt =>
+                    {
+                        opt.Items["artistId"] = id;
+                    });
+                    dto.IsFavorited = userId.HasValue && s.Favorites.Any(f => f.UserId == userId.Value && f.IsFavorite);
+                    return dto;
+                })
                 .ToList();
 
             return result.Paginate(page, size);
         }
 
-        public async Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsCollaboratorAsync(int id, int page = 1, int size = 10)
+        public async Task<PagedResult<SongWithArtistRole>?> GetPopularSongsAsCollaboratorAsync(int id, int? userId, int page = 1, int size = 10)
         {
 
             var popularSongs = _songRepository.GetAll();
@@ -241,24 +246,33 @@ namespace PSMusic.Server.Services.Implementations
             var collaboratorSongs = await songAsCollaborator
                 .Include(s => s.SongArtists)
                     .ThenInclude(sa => sa.Artist)
+                .Include(s => s.Favorites)
                 .ToListAsync();
 
             var result = collaboratorSongs
-                .Select(s => _mapper.Map<SongWithArtistRole>(s, opt =>
-                {
-                    opt.Items["artistId"] = id;
-                }))
+                .Select(s => {
+                    var dto = _mapper.Map<SongWithArtistRole>(s, opt =>
+                    {
+                        opt.Items["artistId"] = id;
+                    });
+                    dto.IsFavorited = userId.HasValue && s.Favorites.Any(f => f.UserId == userId.Value && f.IsFavorite);
+                    return dto;
+                })
                 .ToList();
 
             return result.Paginate(page, size);
         }
 
-        public async Task<PagedResult<SongSearchDetailDTO>?> GetPopularSongWithCategory(int id, int page, int size)
+        public async Task<PagedResult<SongSearchDetailDTO>?> GetPopularSongWithCategory(int id, int? userId, int page, int size)
         {
             var results = await _songRepository.GetPopularSongWithCategory(id);
             if (results == null) return null;
 
-            var songs = results.Select(s => _mapper.Map<SongSearchDetailDTO>(s));
+            var songs = results.Select(s => {
+                var dto = _mapper.Map<SongSearchDetailDTO>(s);
+                dto.IsFavorited = userId.HasValue && s.Favorites.Any(f => f.UserId == userId.Value && f.IsFavorite);
+                return dto;
+            });
             return songs.Paginate(page, size);
         }
 
