@@ -69,7 +69,7 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
                 onClick={handlePlayClick}
                 aria-label="Play"
             >
-                <Play size={24} fill="currentColor" />
+                <Play className={styles['play-icon']} fill="currentColor" />
             </button>
             </div>
         </div>
@@ -109,13 +109,6 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
                 aria-label="Like"
             >
                 <Heart size={20} />
-            </button>
-            <button 
-                className={styles['action-btn']}
-                onClick={handleMenuClick}
-                aria-label="More"
-            >
-                <MoreHorizontal size={20} />
             </button>
         </div>
     </div>

@@ -2,9 +2,10 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Download } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import axiosInstance from "../../services/axiosInstance";
-import styles from "../SongViewPage/SongViewPage.module.css";
+import styles from "./FavoriteSongsPage.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
+import ItemCardRow from "../../components/ItemCardRow/ItemCardRow";
 
 export default function FavoritePlaylistPage() {
   const [songs, setSongs] = useState([]);
@@ -20,7 +21,16 @@ export default function FavoritePlaylistPage() {
 
         const resFavorited = await axiosInstance.get("/song/favorites");
 
-        const fetchedSongs = resFavorited.data || [];
+        const fetchedSongs = (resFavorited.data || []).map(song => ({
+          ...song,
+          artists: song.artist 
+            ? song.artist.split(',').map(name => ({
+                name: name.trim(),
+                id: null
+              }))
+            : [],
+          mp3Url: song.audioUrl
+        }));
 
         setSongs(fetchedSongs);
       } catch (err) {
@@ -188,39 +198,7 @@ export default function FavoritePlaylistPage() {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <div
-                          className={styles["song-content"]}
-                          onClick={() => handlePlaySong(song, index)}
-                          style={{
-                            cursor: "pointer",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            width: "100%",
-                          }}
-                        >
-                          <div className={styles["song-left"]}>
-                            <img
-                              src={song.imageUrl || null}
-                              className={styles["song-thumbnail"]}
-                              alt=""
-                            />
-                            <div className={styles["song-mid"]}>
-                              <span className={styles["song-title-text"]}>
-                                {song.title}
-                              </span>
-                              <span className={styles["song-artist-text"]}>
-                                {song.artist}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className={styles["song-right"]}>
-                            <span className={styles["song-duration"]}>
-                              {song.duration}
-                            </span>
-                          </div>
-                        </div>
+                        <ItemCardRow song={song} />
                       </div>
                     )}
                   </Draggable>

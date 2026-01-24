@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Play } from 'lucide-react';
 import styles from './ItemCardRow.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
 
@@ -13,10 +14,13 @@ const handleImgError = (e) => {
 };
 
 const ItemCardRow = ({ song }) => {
+    const [isHovered, setIsHovered] = useState(false);
     const { playSong } = usePlayer();
     const artists = song.artists || [];
 
-    const handleClick = () => {
+    const handlePlayClick = (e) => {
+        e.stopPropagation();
+        
         if (song.mp3Url) {
             const songData = {
                 ...song,
@@ -28,10 +32,30 @@ const ItemCardRow = ({ song }) => {
 
     return (
         <div 
-            className={styles['item-card-row']} 
-            onClick={handleClick} 
+            className={styles['item-card-row']}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
-            <img src={song.imageUrl} alt={song.title} className={styles['item-card-row-image']} onError={handleImgError} />
+            {/* Image với Play Button */}
+            <div className={styles['image-container']}>
+                <img 
+                    src={song.imageUrl} 
+                    alt={song.title} 
+                    className={styles['item-card-row-image']} 
+                    onError={handleImgError} 
+                />
+                <div className={`${styles['play-overlay']} ${isHovered ? styles['show'] : ''}`}>
+                    <button 
+                        className={styles['play-button']}
+                        onClick={handlePlayClick}
+                        aria-label="Play"
+                    >
+                        <Play className={styles['play-icon']} fill="currentColor" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Info */}
             <div className={styles['item-card-row-info']}>
                 <Link
                     to={`/song/${song.id}`}
@@ -43,12 +67,18 @@ const ItemCardRow = ({ song }) => {
                     {artists.length > 0 ? (
                         artists.map((artist, index) => (
                             <React.Fragment key={artist.id || index}>
-                                <Link 
-                                    to={`/artist/${artist.id}`}
-                                    className={styles['artist-link']}
-                                >
-                                    {artist.name}
-                                </Link>
+                                {artist.id ? (
+                                    <Link 
+                                        to={`/artist/${artist.id}`}
+                                        className={styles['artist-link']}
+                                    >
+                                        {artist.name}
+                                    </Link>
+                                ) : (
+                                    <span className={styles['artist-link']}>
+                                        {artist.name}
+                                    </span>
+                                )}
                                 {index < artists.length - 1 && <span>, </span>}
                             </React.Fragment>
                         ))
