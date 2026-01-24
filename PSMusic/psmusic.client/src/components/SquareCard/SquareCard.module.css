@@ -12,8 +12,7 @@
     text-align: center;
     cursor: pointer;
     transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
-    width: 280px;
-    margin-bottom: 40px;
+    width: 240px;
 }
 
 .result-card:hover {
@@ -33,7 +32,7 @@
 }
 
 
-/* artist avatar hình tròn */
+/* artist avatar hï¿½nh trï¿½n */
 .result-cover-circle {
     border-radius: 999px;
 }

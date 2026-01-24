@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Play } from "lucide-react";
 import styles from "./SongRow.module.css";
 
 const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab = "", hideInnerArtist= false}) => {
@@ -201,13 +202,15 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
                             {/* Nếu KHÔNG phát và đang hover → hiện nút play */}
                             {!showPlayingIcon && isHoverCover && (
-                                <button
-                                    type="button"
-                                    className={styles["sr-play-overlay"]}
-                                    onClick={() => onPlay?.(item)}
-                                >
-                                    <span className={styles["sr-play-icon"]}>▶</span>
-                                </button>
+                                <div className={styles["sr-play-overlay"]}>
+                                    <button
+                                        type="button"
+                                        className={styles["sr-play-button"]}
+                                        onClick={() => onPlay?.(item)}
+                                    >
+                                        <Play className={styles["sr-play-icon"]} fill="currentColor" />
+                                    </button>
+                                </div>
                             )}
 
                         </div>
@@ -275,16 +278,18 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
                         {/* Nếu KHÔNG phát và đang hover → hiện nút play */}
                         {!showPlayingIcon && isHoverCover && (
-                            <button
-                                type="button"
-                                className={styles["sr-play-overlay"]}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onPlay?.(item);   // Bấm 1 lần là play luôn
-                                }}
-                            >
-                                <span className={styles["sr-play-icon"]}>▶</span>
-                            </button>
+                            <div className={styles["sr-play-overlay"]}>
+                                <button
+                                    type="button"
+                                    className={styles["sr-play-button"]}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onPlay?.(item);   // Bấm 1 lần là play luôn
+                                    }}
+                                >
+                                    <Play className={styles["sr-play-icon"]} fill="currentColor" />
+                                </button>
+                            </div>
                         )}
                     </div>
 

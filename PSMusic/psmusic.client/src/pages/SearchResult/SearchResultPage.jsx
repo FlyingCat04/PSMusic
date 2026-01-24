@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "./SearchResultPage.module.css";
 import SearchTabs from "../../components/SearchTab/SearchTab";
-import SongRow from "../../components/SongRow/SongRow";
+import ItemCardRow from "../../components/ItemCardRow/ItemCardRow";
 import SquareCard from "../../components/SquareCard/SquareCard";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import Pagination from "../../components/Pagination/Pagination";
@@ -260,27 +260,17 @@ const SearchResultPage = () => {
             {/* TOP RESULT: kết quả khớp chính xác */}
             {activeTab === "Tất cả" && topResult && (
                 <section className={styles["content-section"]}>
-                    <SectionHeader title="Kết quả chính xác" />
+                    <SectionHeader title="Top kết quả" />
                     {topResult.kind === "song" ? (
                         <div className={styles["top-result-row"]}>
-                            <SongRow
-                                item={{
+                            <ItemCardRow
+                                song={{
                                     id: topResult.id,
                                     title: topResult.title,
                                     artists: topResult.artists,
                                     imageUrl: topResult.imageUrl,
+                                    mp3Url: topResult.mp3Url,
                                 }}
-                                showPlayingIcon={currentSong?.id === topResult.id && isPlaying}
-                                onPlay={() => playSong({
-                                    ...topResult,
-                                    audioUrl: topResult.mp3Url,
-                                    coverUrl: topResult.imageUrl,
-                                    artists: topResult.artists?.map(a => a.name) || [],
-                                })}
-                                onTitleClick={handleTitleClick}
-                                onAddToPlaylist={handleAddToPlaylist}
-                                onViewArtist={handleViewArtist}
-                                activeTab={activeTab}
                             />
                         </div>
                     ) : (
@@ -314,39 +304,17 @@ const SearchResultPage = () => {
                         <div className={`${styles["sr-rows"]} ${styles["two-col"]}`}>
                             <div className={styles["sr-col"]}>
                                 {leftCol.map((s) => (
-                                    <SongRow
+                                    <ItemCardRow
                                         key={s.id}
-                                        item={s}
-                                        showPlayingIcon={currentSong?.id === s.id && isPlaying}
-                                        onPlay={() => playSong({
-                                            ...s,
-                                            audioUrl: s.mp3Url,
-                                            coverUrl: s.imageUrl,
-                                            artist: s.artists?.map(a => a.name) || [],
-                                        })}
-                                        onTitleClick={handleTitleClick}
-                                        onAddToPlaylist={handleAddToPlaylist}
-                                        onViewArtist={handleViewArtist}
-                                        activeTab={activeTab}
+                                        song={s}
                                     />
                                 ))}
                             </div>
                             <div className={styles["sr-col"]}>
                                 {rightCol.map((s) => (
-                                    <SongRow
+                                    <ItemCardRow
                                         key={s.id}
-                                        item={s}
-                                        showPlayingIcon={currentSong?.id === s.id && isPlaying}
-                                        onPlay={() => playSong({
-                                            ...s,
-                                            audioUrl: s.mp3Url,
-                                            coverUrl: s.imageUrl,
-                                            artist: s.artists?.map(a => a.name) || [],
-                                        })}
-                                        onTitleClick={handleTitleClick}
-                                        onAddToPlaylist={handleAddToPlaylist}
-                                        onViewArtist={handleViewArtist}
-                                        activeTab={activeTab}
+                                        song={s}
                                     />
                                 ))}
                             </div>

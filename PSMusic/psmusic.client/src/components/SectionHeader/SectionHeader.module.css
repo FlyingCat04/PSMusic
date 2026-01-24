@@ -1,16 +1,15 @@
-
 .section-header {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* tiêu đề bên trái, Thêm bên phải */
+    justify-content: space-between;
     margin-bottom: 5px;
 }
 
 .section-title {
-    font-size: 30px;
+    font-size: 24px;
     font-weight: 700;
+    margin: 8px 0px;
 }
-
 
 .see-all-link {
     display: inline-flex;

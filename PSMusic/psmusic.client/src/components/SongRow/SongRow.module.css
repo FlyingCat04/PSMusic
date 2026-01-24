@@ -28,7 +28,6 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 10px 12px;
-    margin-bottom: 10px;
     position: relative;
 }
 
@@ -120,31 +119,37 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    background: rgba(0, 0, 0, 0.45);
-    cursor: pointer;
-    transition: background 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
     opacity: 1;
-    border-radius:8px;
+    transition: opacity 0.3s ease;
+}
+
+.sr-play-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary-purple);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sr-play-button:hover {
+    transform: scale(1.05);
+}
+
+.sr-play-button:active {
+    transform: scale(0.95);
 }
 
 .sr-play-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
-    background: #fff;
-    color: #000;
-    font-size: 14px;
-    font-weight: 700;
-    transform: translateX(1px); /* cho tam giác cân hơn */
-}
-
-.sr-play-overlay:hover {
-    background: rgba(0, 0, 0, 0.6);
-    transform: scale(1.03);
+    width: 18px;
+    height: 18px;
 }
 
 .sr-right {
