@@ -114,7 +114,6 @@ export const DataCacheProvider = ({ children }) => {
         getTopChartsData,
         getExploreCategoriesData,
         clearCache,
-        clearCache,
         updateSongFavoriteStatus,
         lastFavoriteUpdate,
         topChartsData: isCacheValid('topCharts') ? cache.topCharts : null,

@@ -192,9 +192,7 @@ namespace PSMusic.Server.Repositories.Implementations
                     AudioUrl = s.Mp3Url ?? "",
                     LyricUrl = s.LrcUrl ?? "",
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
-                    SingerUrl = s.SongArtists
-                        .Select(sa => sa.Artist.AvatarUrl)
-                        .FirstOrDefault() ?? "",
+                    SingerUrl = s.AvatarUrl ?? "",
                     Likes = s.Favorites.Count(f => f.IsFavorite),
                     IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
                     IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId),

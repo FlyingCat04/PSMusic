@@ -125,6 +125,7 @@ export function PlayerProvider({ children }) {
 
   const toggleShuffle = () => {
     if (shuffle) {
+      // Disabling shuffle: Restore from originalQueue
       setShuffle(false);
       if (originalQueue.length > 0) {
         const currentSongId = currentSong?.id;
@@ -132,7 +133,7 @@ export function PlayerProvider({ children }) {
           (song) => song.id === currentSongId
         );
         if (originalIndex !== -1) {
-          setQueue(originalQueue);
+          setQueue([...originalQueue]);
           setQueueIndex(originalIndex);
           if (currentPlaylist) {
             setCurrentPlaylistIndex(originalIndex);
@@ -140,18 +141,20 @@ export function PlayerProvider({ children }) {
         }
       }
     } else {
+      // Enabling shuffle: Keep current song at index 0, shuffle rest
       setShuffle(true);
-      setOriginalQueue([...queue]);
+      const currentOrder = [...queue];
+      setOriginalQueue(currentOrder);
 
-      const shuffledQueue = shuffleQueue(queue);
       const currentSongId = currentSong?.id;
-      const newIndex = shuffledQueue.findIndex(
-        (song) => song.id === currentSongId
-      );
+      const otherSongs = currentOrder.filter((s) => s.id !== currentSongId);
+      const shuffledOthers = shuffleQueue(otherSongs);
+      const newQueue = currentSong ? [currentSong, ...shuffledOthers] : shuffledOthers;
 
-      if (newIndex !== -1) {
-        setQueue(shuffledQueue);
-        setQueueIndex(newIndex);
+      setQueue(newQueue);
+      setQueueIndex(0);
+      if (currentPlaylist) {
+        // We don't necessarily update currentPlaylistIndex as it relates to the original order
       }
     }
   };
@@ -161,59 +164,56 @@ export function PlayerProvider({ children }) {
   };
 
   const playNextSong = async () => {
+    // Repeat One logic
     if (repeat === 2 && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
       return;
     }
 
-    if (currentPlaylist && currentPlaylistIndex < currentPlaylist.length - 1) {
+    // Playlist logic (if playback is scoped to a specific playlist)
+    if (currentPlaylist && !shuffle && currentPlaylistIndex < currentPlaylist.length - 1) {
       const nextIndex = currentPlaylistIndex + 1;
       setCurrentPlaylistIndex(nextIndex);
       playSong(currentPlaylist[nextIndex]);
       return;
     }
 
-    if (
-      repeat === 1 &&
-      currentPlaylist &&
-      currentPlaylistIndex === currentPlaylist.length - 1
-    ) {
-      setCurrentPlaylistIndex(0);
-      playSong(currentPlaylist[0]);
-      return;
-    }
-
+    // Queue logic
     if (queueIndex < queue.length - 1) {
-      playSong(queue[queueIndex]);
       const nextIndex = queueIndex + 1;
       setQueueIndex(nextIndex);
+      playSong(queue[nextIndex]);
 
-      if (queue.length - nextIndex <= 2) {
+      // Proactive fetch if nearing end
+      if (queue.length - nextIndex <= 3) {
         const res = await PlayerControlService.getNextBatch();
-        setQueue((prev) => [...prev, ...res.data]);
-        if (shuffle) {
+        if (res.data && res.data.length > 0) {
+          const newBatch = shuffle ? shuffleQueue(res.data) : res.data;
+          setQueue((prev) => [...prev, ...newBatch]);
           setOriginalQueue((prev) => [...prev, ...res.data]);
         }
       }
       return;
     }
 
-    if (repeat === 1 && queueIndex === queue.length - 1) {
+    // End of queue reached
+    if (repeat === 1) {
+      // Repeat All: Loop back to start
       setQueueIndex(0);
       playSong(queue[0]);
       return;
     }
 
+    // No repeat, fetch more songs
     const res = await PlayerControlService.getNextBatch();
-    if (res.data.length > 0) {
-      const newQueue = shuffle ? shuffleQueue(res.data) : res.data;
-      setQueue(newQueue);
-      if (shuffle) {
-        setOriginalQueue(res.data);
-      }
-      setQueueIndex(0);
-      playSong(newQueue[0]);
+    if (res.data && res.data.length > 0) {
+      const newBatch = shuffle ? shuffleQueue(res.data) : res.data;
+      const startIndex = queue.length; // New index in the updated queue
+      setQueue((prev) => [...prev, ...newBatch]);
+      setOriginalQueue((prev) => [...prev, ...res.data]);
+      setQueueIndex(startIndex);
+      playSong(newBatch[0]);
     }
   };
 

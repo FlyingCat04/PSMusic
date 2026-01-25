@@ -212,6 +212,7 @@ export default function PlayerControl() {
             <div
               className={`${styles["icon-button"]} ${updatingFavorite ? styles["disabled"] : ""}`}
               onClick={toggleFavorite}
+              data-tooltip={isFavorited ? "Bỏ yêu thích" : "Yêu thích"}
               style={{
                 cursor: updatingFavorite ? "not-allowed" : "pointer",
                 display: "flex",
@@ -233,6 +234,7 @@ export default function PlayerControl() {
                 shuffle ? styles["active"] : ""
               }`}
               onClick={toggleShuffle}
+              data-tooltip={shuffle ? "Tắt trộn bài" : "Bật trộn bài"}
             >
               <Shuffle
                 size={24}
@@ -241,7 +243,7 @@ export default function PlayerControl() {
               />
             </button>
 
-            <button className={styles["control-btn"]} onClick={playPrevSong}>
+            <button className={styles["control-btn"]} onClick={playPrevSong} data-tooltip="Bài trước">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -294,7 +296,7 @@ export default function PlayerControl() {
               )}
             </button>
 
-            <button className={styles["control-btn"]} onClick={playNextSong}>
+            <button className={styles["control-btn"]} onClick={playNextSong} data-tooltip="Bài tiếp theo">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -316,12 +318,12 @@ export default function PlayerControl() {
                 repeat > 0 ? styles["active"] : ""
               }`}
               onClick={toggleRepeat}
-              data-repeat-mode={
+              data-tooltip={
                 repeat === 1
-                  ? "Repeat All"
+                  ? "Lặp lại tất cả"
                   : repeat === 2
-                    ? "Repeat One"
-                    : "Repeat Off"
+                    ? "Lặp lại 1 bài"
+                    : "Tắt lặp lại"
               }
             >
               {repeat === 2 ? (
@@ -343,6 +345,7 @@ export default function PlayerControl() {
                   isRated ? styles["rated"] : ""
                 }`}
                 onClick={toggleRating}
+                data-tooltip="Đánh giá bài hát"
                 disabled={!currentSong}
               >
                 <svg
@@ -363,6 +366,7 @@ export default function PlayerControl() {
               <button
                 className={styles["control-btn"]}
                 onClick={handleDownload}
+                data-tooltip="Tải bài hát"
                 disabled={!songToDisplay?.audioUrl}
               >
                 <svg
@@ -384,7 +388,11 @@ export default function PlayerControl() {
             </div>
 
             <div className={styles["volume-control-container"]}>
-              <button className={styles["control-btn"]} onClick={toggleMute}>
+              <button
+                className={styles["control-btn"]}
+                onClick={toggleMute}
+                data-tooltip={isMuted || volume === 0 ? "Bật âm thanh" : "Tắt âm thanh"}
+              >
                 {isMuted || volume === 0 ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

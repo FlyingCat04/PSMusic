@@ -55,8 +55,7 @@ namespace PSMusic.Server.Controllers
             foreach (var s in randomSongs)
             {
                 s.Likes = await _songService.GetFavoriteCount(s.Id);
-                var mainArtist = await _artistService.GetArtistsBySongId(s.Id);
-                s.SingerUrl = mainArtist.FirstOrDefault()?.AvatarUrl ?? string.Empty;
+                s.SingerUrl = s.CoverUrl ?? string.Empty;
             }
 
             return Ok(randomSongs);
