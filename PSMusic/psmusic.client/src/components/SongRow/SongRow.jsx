@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Play } from "lucide-react";
 import styles from "./SongRow.module.css";
 
-const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab = "", hideInnerArtist= false}) => {
+const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewArtist, activeTab = "", hideInnerArtist= false}) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isHoverCover, setIsHoverCover] = useState(false);
     //const [artistMenuOpen, setArtistMenuOpen] = useState(false);
@@ -20,17 +20,20 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
     const menuRef = useRef(null);
 
-    const mp3Url = item?.mp3Url || null;
+    //const mp3Url = item?.mp3Url || null;
     const activeTabChose = activeTab || "";
     
 
     const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
 
-    const formatDuration = (seconds) => {
-        if (!seconds && seconds !== 0) return "";
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, "0")}`;
+    const formatTime = (timeStr) => {
+        if (!timeStr) return "00:00";
+        const parts = timeStr.split(':');
+        if (parts.length === 3 && parts[0] === "00") {
+            return `${parts[1]}:${parts[2]}`; 
+        }
+
+        return timeStr; 
     };
 
     const handleRowStyle = () => { 
@@ -66,27 +69,15 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
             setDuration(null);
             return;
         }
-        if (!mp3Url) return;
 
-        let audio = new Audio();
-        audio.src = mp3Url;
-        audio.preload = "metadata";
+        if (item.duration) {
+            setDuration(item.duration);
+        } else {
+            setDuration("00:00");
+        }
 
-        const handleLoaded = () => {
-            if (!isNaN(audio.duration)) {
-                setDuration(Math.floor(audio.duration));
-            }
-        };
-
-        audio.addEventListener("loadedmetadata", handleLoaded);
-
-        return () => {
-            audio.removeEventListener("loadedmetadata", handleLoaded);
-            audio.pause();
-            audio.src = "";
-            audio = null;
-        };
-    }, [activeTabChose, mp3Url]);
+        
+    }, [activeTabChose, item]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -335,7 +326,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
             {/* ACTIONS */}
             {activeTab === "Bài hát" && duration && (
                 <span className={styles["sr-duration"]}>
-                    {formatDuration(duration)}
+                    {formatTime(duration)}
                 </span>
             )}
             {/*<div className={styles["sr-right"]}>*/}

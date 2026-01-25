@@ -60,6 +60,11 @@ namespace PSMusic.Server.Services.Implementations
             foreach (var song in songs)
             {
                 var artistsForSong = _mapper.Map<IEnumerable<PartialArtistDTO>>(song.Artists);
+                TimeSpan duration = TimeSpan.Zero;
+                if (!string.IsNullOrEmpty(song.Duration) && TimeSpan.TryParseExact(song.Duration, @"mm\:ss", null, out TimeSpan parsedTime))
+                {
+                    duration = parsedTime;
+                }
 
                 songResults.Add(new SearchResultDTO
                 {
@@ -68,7 +73,8 @@ namespace PSMusic.Server.Services.Implementations
                     AvatarUrl = song.AvatarUrl,
                     Mp3Url = song.Mp3Url,
                     Name = song.Name,
-                    Artists = artistsForSong
+                    Artists = artistsForSong,
+                    Duration = duration
                 });
             }
 

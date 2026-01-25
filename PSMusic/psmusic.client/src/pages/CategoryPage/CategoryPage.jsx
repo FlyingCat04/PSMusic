@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../services/axiosInstance";
 import LoadSpinnder from "../../components/LoadSpinner/LoadSpinner";
@@ -101,9 +101,54 @@ const DEFAULT_SONG_IMAGE =
 const DEFAULT_ARTIST_IMAGE =
     "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
-const PAGE_SIZE = 8;
-
 const checkImage = (url, fallback) => (!url ? fallback : url);
+
+// Thêm hook này vào đầu file CategoryPage.jsx (bên ngoài component)
+// hoặc tạo file hooks/useDynamicPageSize.js
+
+const useDynamicPageSize = (minItemWidth, gap, numRows = 2) => {
+    const [pageSize, setPageSize] = useState(numRows * 4);
+    const [columns, setColumns] = useState(4); // Thêm state để lưu số cột chính xác
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        const calculateSize = () => {
+            if (containerRef.current) {
+                // Lấy style để trừ đi padding của container cha (đảm bảo tính chính xác)
+                const style = getComputedStyle(containerRef.current);
+                const paddingLeft = parseFloat(style.paddingLeft) || 0;
+                const paddingRight = parseFloat(style.paddingRight) || 0;
+                
+                // Chiều rộng khả dụng cho nội dung
+                const containerWidth = containerRef.current.offsetWidth - paddingLeft - paddingRight;
+
+                const itemTotalSpace = minItemWidth + gap;
+                
+                // Tính số cột tối đa có thể chứa
+                let cols = Math.floor((containerWidth + gap) / itemTotalSpace);
+                
+                // Đảm bảo ít nhất 1 cột
+                const safeColumns = cols > 0 ? cols : 1;
+
+                setColumns(safeColumns);
+                
+                // PageSize luôn là bội số của số cột -> Lấp đầy hàng
+                const newSize = safeColumns * numRows;
+                
+                setPageSize(prev => prev !== newSize ? newSize : prev);
+            }
+        };
+
+        calculateSize();
+
+        const observer = new ResizeObserver(() => calculateSize());
+        if (containerRef.current) observer.observe(containerRef.current);
+
+        return () => observer.disconnect();
+    }, [minItemWidth, gap, numRows]);
+
+    return { pageSize, columns, containerRef }; // Return thêm columns
+};
 
 //const mapSong = (item) => ({
 //    id: item.id,
@@ -120,6 +165,7 @@ const mapSong = (item) => ({
     artists: item.artists,
     imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
     mp3Url: item.mp3Url || "",
+    duration: item.duration || "00:00",
 });
 
 const mapArtist = (item) => ({
@@ -133,13 +179,16 @@ const mapArtist = (item) => ({
 const CategoryPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { playSong, currentSong, isPlaying } = usePlayer();
+    const { playSong } = usePlayer();
 
 
     const [category, setCategory] = useState({ id, name: "Category", imageUrl: ""});
 
     const [artists, setArtists] = useState([]);
     const [songs, setSongs] = useState([]);
+
+    const { pageSize: artistPageSize, columns: artistColumns, containerRef: artistRef } = useDynamicPageSize(240, 20, 2);
+    const { pageSize: songPageSize, columns: songColumns, containerRef: songRef } = useDynamicPageSize(150, 20, 2);
 
     // pagination
     const [artistPage, setArtistPage] = useState(1);
@@ -191,7 +240,7 @@ const CategoryPage = () => {
         const load = async () => {
             try {
                 const res = await axiosInstance.get(`/artist/category/${id}`, {
-                    params: {id: id, page: artistPage, size: PAGE_SIZE },
+                    params: { id: id, page: artistPage, size: artistPageSize },
                 });
 
                 const data = res.data || {};
@@ -204,8 +253,8 @@ const CategoryPage = () => {
             }
         };
 
-        load();
-    }, [id, artistPage]);
+        if (id) load();
+    }, [id, artistPage, artistPageSize]);
 
     // ===========================
     // CALL API: SONGS
@@ -214,7 +263,7 @@ const CategoryPage = () => {
         const load = async () => {
             try {
                 const res = await axiosInstance.get(`song/category/popular/${id}`, {
-                    params: { id: id, page: songPage, size: PAGE_SIZE },
+                    params: { id: id, page: songPage, size: songPageSize },
                 });
 
                 const data = res.data || {};
@@ -227,8 +276,8 @@ const CategoryPage = () => {
             }
         };
 
-        load();
-    }, [id, songPage]);
+        if (id) load();
+    }, [id, songPage, songPageSize ]);
 
     useEffect(() => {
         if (!category) return;
@@ -269,11 +318,11 @@ const CategoryPage = () => {
         };
     }, [category]);
 
-    const artistsPreview = useMemo(() => artists.slice(0, 4), [artists]);
-    const songsPreview = useMemo(() => songs.slice(0, 4), [songs]);
+    const artistsPreview = useMemo(() => artists.slice(0, artistColumns), [artists, artistColumns]);
+    const songsPreview = useMemo(() => songs.slice(0, songColumns), [songs, songColumns]);
 
     const handleViewArtist = (artistId) => navigate(`/artist/${artistId}`);
-    const handleViewSong = (song) => navigate(`/song/${song.id}`);
+    //const handleViewSong = (song) => navigate(`/song/${song.id}`);
 
     if (loading) {
         return (
@@ -299,55 +348,38 @@ const CategoryPage = () => {
 
             {/* ARTISTS */}
             {artists.length > 0 && (
-                <section className={styles.section}>
+                <section className={styles.section} ref={artistRef}>
                     <SectionHeader
                         title="Nghệ sĩ nổi bật"
                         onMore={showAllArtists === false ? () => setShowAllArtists(true) : undefined} // mở chế độ xem đầy đủ
                     />
 
                     {/* PREVIEW MODE */}
-                    {!showAllArtists ? (
-                        // PREVIEW
-                        <div>
-                            {artistsPreview.map(a => (
-                                <SquareCard
-                                    key={a.id}
-                                    imageUrl={a.imageUrl}
-                                    title={a.name}
-                                    circle
-                                    onClick={() => handleViewArtist(a.id)}
-                                />
-                            ))}
-                        </div>
-                        ) : (
-                            <>
-                                <div>
-                                    {artists.map(a => (
-                                        <SquareCard
-                                            key={a.id}
-                                            imageUrl={a.imageUrl}
-                                            title={a.name}
-                                            circle
-                                            onClick={() => handleViewArtist(a.id)}
-                                        />
-                                    ))}
-                                </div>
+                    <div className={styles.resultGrid} style={{ gridTemplateColumns: `repeat(${artistColumns}, 1fr)` }}>
+                        {(!showAllArtists ? artistsPreview : artists).map(a => (
+                            <SquareCard
+                                key={a.id}
+                                imageUrl={a.imageUrl}
+                                title={a.name}
+                                circle
+                                onClick={() => handleViewArtist(a.id)}
+                            />
+                        ))}
+                    </div>
 
-                                <Pagination
-                                    page={artistPage}
-                                    totalPages={artistTotalPages}
-                                    onChange={setArtistPage}
-                                />
-                            </>
-                        )
-                    }
-
+                    {showAllArtists && (
+                        <Pagination
+                            page={artistPage}
+                            totalPages={artistTotalPages}
+                            onChange={setArtistPage}
+                        />
+                    )}
                 </section>
             )}
 
             {/* SONGS */}
             {songs.length > 0 && (
-                <section className={styles.section}>
+                <section className={styles.section} ref={songRef}>
                     <SectionHeader
                         title="Bài hát"
                         onMore={showAllSongs === false ? () => setShowAllSongs(true) : undefined}

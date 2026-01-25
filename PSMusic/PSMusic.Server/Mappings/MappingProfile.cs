@@ -70,7 +70,9 @@ namespace PSMusic.Server.Mapping
                         Id = sa.Artist.Id, 
                         Name = sa.Artist.Name 
                     }))
-                );
+                )
+                .ForMember(dest => dest.Duration,
+                    opt => opt.MapFrom(src => src.Duration.HasValue ? src.Duration.Value.ToString(@"mm\:ss") : "00:00"));
 
 
             // map artist

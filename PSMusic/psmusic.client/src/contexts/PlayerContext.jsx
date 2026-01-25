@@ -6,6 +6,9 @@
   useEffect,
 } from "react";
 import PlayerControlService from "../services/PlayerControlService";
+import axiosInstance from "../services/axiosInstance";
+import LoadSpinner from "../components/LoadSpinner/LoadSpinner";
+
 
 const PlayerContext = createContext();
 export const usePlayer = () => useContext(PlayerContext);
@@ -28,6 +31,7 @@ export function PlayerProvider({ children }) {
   const [originalQueue, setOriginalQueue] = useState([]);
   const [hasStreamed, setHasStreamed] = useState(false);
   const [playerData, setPlayerData] = useState(null);
+  const [playlistContext, setPlaylistContext] = useState(null);
 
   useEffect(() => {
     if (!currentSong?.id) {
@@ -80,6 +84,7 @@ export function PlayerProvider({ children }) {
         setQueueIndex(0);
       }
     }
+    setPlaylistContext(null);
     setCurrentSong(song);
     setHasStreamed(false);
     setIsPlayerVisible(true);
@@ -156,6 +161,45 @@ export function PlayerProvider({ children }) {
     }
   };
 
+  const loadMoreSongs = async () => {
+    if (!playlistContext) return [];
+
+    try {
+        const nextPage = playlistContext.page + 1;
+        let endpoint = "";
+        
+        // Xác định API dựa trên loại playlist
+        if (playlistContext.type === 'ARTIST_MAIN') endpoint = `/song/artist/main/${playlistContext.id}`;
+        else if (playlistContext.type === 'ARTIST_COLLAB') endpoint = `/song/artist/collab/${playlistContext.id}`;
+        
+        if (!endpoint) return [];
+
+        // Gọi API lấy trang tiếp theo
+        const res = await axiosInstance.get(endpoint, { 
+            params: { page: nextPage, size: 10 } 
+        });
+
+        const newItems = res.data?.items || [];
+        
+        if (newItems.length > 0) {
+            const mappedSongs = newItems.map(item => ({
+                id: item.id,
+                title: item.name || "Không tên",
+                artistText: item.artists?.map(a => a.name).join(", ") || "",
+                artists: item.artists || [],
+                imageUrl: item.avatarUrl || "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png", // Fallback image
+                mp3Url: item.mp3Url,
+                duration: item.duration || "00:00"
+            }));
+            setPlaylistContext(prev => ({ ...prev, page: nextPage }));
+            return mappedSongs;
+        }
+    } catch (err) {
+        console.error("Lỗi không load thêm được bài hát:", err);
+    }
+    return [];
+  };
+
   const toggleRepeat = () => {
     setRepeat((prev) => (prev + 1) % 3);
   };
@@ -171,6 +215,16 @@ export function PlayerProvider({ children }) {
       const nextIndex = currentPlaylistIndex + 1;
       setCurrentPlaylistIndex(nextIndex);
       playSong(currentPlaylist[nextIndex]);
+      if (queue.length - nextIndex <= 2 && playlistContext) {
+          <LoadSpinner />
+          const moreSongs = await loadMoreSongs();
+          
+          if (moreSongs.length > 0) {
+              // Nối đuôi vào hàng chờ hiện tại
+              setQueue(prev => [...prev, ...moreSongs]);
+              if (shuffle) setOriginalQueue(prev => [...prev, ...moreSongs]);
+          }
+      }
       return;
     }
 
@@ -232,7 +286,7 @@ export function PlayerProvider({ children }) {
     }
   };
 
-  const playPlaylist = (playlist, startIndex = 0) => {
+  const playPlaylist = (playlist, startIndex = 0, context = null) => {
     let playQueue = playlist;
 
     if (shuffle) {
@@ -249,6 +303,8 @@ export function PlayerProvider({ children }) {
     setCurrentPlaylistIndex(startIndex);
     setQueue(playQueue);
     setQueueIndex(startIndex);
+    playSong(playQueue[startIndex]);
+    setPlaylistContext(context);
     playSong(playQueue[startIndex]);
   };
 

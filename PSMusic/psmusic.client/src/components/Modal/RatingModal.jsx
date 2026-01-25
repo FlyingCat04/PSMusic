@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { X, Star, Send } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
 import styles from "./RatingModal.module.css";
+import Pagination from "../../components/Pagination/Pagination";
+
 
 const USER_NAME = "Bạn (User hiện tại)";
+const ITEMS_PER_PAGE = 5;
 
 const StarRatingDisplay = ({ rating, size = 16 }) => (
   <div className={styles["star-rating-display"]}>
@@ -38,6 +41,12 @@ const RatingModal = ({
   const [comment, setComment] = useState("");
   const [hover, setHover] = useState(0);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(reviews.length / ITEMS_PER_PAGE);
+  const indexOfLastReview = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstReview = indexOfLastReview - ITEMS_PER_PAGE;
+  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+
   const userHasRated =
     reviews.some((review) => review.user === USER_NAME) || isReviewed;
 
@@ -70,6 +79,7 @@ const RatingModal = ({
         setRating(0);
         setComment("");
         setHover(0);
+        setCurrentPage(1);
       }
     };
 
@@ -83,6 +93,7 @@ const RatingModal = ({
       setHover(0);
       setSuccessMessage("");
       setSubmitting(false);
+      setCurrentPage(1);
     }
   }, [isOpen]);
 
@@ -134,6 +145,7 @@ const RatingModal = ({
       };
 
       setReviews((prev) => [newReview, ...prev]);
+      setCurrentPage(1);
 
       setSuccessMessage(`🎉 Đã gửi đánh giá ${rating} sao thành công!`);
 
@@ -240,26 +252,36 @@ const RatingModal = ({
           {loading ? (
             <p className={styles["loading-reviews"]}>Đang tải đánh giá...</p>
           ) : reviews.length > 0 ? (
-            <div className={styles["reviews-list"]}>
-              {reviews.map((review) => (
-                <div
-                  key={review.id}
-                  className={`${styles["review-item"]} ${
-                    review.user === USER_NAME ? styles["user-review"] : ""
-                  }`}
-                >
-                  <div className={styles["review-header"]}>
-                    <strong>{review.user}</strong>
-                    <StarRatingDisplay rating={review.rating} />
-                  </div>
+            <>
+              <div className={styles["reviews-list"]}>
+                {currentReviews.map((review) => (
+                  <div
+                    key={review.id}
+                    className={`${styles["review-item"]} ${
+                      review.user === USER_NAME ? styles["user-review"] : ""
+                    }`}
+                  >
+                    <div className={styles["review-header"]}>
+                      <strong>{review.user}</strong>
+                      <StarRatingDisplay rating={review.rating} />
+                    </div>
 
-                  <p className={styles["review-comment"]}>{review.comment}</p>
-                  <span className={styles["review-date"]}>
-                    Ngày: {review.date || review.createdAt?.slice(0, 10)}
-                  </span>
-                </div>
-              ))}
-            </div>
+                    <p className={styles["review-comment"]}>{review.comment}</p>
+                    <span className={styles["review-date"]}>
+                      Ngày: {review.date || review.createdAt?.slice(0, 10)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
+                  <Pagination
+                    page={currentPage}
+                    totalPages={totalPages}
+                    onChange={(page) => setCurrentPage(page)}
+                  />
+              </div>
+            </>
           ) : (
             <p className={styles["no-reviews"]}>
               Chưa có đánh giá nào cho bài hát này.
