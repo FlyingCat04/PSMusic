@@ -5,6 +5,15 @@ import styles from "./SongViewPage.module.css";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import { usePlayer } from "../../contexts/PlayerContext";
 import axiosInstance from "../../services/axiosInstance";
+import TrackTable from "../../components/TrackTable/TrackTable";
+
+const DEFAULT_SONG_IMAGE =
+  "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
+
+const checkImage = (url, fallback) => {
+  if (!url) return fallback;
+  return url;
+};
 
 export default function SongViewPage() {
   const { songId } = useParams();
@@ -15,9 +24,10 @@ export default function SongViewPage() {
   const [lyrics, setLyrics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFullLyrics, setShowFullLyrics] = useState(false);
+  const [showAllOtherSongs, setShowAllOtherSongs] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const lyricsRef = useRef(null);
-  const { playSong, currentTime, currentSong } = usePlayer();
+  const { playSong, currentTime, currentSong, isPlaying } = usePlayer();
   const [isFavorited, setIsFavorited] = useState(false);
   const [isReviewed, setIsReviewed] = useState(false);
   const navigate = useNavigate();
@@ -39,7 +49,19 @@ export default function SongViewPage() {
         const resOther = await axiosInstance.get(`/song/${song.id}/related`);
         let related = resOther.data || [];
 
-        setOtherSongs(related);
+        console.log(related)
+
+        const mappedRelated = related.map(item => ({
+          id: item.id,
+          title: item.title,
+          artistText: item.artist,
+          artists: item.artists || [],
+          imageUrl: checkImage(item.imageUrl, DEFAULT_SONG_IMAGE),
+          mp3Url: item.audioUrl || item.mp3Url,
+          duration: item.duration
+        }));
+
+        setOtherSongs(mappedRelated);
 
         const resArtists = await axiosInstance.get(`/artist/${songId}/artists`);
         setRelatedArtists(resArtists.data || []);
@@ -96,6 +118,19 @@ export default function SongViewPage() {
     }
   };
 
+  const handleTitleClick = (song) => {
+    navigate(`/song/${song.id}`);
+  };
+
+  const handleViewArtist = (artistId) => {
+    navigate(`/artist/${artistId}`);
+  };
+
+  const handleAddToPlaylist = (song, playlist) => {
+    // TODO: Implement add to playlist
+    console.log("Add to playlist", song, playlist);
+  };
+
   if (loading) return <p>Đang tải...</p>;
   if (!songDetail) return <p>Không tìm thấy bài hát</p>;
 
@@ -111,7 +146,7 @@ export default function SongViewPage() {
             {relatedArtists.length > 0 ? (
               relatedArtists.map((artist, index) => (
                 <React.Fragment key={artist.id || index}>
-                  <span 
+                  <span
                     className={styles["artist-link"]}
                     onClick={() => navigate(`/artist/${artist.id}`)}
                   >
@@ -146,8 +181,8 @@ export default function SongViewPage() {
           </div>
 
           <div className={styles["play-buttons"]}>
-            <button 
-              className={styles["btn-play"]} 
+            <button
+              className={styles["btn-play"]}
               onClick={() => playSong(songDetail)}
             >
               <Play className={styles["button-icon"]} />Phát
@@ -173,9 +208,8 @@ export default function SongViewPage() {
           <hr />
 
           <div
-            className={`${styles["lyrics-content-scroller"]} ${
-              showFullLyrics ? styles["lyrics-expanded"] : styles["lyrics-collapsed"]
-            }`}
+            className={`${styles["lyrics-content-scroller"]} ${showFullLyrics ? styles["lyrics-expanded"] : styles["lyrics-collapsed"]
+              }`}
             ref={lyricsRef}
           >
             {lyrics.length ? (
@@ -188,9 +222,8 @@ export default function SongViewPage() {
                 return (
                   <p
                     key={index}
-                    className={`${styles["lyric-line"]} ${
-                      isCurrent ? styles["active-lyric"] : ""
-                    }`}
+                    className={`${styles["lyric-line"]} ${isCurrent ? styles["active-lyric"] : ""
+                      }`}
                   >
                     {line.text || "\u00A0"}
                   </p>
@@ -216,8 +249,8 @@ export default function SongViewPage() {
 
           {relatedArtists.length > 0 ? (
             relatedArtists.map((artist) => (
-              <div 
-                key={artist.id} 
+              <div
+                key={artist.id}
                 className={styles["artist-row"]}
                 onClick={() => navigate(`/artist/${artist.id}`)}
                 style={{ cursor: 'pointer' }}
@@ -237,24 +270,33 @@ export default function SongViewPage() {
       <div className={styles["other-songs-section"]}>
         <h2>Bài hát khác của {songDetail.artist.split(",")[0]}</h2>
 
-        {otherSongs.map((s) => (
-          <div
-            key={s.id}
-            className={styles["song-row"]}
-            onClick={() => navigate(`/song/${s.id}`)}
-          >
-            <div className={styles["song-left"]}>
-              {s.imageUrl && (
-                <img src={s.imageUrl} className={styles["song-thumbnail"]} />
-              )}
-              <span className={styles["song-title-text"]}>{s.title}</span>
-            </div>
+        <div
+          className={`${styles["song-list-wrapper"]} ${showAllOtherSongs
+            ? styles["songs-expanded"]
+            : styles["songs-collapsed"]
+            }`}
+        >
+          <TrackTable
+            songs={otherSongs}
+            currentSong={currentSong}
+            isPlaying={isPlaying}
+            onPlay={playSong}
+            onTitleClick={handleTitleClick}
+            onAddToPlaylist={handleAddToPlaylist}
+            onViewArtist={handleViewArtist}
+            page={1}
+            pageSize={otherSongs.length} // Show all in table, let CSS wrapper handle visibility
+          />
+        </div>
 
-            <div className={styles["song-right"]}>
-              <span className={styles["song-duration"]}>{s.duration || "00:00"}</span>
-            </div>
-          </div>
-        ))}
+        {otherSongs.length > 4 && (
+          <button
+            className={styles["btn-toggle-songs"]}
+            onClick={() => setShowAllOtherSongs(!showAllOtherSongs)}
+          >
+            {showAllOtherSongs ? "Thu gọn" : "Xem thêm"}
+          </button>
+        )}
       </div>
 
       {currentSong && <PlayerControl />}
