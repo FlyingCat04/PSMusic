@@ -114,6 +114,7 @@ const mapSong = (item) => ({
     artists: item.artists,
     imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
     mp3Url: item.mp3Url || "",
+    duration: item.duration,
 });
 
 const mapArtist = (item) => ({
@@ -408,34 +409,34 @@ const ArtistPage = () => {
             )}
 
             {/* BÀI HÁT CHÍNH */}
-            { mainSongs.length > 0 && (
-            <section className={styles.section}>
-                <SectionHeader title="Bài hát do nghệ sĩ hát chính" />
-                {loadingMain ? (
-                    <LoadSpinner />
-                ) : (
-                    <>
-                        <div className={styles.songList}>
-                            <TrackTable
-                                songs={mainSongs}
-                                currentSong={currentSong}
-                                isPlaying={isPlaying}
-                                onPlay={playSong}
-                                onTitleClick={handleTitleClick}
-                                onAddToPlaylist={handleAddToPlaylist}
-                                onViewArtist={handleViewArtist}
+            {mainSongs.length > 0 && (
+                <section className={styles.section}>
+                    <SectionHeader title="Bài hát do nghệ sĩ hát chính" />
+                    {loadingMain ? (
+                        <LoadSpinner />
+                    ) : (
+                        <>
+                            <div className={styles.songList}>
+                                <TrackTable
+                                    songs={mainSongs}
+                                    currentSong={currentSong}
+                                    isPlaying={isPlaying}
+                                    onPlay={playSong}
+                                    onTitleClick={handleTitleClick}
+                                    onAddToPlaylist={handleAddToPlaylist}
+                                    onViewArtist={handleViewArtist}
+                                    page={mainPage}
+                                    pageSize={PAGE_SIZE}
+                                />
+                            </div>
+                            <Pagination
                                 page={mainPage}
-                                pageSize={PAGE_SIZE}
+                                totalPages={mainTotalPages}
+                                onChange={handleMainPageChange}
                             />
-                        </div>
-                        <Pagination
-                            page={mainPage}
-                            totalPages={mainTotalPages}
-                            onChange={handleMainPageChange}
-                        />
-                    </>
-                )}
-            </section>
+                        </>
+                    )}
+                </section>
             )}
 
             {/* BÀI HÁT COLLAB */}
