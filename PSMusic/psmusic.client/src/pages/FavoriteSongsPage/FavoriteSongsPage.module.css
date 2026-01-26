@@ -17,6 +17,8 @@
 .song-info {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
 }
 
 .song-subtitle {
@@ -66,9 +68,9 @@
 }
 
 .play-buttons {
-  padding-top: 10px;
   display: flex;
   gap: 14px;
+  margin-top: auto;
 }
 
 .button-icon {

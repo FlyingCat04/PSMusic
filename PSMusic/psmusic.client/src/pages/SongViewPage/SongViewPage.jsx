@@ -162,20 +162,20 @@ export default function SongViewPage() {
           <div className={styles["action-buttons"]}>
             <div className={styles["icon-button"]}>
               <Heart
-                size={20}
+                size={22}
                 color="white"
                 fill={isFavorited ? "white" : "transparent"}
               />
-              {songDetail.favorite} {songDetail.favorite > 1 ? "Favorites" : "Favorite"}
+              <span>{songDetail.favorite}</span>
             </div>
 
             <div className={styles["icon-button"]}>
               <Star
-                size={20}
+                size={22}
                 color="white"
                 fill={isReviewed ? "white" : "transparent"}
               />
-              {songDetail.reviews} {songDetail.reviews > 1 ? "Reviews" : "Review"}
+              <span>{songDetail.reviews}</span>
             </div>
           </div>
 
