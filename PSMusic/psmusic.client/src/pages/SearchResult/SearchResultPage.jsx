@@ -60,6 +60,7 @@ const mapSong = (item) => ({
     artists: item.artists,
     imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
     mp3Url: item.mp3Url || "",
+    duration: item.duration || "",
 });
 
 const mapArtist = (item) => ({

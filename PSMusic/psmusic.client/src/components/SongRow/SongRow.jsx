@@ -10,8 +10,6 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
     //const [playlistMenuOpen, setPlaylistMenuOpen] = useState(false);
     //const [playlistQuery, setPlaylistQuery] = useState("");
 
-    const [duration, setDuration] = useState(null);
-
     //const [playlistMenuPlacement, setPlaylistMenuPlacement] = useState("right");
     //const playlistMenuRef = useRef(null);
 
@@ -20,18 +18,10 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
     const menuRef = useRef(null);
 
-    const mp3Url = item?.mp3Url || null;
     const activeTabChose = activeTab || "";
     
 
     const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
-
-    const formatDuration = (seconds) => {
-        if (!seconds && seconds !== 0) return "";
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, "0")}`;
-    };
 
     const handleRowStyle = () => { 
         return activeTab === "Bài hát" ? "sr-song-tab" : "sr-row";
@@ -60,33 +50,6 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
     //const filteredPlaylists = playlists.filter((pl) =>
     //    pl.name.toLowerCase().includes(playlistQuery.toLowerCase())
     //);
-
-    useEffect(() => {
-        if (activeTabChose !== "Bài hát") {
-            setDuration(null);
-            return;
-        }
-        if (!mp3Url) return;
-
-        let audio = new Audio();
-        audio.src = mp3Url;
-        audio.preload = "metadata";
-
-        const handleLoaded = () => {
-            if (!isNaN(audio.duration)) {
-                setDuration(Math.floor(audio.duration));
-            }
-        };
-
-        audio.addEventListener("loadedmetadata", handleLoaded);
-
-        return () => {
-            audio.removeEventListener("loadedmetadata", handleLoaded);
-            audio.pause();
-            audio.src = "";
-            audio = null;
-        };
-    }, [activeTabChose, mp3Url]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -333,9 +296,9 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
              
 
             {/* ACTIONS */}
-            {activeTab === "Bài hát" && duration && (
+            {activeTab === "Bài hát" && item.duration && (
                 <span className={styles["sr-duration"]}>
-                    {formatDuration(duration)}
+                    {item.duration}
                 </span>
             )}
             {/*<div className={styles["sr-right"]}>*/}
