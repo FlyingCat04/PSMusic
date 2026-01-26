@@ -85,7 +85,13 @@ namespace PSMusic.Server.Mapping
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.AvatarUrl))
                 .ForMember(dest => dest.Mp3Url, opt => opt.MapFrom(src => src.Mp3Url))
-                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.HasValue ? src.Duration.Value.ToString(@"mm\:ss") : "00:00"));
+                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.HasValue ? src.Duration.Value.ToString(@"mm\:ss") : "00:00"))
+                .ForMember(dest => dest.Artist, opt => opt.MapFrom(src => string.Join(", ", src.SongArtists.Select(sa => sa.Artist.Name))))
+                .ForMember(dest => dest.Artists, opt => opt.MapFrom(src => src.SongArtists.Select(sa => new PartialArtistDTO
+                {
+                    Id = sa.Artist.Id,
+                    Name = sa.Artist.Name
+                })));
 
             // Map CreateRatingDTO -> Entity Rating
             CreateMap<CreateRatingDTO, Rating>()
