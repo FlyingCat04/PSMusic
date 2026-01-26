@@ -9,6 +9,7 @@ using PSMusic.Server.Models.Entities;
 using PSMusic.Server.Repositories.Implementations;
 using PSMusic.Server.Repositories.Interfaces;
 using PSMusic.Server.Services.Interfaces;
+using System.Text.Json;
 
 namespace PSMusic.Server.Services.Implementations
 {
@@ -53,14 +54,12 @@ namespace PSMusic.Server.Services.Implementations
         {
             if (page < 1) page = 1;
             if (size < 10) size = 10;
-            Console.WriteLine("abcdef");
             var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongSearchDetailDTO>();
-            Console.WriteLine("ab");
             var songResults = new List<SearchResultDTO>();
             foreach (var song in songs)
             {
                 var artistsForSong = _mapper.Map<IEnumerable<PartialArtistDTO>>(song.Artists);
-
+                TimeSpan duration = TimeSpan.TryParse(song.Duration, out var d) ? d : TimeSpan.Zero;
                 songResults.Add(new SearchResultDTO
                 {
                     Id = song.Id,
@@ -68,7 +67,8 @@ namespace PSMusic.Server.Services.Implementations
                     AvatarUrl = song.AvatarUrl,
                     Mp3Url = song.Mp3Url,
                     Name = song.Name,
-                    Artists = artistsForSong
+                    Artists = artistsForSong,
+                    Duration = duration,
                 });
             }
 
