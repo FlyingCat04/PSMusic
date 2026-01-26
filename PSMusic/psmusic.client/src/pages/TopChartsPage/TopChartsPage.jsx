@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import ItemTopCharts from "../../components/ItemTopCharts/ItemTopCharts";
+import TrackTable from "../../components/TrackTable/TrackTable";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import topChartsService from "../../services/topChartsService";
 import { useDataCache } from "../../contexts/DataCacheContext";
@@ -9,6 +9,7 @@ import styles from "./TopChartsPage.module.css";
 
 const TopChartsPage = () => {
     const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData, clearCache } = useDataCache();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -53,7 +54,7 @@ const TopChartsPage = () => {
             // Gọi các API còn lại song song
             const apiCalls = [
                 topChartsService.getPopularArtists(1, 10),
-                ...sortedCategories.map(cat => 
+                ...sortedCategories.map(cat =>
                     topChartsService.getPopularSongsByCategory(cat.id, 1, 10)
                 )
             ];
@@ -103,7 +104,7 @@ const TopChartsPage = () => {
         );
     }
 
-    const handleToggleFavorite = async (song) => { 
+    const handleToggleFavorite = async (song) => {
         const songId = song.id || song.songId;
         try {
             const res = await topChartsService.toggleFavorite(songId);
@@ -124,7 +125,7 @@ const TopChartsPage = () => {
 
                 // 2. Update global cache for sync
                 updateSongFavoriteStatus(songId, res.isFavorited);
-                
+
                 // 3. Clear favorites cache to force refresh on next visit
                 clearCache('favorites');
             }
@@ -133,9 +134,17 @@ const TopChartsPage = () => {
         }
     };
 
+    const handleViewArtist = (artistId) => {
+        navigate(`/artist/${artistId}`);
+    };
+
+    const handleTitleClick = (song) => {
+        navigate(`/song/${song.id}`);
+    };
+
     // Render một section cho category
     const renderCategorySection = (category, isDualColumn = false) => {
-        const songs = categorySongs[category.id] || [];        
+        const songs = categorySongs[category.id] || [];
         const content = (
             <>
                 <div className={styles["section-header"]}>
@@ -145,32 +154,25 @@ const TopChartsPage = () => {
                         <ChevronRight />
                     </Link>
                 </div>
-                <div className={styles["items-list"]}>
-                    {songs.length > 0 ? (
-                        songs.map((song, index) => (
-                            <ItemTopCharts
-                                key={song.id || song.songId}
-                                rank={index + 1}
-                                song={{
-                                    id: song.id || song.songId,
-                                    title: song.name || song.title,
-                                    artists: Array.isArray(song.artists) 
-                                        ? song.artists 
-                                        : [{ name: 'Unknown Artist' }],
-                                    imageUrl:
-                                        song.avatarUrl ||
-                                        song.imageUrl ||
-                                        "https://via.placeholder.com/100",
-                                    mp3Url: song.mp3Url,
-                                    isFavorited: song.isFavorited
-                                }}
-                                onFavorite={handleToggleFavorite}
-                            />
-                        ))
-                    ) : (
-                        <p className={styles["no-data"]}>Không có dữ liệu</p>
-                    )}
-                </div>
+                {songs.length > 0 ? (
+                    <div className={styles["items-list"]}>
+                        <TrackTable
+                            songs={songs.map(song => ({
+                                ...song,
+                                id: song.id || song.songId,
+                                title: song.name || song.title,
+                                imageUrl: song.avatarUrl || song.imageUrl,
+                                artists: Array.isArray(song.artists) ? song.artists : [{ name: 'Unknown Artist' }],
+                            }))}
+                            showRank={true}
+                            hideDuration={isDualColumn}
+                            onTitleClick={handleTitleClick}
+                            onViewArtist={handleViewArtist}
+                        />
+                    </div>
+                ) : (
+                    <p className={styles["no-data"]}>Không có dữ liệu</p>
+                )}
             </>
         );
 

@@ -64,3 +64,25 @@
     font-size: 13px;
     color: var(--text-tertiary);
 }
+
+.rankColumn {
+    font-size: 18px !important;
+    font-weight: 700;
+    text-align: center;
+    width: 32px;
+}
+
+.rank-1 {
+    color: #ffd700 !important;
+    /* Gold */
+}
+
+.rank-2 {
+    color: #c0c0c0 !important;
+    /* Silver */
+}
+
+.rank-3 {
+    color: #cd7f32 !important;
+    /* Bronze */
+}

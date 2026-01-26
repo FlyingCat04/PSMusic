@@ -11,11 +11,11 @@
     position: relative;
 }
 
-    .sr-row:hover {
-        background: var(--component-hover-bg);
-        border-color: var(--primary-purple);
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-    }
+.sr-row:hover {
+    background: var(--component-hover-bg);
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
 
 /* Song row khi ở tab Bài hát: 4 cột bằng nhau
    [cover + title] [artist] [duration] [menu] */
@@ -87,9 +87,9 @@
     text-overflow: ellipsis;
 }
 
-    .sr-title:hover {
-        color: var(--primary-purple);
-    }
+.sr-title:hover {
+    color: var(--primary-purple);
+}
 
 .sr-subtitle {
     color: var(--text-tertiary);
@@ -110,6 +110,7 @@
     background: transparent;
     overflow: hidden;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 /* overlay nút play khi hover */
@@ -166,6 +167,25 @@
     text-align: right;
 }
 
+.sr-btn-favorite {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    color: var(--text-tertiary);
+    transition: all 0.2s;
+}
+
+.sr-btn-favorite:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    transform: scale(1.1);
+}
+
 .sr-dotsButton {
     border: none;
     background: transparent;
@@ -178,10 +198,10 @@
     justify-content: center;
 }
 
-    .sr-dotsButton:hover {
-        background: rgba(255,255,255,.06);
-        color: var(--text-primary);
-    }
+.sr-dotsButton:hover {
+    background: rgba(255, 255, 255, .06);
+    color: var(--text-primary);
+}
 
 /* icon 3 chấm */
 .sr-dotsIcon {
@@ -192,15 +212,15 @@
     justify-content: space-between;
 }
 
-    .sr-dotsIcon::before,
-    .sr-dotsIcon::after,
-    .sr-dotsIcon div {
-        content: "";
-        width: 4px;
-        height: 4px;
-        background: currentColor;
-        border-radius: 50%;
-    }
+.sr-dotsIcon::before,
+.sr-dotsIcon::after,
+.sr-dotsIcon div {
+    content: "";
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+}
 
 /* dropdown menu tác vụ */
 
@@ -215,7 +235,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     z-index: 10;
-    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
 }
 
 .sr-menuItem {
@@ -229,9 +249,9 @@
     cursor: pointer;
 }
 
-    .sr-menuItem:hover {
-        background: rgba(255,255,255,.06);
-    }
+.sr-menuItem:hover {
+    background: rgba(255, 255, 255, .06);
+}
 
 
 /* Hàng menu chính */
@@ -273,7 +293,8 @@
 }
 
 .sr-menuItemArrowLeft {
-    transform: scaleX(-1); /* xoay dấu › thành ‹ */
+    transform: scaleX(-1);
+    /* xoay dấu › thành ‹ */
 }
 
 /* Item trong submenu */
@@ -288,9 +309,9 @@
     cursor: pointer;
 }
 
-    .sr-subMenuItem:hover {
-        background: rgba(255,255,255,0.07);
-    }
+.sr-subMenuItem:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
 
 /* Hiệu ứng fade */
 @keyframes fadeIn {
@@ -308,7 +329,7 @@
 
 /* submenu lớn cho "Thêm vào playlist" */
 .sr-subMenuPlaylists {
-    top: -4px; 
+    top: -4px;
     width: 240px;
     max-height: 220px;
     display: flex;
@@ -330,9 +351,9 @@
     color: var(--text-primary);
 }
 
-    .sr-subMenuInput::placeholder {
-        color: var(--text-tertiary);
-    }
+.sr-subMenuInput::placeholder {
+    color: var(--text-tertiary);
+}
 
 /* dòng "Playlist mới" */
 .sr-subMenuItemPrimary {
@@ -346,9 +367,9 @@
     cursor: pointer;
 }
 
-    .sr-subMenuItemPrimary:hover {
-        background: rgba(255, 255, 255, 0.06);
-    }
+.sr-subMenuItemPrimary:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
 
 /* gạch phân cách */
 .sr-subMenuDivider {
@@ -375,9 +396,9 @@
     cursor: pointer;
 }
 
-    .sr-subMenuItem:hover {
-        background: rgba(255, 255, 255, 0.06);
-    }
+.sr-subMenuItem:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
 
 /* Cột 1: cover + title */
 .sr-col-cover-title {
@@ -398,6 +419,7 @@
 .sr-title-songtab:hover {
     color: var(--primary-purple);
 }
+
 /* Cột 2: nghệ sĩ */
 .sr-col-artist {
     font-size: 13px;
@@ -431,7 +453,7 @@
     align-items: center;
     justify-content: center;
     /* hơi làm tối ảnh phía sau cho nổi bars */
-    background: radial-gradient(circle, rgba(0,0,0,0.15), rgba(0,0,0,0.55));
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.55));
     border-radius: 8px;
 }
 
@@ -440,38 +462,39 @@
     align-items: flex-end;
     justify-content: center;
     gap: 4px;
-    width: 28px; /* khống chế bề rộng cụm thanh */
+    width: 28px;
+    /* khống chế bề rộng cụm thanh */
     height: 32px;
 }
 
-    /* từng thanh */
-    .sr-eq span {
-        display: inline-block;
-        width: 6px;
-        border-radius: 999px;
-        background: #ffffff;
-        /* chiều cao base */
-        height: 18px;
-        /* animation */
-        transform-origin: bottom;
-        animation: sr-eq-pulse 0.6s infinite ease-in-out alternate;
-    }
+/* từng thanh */
+.sr-eq span {
+    display: inline-block;
+    width: 6px;
+    border-radius: 999px;
+    background: #ffffff;
+    /* chiều cao base */
+    height: 18px;
+    /* animation */
+    transform-origin: bottom;
+    animation: sr-eq-pulse 0.6s infinite ease-in-out alternate;
+}
 
-        /* 3 thanh với cao & delay khác nhau cho tự nhiên */
-        .sr-eq span:nth-child(1) {
-            height: 22px;
-            animation-delay: 0s;
-        }
+/* 3 thanh với cao & delay khác nhau cho tự nhiên */
+.sr-eq span:nth-child(1) {
+    height: 22px;
+    animation-delay: 0s;
+}
 
-        .sr-eq span:nth-child(2) {
-            height: 15px;
-            animation-delay: 0.15s;
-        }
+.sr-eq span:nth-child(2) {
+    height: 15px;
+    animation-delay: 0.15s;
+}
 
-        .sr-eq span:nth-child(3) {
-            height: 18px;
-            animation-delay: 0.3s;
-        }
+.sr-eq span:nth-child(3) {
+    height: 18px;
+    animation-delay: 0.3s;
+}
 
 /* animation nhấp nháy */
 @keyframes sr-eq-pulse {
