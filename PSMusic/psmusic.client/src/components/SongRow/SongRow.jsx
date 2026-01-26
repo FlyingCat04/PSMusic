@@ -23,6 +23,27 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
     const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
 
+    // Format duration
+    const formatDuration = (duration) => {
+        if (!duration) return "";
+        
+        // Nếu đã đúng format MM:SS (2 phần, không có dấu chấm)
+        const parts = duration.split(':');
+        if (parts.length === 2 && !duration.includes('.')) {
+            return duration; // "03:46"
+        }
+        
+        // Nếu là format đầy đủ "HH:MM:SS.milliseconds" hoặc "HH:MM:SS"
+        if (parts.length >= 2) {
+            const minutes = parts[1]; // phút
+            const secondsPart = parts[2] || '00'; // giây (có thể có phần thập phân)
+            const seconds = secondsPart.split('.')[0]; // bỏ phần milliseconds
+            return `${minutes}:${seconds}`;
+        }
+        
+        return duration; // fallback
+    };
+
     const handleRowStyle = () => { 
         return activeTab === "Bài hát" ? "sr-song-tab" : "sr-row";
     };
@@ -298,7 +319,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
             {/* ACTIONS */}
             {activeTab === "Bài hát" && item.duration && (
                 <span className={styles["sr-duration"]}>
-                    {item.duration}
+                    {formatDuration(item.duration)}
                 </span>
             )}
             {/*<div className={styles["sr-right"]}>*/}
