@@ -75,7 +75,7 @@ const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             if (error.message !== "Chưa đăng nhập hoặc phiên đăng nhập đã hết hạn") {
-                console.error("Auth check failed:", error.message);
+                //console.error("Auth check failed:", error.message);
             }
             setUser(null);
         } finally {
@@ -109,7 +109,7 @@ const AuthProvider = ({ children }) => {
     //         (response) => response,
     //         async (error) => {
     //             if (error.response?.status === 401) {
-    //                 console.warn("Cần đăng nhập!!");
+    //                 //console.warn("Cần đăng nhập!!");
     //             }
     //             return Promise.reject(error);
     //         }
@@ -165,7 +165,7 @@ const AuthProvider = ({ children }) => {
                             throw new Error("Refresh failed logic");
                         }
                     } catch (refreshError) {
-                        console.error("Refresh Token API Error:", refreshError);
+                        //console.error("Refresh Token API Error:", refreshError);
                         processQueue(refreshError, null);
                         logout(); 
                         return Promise.reject(refreshError);

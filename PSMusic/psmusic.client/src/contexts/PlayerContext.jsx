@@ -45,7 +45,7 @@ export function PlayerProvider({ children }) {
           setPlayerData(res.data);
         }
       } catch (err) {
-        console.error("Fetch player data failed:", err);
+        //console.error("Fetch player data failed:", err);
       }
     };
 
@@ -66,7 +66,7 @@ export function PlayerProvider({ children }) {
     if (isPlaying) {
       audioRef.current.play().catch((err) => {
         if (err.name !== "AbortError") {
-          console.error("Play error:", err);
+          //console.error("Play error:", err);
         }
       });
     }

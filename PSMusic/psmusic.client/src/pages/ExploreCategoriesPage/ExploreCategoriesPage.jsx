@@ -60,7 +60,7 @@ const ExploreCategoriesPage = () => {
             // Cache data
             setExploreCategoriesData(data);
         } catch (err) {
-            console.error('Error fetching explore categories data:', err);
+            //console.error('Error fetching explore categories data:', err);
             setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
         } finally {
             setLoading(false);

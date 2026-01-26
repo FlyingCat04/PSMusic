@@ -12,13 +12,13 @@ const Footer = () => {
       phone: "(028) 1234 5678",
       email: "psmusicofficial2025@gmail.com"
     },
-    support: [
-      { name: "Hỗ trợ", url: "/support" },
-      { name: "Điều khoản sử dụng", url: "/terms" },
-      { name: "Chính sách bảo mật", url: "/privacy" },
-      { name: "Liên hệ", url: "/contact" },
-      { name: "Góp ý", url: "/feedback" }
-    ],
+    // support: [
+    //   { name: "Hỗ trợ", url: "/support" },
+    //   { name: "Điều khoản sử dụng", url: "/terms" },
+    //   { name: "Chính sách bảo mật", url: "/privacy" },
+    //   { name: "Liên hệ", url: "/contact" },
+    //   { name: "Góp ý", url: "/feedback" }
+    // ],
     socialLinks: [
       { name: "Facebook", url: "https://youtu.be/886d9rm_AFE?si=kTHUX8yEVxn4qmAg", icon: <Facebook /> },
       { name: "Instagram", url: "https://youtu.be/886d9rm_AFE?si=kTHUX8yEVxn4qmAg", icon: <Instagram /> },
@@ -52,7 +52,7 @@ const Footer = () => {
           </div>
 
           {/* Support */}
-          <div className={styles['footer-section']}>
+          {/* <div className={styles['footer-section']}>
             <h4 className={styles['footer-title']}>Hỗ trợ</h4>
             <ul className={styles['footer-links']}>
               {footerData.support.map((item, index) => (
@@ -61,7 +61,7 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Social Links */}
           <div className={styles['footer-section']}>

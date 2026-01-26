@@ -35,7 +35,7 @@ export default function FavoritePlaylistPage() {
         setLoading(true);
 
         const resFavorited = await axiosInstance.get("/song/favorites");
-        console.log(resFavorited.data)
+        //console.log(resFavorited.data)
 
         const fetchedSongs = (resFavorited.data || []).map(song => ({
           ...song,
@@ -51,7 +51,7 @@ export default function FavoritePlaylistPage() {
         setSongs(fetchedSongs);
         setFavoritesData(fetchedSongs);
       } catch (err) {
-        console.error("Lỗi khi tải playlist yêu thích:", err);
+        //console.error("Lỗi khi tải playlist yêu thích:", err);
       } finally {
         setLoading(false);
       }
@@ -86,7 +86,7 @@ export default function FavoritePlaylistPage() {
         }
       }
     } catch (error) {
-      console.error("Lỗi khi tải playlist:", error);
+      //console.error("Lỗi khi tải playlist:", error);
       alert("Có lỗi xảy ra khi tải playlist");
     } finally {
       setDownloading(false);

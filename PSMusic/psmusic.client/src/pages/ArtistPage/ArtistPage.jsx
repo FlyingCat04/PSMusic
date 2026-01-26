@@ -180,7 +180,7 @@ const ArtistPage = () => {
                 });
 
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setError("Không tải được nghệ sĩ.");
             } finally {
                 setLoadingArtist(false);
@@ -223,7 +223,7 @@ const ArtistPage = () => {
                 document.documentElement.style.setProperty("--artist-play-bg", playBg);
                 document.documentElement.style.setProperty("--artist-play-text", playText);
             } catch (err) {
-                console.warn("Không lấy được màu dominant:", err);
+                //console.warn("Không lấy được màu dominant:", err);
             }
         };
     }, [artist]);
@@ -254,7 +254,7 @@ const ArtistPage = () => {
                 setMainSongs(items.map(mapSong));
                 setMainTotalPages(data.totalPages || 1);
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setError("Không tải được danh sách bài hát chính.");
             } finally {
                 setLoadingMain(false);
@@ -288,7 +288,7 @@ const ArtistPage = () => {
                 setCollabSongs(items.map(mapSong));
                 setCollabTotalPages(data.totalPages || 1);
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setError("Không tải được danh sách bài hát collab.");
             } finally {
                 setLoadingCollab(false);
@@ -320,7 +320,7 @@ const ArtistPage = () => {
                 const total = Math.max(1, Math.ceil(mapped.length / 4));
                 setRelatedArtistTotalPages(total);
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setRelatedArtists([]);
                 setRelatedArtistTotalPages(1);
             } finally {

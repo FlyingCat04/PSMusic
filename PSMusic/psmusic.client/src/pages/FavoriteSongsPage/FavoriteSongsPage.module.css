@@ -323,7 +323,7 @@
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr);
   align-items: center;
-  padding: 16px 8px;
+  padding: 16px 0;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -368,7 +368,6 @@
   grid-template-columns: 32px minmax(0, 1fr);
   align-items: center;
   column-gap: 16px;
-  padding: 0 16px 0 16px;
 }
 
 .row .colIndex {
@@ -382,6 +381,7 @@
 
 .btn-toggle-favorites {
   margin-top: 10px;
+  padding: 8px 16px;
   background: none;
   border: none;
   color: var(--primary-purple);

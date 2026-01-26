@@ -79,7 +79,7 @@ const TopChartsPage = () => {
 
             setTopChartsData(data);
         } catch (err) {
-            console.error("Error fetching top charts data:", err);
+            //console.error("Error fetching top charts data:", err);
             setError("Không thể tải dữ liệu. Vui lòng thử lại sau.");
         } finally {
             setLoading(false);
@@ -129,7 +129,7 @@ const TopChartsPage = () => {
                 clearCache('favorites');
             }
         } catch (err) {
-            console.error("Toggle favorite error:", err);
+            //console.error("Toggle favorite error:", err);
         }
     };
 

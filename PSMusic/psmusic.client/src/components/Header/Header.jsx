@@ -101,13 +101,13 @@ const Header = () => {
                         : s.artistName || s.artist || "",
                 }));
 
-                console.log(mappedTop.length);
+                //console.log(mappedTop.length);
 
                 setTopResults(mappedTop);
                 setSuggestions(mapped);
 
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setSuggestions([]);
                 setTopResults([]);
             } finally {

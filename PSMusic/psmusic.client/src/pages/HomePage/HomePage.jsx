@@ -68,7 +68,7 @@ const HomePage = () => {
       // Cache data
       setHomePageData(data);
     } catch (err) {
-      console.error('Error fetching home page data:', err);
+      //console.error('Error fetching home page data:', err);
       setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
     } finally {
       setLoading(false);

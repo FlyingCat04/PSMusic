@@ -86,7 +86,7 @@ export default function PlayerControl() {
       // Clear favorites cache to force refresh on next visit
       clearCache('favorites');
     } catch (err) {
-      console.error("Lỗi toggle favorite:", err);
+      //console.error("Lỗi toggle favorite:", err);
     } finally {
       setUpdatingFavorite(false);
     }
@@ -102,7 +102,7 @@ export default function PlayerControl() {
   };
 
   const handleReviewSubmitted = (reviewData) => {
-    console.log("✅ Đánh giá đã được gửi:", reviewData);
+    //console.log("✅ Đánh giá đã được gửi:", reviewData);
     setPlayerData((prev) =>
       prev ? { ...prev, isReviewed: true } : prev
     );
@@ -110,7 +110,7 @@ export default function PlayerControl() {
 
   const handleDownload = () => {
     if (!songToDisplay?.audioUrl) {
-      console.error("Không có URL để tải bài hát");
+      //console.error("Không có URL để tải bài hát");
       return;
     }
 
@@ -127,7 +127,7 @@ export default function PlayerControl() {
       downloadLink.click();
       document.body.removeChild(downloadLink);
     } catch (error) {
-      console.error("Lỗi khi tải bài hát:", error);
+      //console.error("Lỗi khi tải bài hát:", error);
     }
   };
 

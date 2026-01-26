@@ -8,7 +8,7 @@ const exploreCategoriesService = {
             });
             return res.data;
         } catch (error) {
-            console.error("Error fetching all categories:", error);
+            //console.error("Error fetching all categories:", error);
             throw error;
         }
     },
@@ -20,7 +20,7 @@ const exploreCategoriesService = {
             });
             return res.data;
         } catch (error) {
-            console.error(`Error fetching songs for category ${categoryId}:`, error);
+            //console.error(`Error fetching songs for category ${categoryId}:`, error);
             throw error;
         }
     },
@@ -32,7 +32,7 @@ const exploreCategoriesService = {
             );
             return await Promise.all(requests);
         } catch (error) {
-            console.error("Error fetching multiple category songs:", error);
+            //console.error("Error fetching multiple category songs:", error);
             throw error;
         }
     }

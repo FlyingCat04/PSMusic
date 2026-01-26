@@ -98,7 +98,7 @@ function SignUpForm() {
 
         // } catch (err) {
         //     setLoading(false)
-        //     console.error(err);
+        //     //console.error(err);
         //     setError("Lỗi kết nối đến máy chủ.");
         // };
     }

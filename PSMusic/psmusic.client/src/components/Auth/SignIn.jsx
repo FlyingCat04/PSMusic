@@ -46,7 +46,7 @@ function SignInForm() {
 
   //       if (!response.ok) {
   //           setLoading(false)
-  //           console.log(data.message)
+  //           //console.log(data.message)
   //           setError("Tên đăng nhập hoặc mật khẩu không đúng.");
   //           return;
   //     }
@@ -67,7 +67,7 @@ function SignInForm() {
 
   //   } catch (err) {
   //     setLoading(false)
-  //     console.error(err);
+  //     //console.error(err);
   //     setError("Lỗi kết nối đến máy chủ.");
   //   }
   // };
@@ -109,7 +109,7 @@ function SignInForm() {
     }
     // try {
     //   const res = await axiosInstance.post("/auth/login", { username: name, password: password });
-    //   console.log('Cookies:', document.cookie);
+    //   //console.log('Cookies:', document.cookie);
     //   const data = res.data;
     //   if (data.isSuccess)
     //   {
@@ -122,11 +122,11 @@ function SignInForm() {
     //     setState({ name: "", password: "" });
     //     setError("");
     //     const res = await axiosInstance.get("/auth/me");
-    //     console.log(res.data);
+    //     //console.log(res.data);
     //   }
     //   else {
     //     setLoading(false);
-    //     console.error("Login error:", err.response || err);
+    //     //console.error("Login error:", err.response || err);
     //     setError(
     //       err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng."
     //     );
@@ -134,7 +134,7 @@ function SignInForm() {
       
     // } catch (err) {
     //   setLoading(false);
-    //   console.error("Login error:", err.response || err);
+    //   //console.error("Login error:", err.response || err);
     //   setError(
     //     err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng."
     //   );

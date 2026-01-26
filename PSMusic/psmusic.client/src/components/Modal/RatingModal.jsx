@@ -62,7 +62,7 @@ const RatingModal = ({
         const res = await axiosInstance.get(`/rating/${songId}/reviews`);
         setReviews(res.data || []);
       } catch (err) {
-        console.error("Lỗi load review:", err);
+        //console.error("Lỗi load review:", err);
       } finally {
         setLoading(false);
         setSuccessMessage("");
@@ -145,7 +145,7 @@ const RatingModal = ({
       setComment("");
       setHover(0);
     } catch (err) {
-      console.error("Lỗi gửi đánh giá:", err);
+      //console.error("Lỗi gửi đánh giá:", err);
       alert("Không thể gửi đánh giá. Vui lòng thử lại.");
     } finally {
       setSubmitting(false);
