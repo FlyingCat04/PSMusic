@@ -6,11 +6,13 @@
   useEffect,
 } from "react";
 import PlayerControlService from "../services/PlayerControlService";
+import { useAuth } from "../hooks/useAuth";
 
 const PlayerContext = createContext();
 export const usePlayer = () => useContext(PlayerContext);
 
 export function PlayerProvider({ children }) {
+  const { user } = useAuth();
   const audioRef = useRef(null);
 
   const [currentSong, setCurrentSong] = useState(null);
@@ -38,6 +40,18 @@ export function PlayerProvider({ children }) {
     let cancelled = false;
 
     const fetchPlayerData = async () => {
+      if (!user) {
+        if (!cancelled) {
+          setPlayerData({
+            ...currentSong,
+            isFavorited: false,
+            isReviewed: false,
+            audioUrl: currentSong.audioUrl || currentSong.mp3Url
+          });
+        }
+        return;
+      }
+
       try {
         const res = await PlayerControlService.getPlayerData(currentSong.id);
 
@@ -99,14 +113,6 @@ export function PlayerProvider({ children }) {
     setIsPlayerVisible(true);
   };
 
-  const handleTimeUpdate = () => {
-    if (!audioRef.current) return;
-    setCurrentTime(audioRef.current.currentTime);
-  };
-
-  const handleLoaded = () => {
-    setDuration(audioRef.current.duration);
-  };
 
   const loadInitialQueue = async () => {
     const res = await PlayerControlService.getNextBatch();
@@ -272,27 +278,16 @@ export function PlayerProvider({ children }) {
   useEffect(() => {
     if (!audioRef.current) return;
     const audio = audioRef.current;
-    audio.volume = volume;
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("loadedmetadata", handleLoaded);
+    
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const onLoadedMetadata = () => setDuration(audio.duration);
+    
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    
     return () => {
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener("loadedmetadata", handleLoaded);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-
-    const audio = audioRef.current;
-    audio.volume = volume;
-
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("loadedmetadata", handleLoaded);
-
-    return () => {
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener("loadedmetadata", handleLoaded);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
     };
   }, []);
 
@@ -303,20 +298,21 @@ export function PlayerProvider({ children }) {
   }, [volume]);
 
   useEffect(() => {
-    if (!currentSong) return;
+    if (!user || !currentSong) return;
 
     if (!hasStreamed && currentTime >= 20) {
       PlayerControlService.streamSong(currentSong.id);
 
       setHasStreamed(true);
     }
-  }, [currentTime, currentSong, hasStreamed]);
+  }, [currentTime, currentSong, hasStreamed, user]);
 
   const value = {
     audioRef,
     currentSong,
     playerData,
     isPlaying,
+    setIsPlaying,
     setPlayerData,
     currentTime,
     duration,
@@ -345,8 +341,6 @@ export function PlayerProvider({ children }) {
       <audio
         ref={audioRef}
         onEnded={playNextSong}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoaded}
       />
     </PlayerContext.Provider>
   );

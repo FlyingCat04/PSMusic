@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import ItemTopCharts from "../../components/ItemTopCharts/ItemTopCharts";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import topChartsService from "../../services/topChartsService";
+import { useAuth } from "../../hooks/useAuth";
+import { usePlayer } from "../../contexts/PlayerContext";
 import { useDataCache } from "../../contexts/DataCacheContext";
 import styles from "./TopChartsPage.module.css";
 
 const TopChartsPage = () => {
+    const navigate = useNavigate();
+    const { user } = useAuth();
+    const { audioRef, setIsPlaying } = usePlayer();
     const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData } = useDataCache();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -103,7 +108,17 @@ const TopChartsPage = () => {
         );
     }
 
-    const handleToggleFavorite = async (song) => { 
+    const handleToggleFavorite = async (song, e) => { 
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (!user) {
+            if (audioRef.current) audioRef.current.pause();
+            setIsPlaying(false);
+            navigate("/auth");
+            return;
+        }
         const songId = song.id || song.songId;
         try {
             const res = await topChartsService.toggleFavorite(songId);

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Play } from "lucide-react";
+import { Play, Heart } from "lucide-react";
 import styles from "./SongRow.module.css";
 
-const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, activeTab = "", hideInnerArtist= false}) => {
+const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, onFavorite, activeTab = "", hideInnerArtist= false}) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isHoverCover, setIsHoverCover] = useState(false);
     //const [artistMenuOpen, setArtistMenuOpen] = useState(false);
@@ -25,6 +25,11 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
     
 
     const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
+
+    const handleFavoriteClick = (e) => {
+        e.stopPropagation();
+        if (onFavorite) onFavorite(item, e);
+    };
 
     const formatDuration = (seconds) => {
         if (!seconds && seconds !== 0) return "";
@@ -338,6 +343,19 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                     {formatDuration(duration)}
                 </span>
             )}
+            <div className={styles["sr-right"]}>
+                <button
+                    type="button"
+                    className={styles["sr-favorite-button"]}
+                    onClick={handleFavoriteClick}
+                >
+                    <Heart 
+                        size={18} 
+                        fill={item.isFavorited ? "white" : "transparent"} 
+                        color="white" 
+                    />
+                </button>
+            </div>
             {/*<div className={styles["sr-right"]}>*/}
             {/*    <button*/}
             {/*        type="button"*/}

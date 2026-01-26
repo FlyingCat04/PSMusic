@@ -7,14 +7,17 @@ import { usePlayer } from "../../contexts/PlayerContext";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import SongRow from "../../components/SongRow/SongRow";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import topChartsService from "../../services/topChartsService";
 
 export default function FavoritePlaylistPage() {
   const [songs, setSongs] = useState([]);
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
-  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist } =
+  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying } =
     usePlayer();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -146,6 +149,33 @@ export default function FavoritePlaylistPage() {
     updateCurrentPlaylist(newOrder);
   };
 
+  const handleToggleFavorite = async (song, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!user) {
+      if (audioRef.current) audioRef.current.pause();
+      setIsPlaying(false);
+      navigate("/auth");
+      return;
+    }
+    const songId = song.id || song.songId;
+    try {
+      const res = await topChartsService.toggleFavorite(songId);
+      if (res && res.isFavorited !== undefined) {
+        // Cập nhật state bài hát trong danh sách
+        setSongs((prev) =>
+          prev.map((s) =>
+            (s.id || s.songId) === songId ? { ...s, isFavorited: res.isFavorited } : s
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Toggle favorite error:", err);
+    }
+  };
+
   if (loading) return <p>Đang tải playlist...</p>;
   if (!songs.length) return <p>Không có bài hát yêu thích nào.</p>;
 
@@ -225,13 +255,14 @@ export default function FavoritePlaylistPage() {
                           {...provided.dragHandleProps}
                         >
                           <div className={styles["colIndex"]}>{index + 1}</div>
-                          <SongRow
-                            item={song}
-                            onTitleClick={handleTitleClick}
-                            onViewArtist={handleViewArtist}
-                            onPlay={() => handlePlaySong(song, index)}
-                            activeTab="Bài hát"
-                          />
+                            <SongRow
+                              item={song}
+                              onTitleClick={handleTitleClick}
+                              onViewArtist={handleViewArtist}
+                              onPlay={() => handlePlaySong(song, index)}
+                              onFavorite={handleToggleFavorite}
+                              activeTab="Bài hát"
+                            />
                         </div>
                       )}
                     </Draggable>
