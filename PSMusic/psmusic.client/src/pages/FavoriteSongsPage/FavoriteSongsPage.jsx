@@ -11,7 +11,7 @@ import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import { useDataCache } from "../../contexts/DataCacheContext";
 
 export default function FavoritePlaylistPage() {
-  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist } =
+  const { playSong, currentSong, isPlaying, playPlaylist, updateCurrentPlaylist } =
     usePlayer();
   const navigate = useNavigate();
   const { getFavoritesData, setFavoritesData, clearCache } = useDataCache();
@@ -240,6 +240,7 @@ export default function FavoritePlaylistPage() {
                           <div className={styles["colIndex"]}>{index + 1}</div>
                           <SongRow
                             item={song}
+                            showPlayingIcon={currentSong?.id === song.id && isPlaying}
                             onTitleClick={handleTitleClick}
                             onViewArtist={handleViewArtist}
                             onPlay={() => handlePlaySong(song, index)}
