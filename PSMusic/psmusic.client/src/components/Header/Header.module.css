@@ -204,13 +204,19 @@
     border: none;
     cursor: pointer;
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
 }
 
     .suggestItem:hover {
         background: rgba(255,255,255,0.06);
     }
+
+.suggestIcon {
+    flex-shrink: 0;
+    color: var(--text-tertiary, #b3b3b3);
+}
 
 .suggestTitle {
     font-size: 14px;

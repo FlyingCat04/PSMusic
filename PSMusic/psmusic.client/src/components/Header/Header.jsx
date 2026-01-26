@@ -184,10 +184,13 @@ const Header = () => {
                                   }
                               }}
                           >
-                              <div className={styles.suggestTitle}>{s.title}</div>
-                              {s.artist && (
-                                  <div className={styles.suggestSubtitle}>{s.artist}</div>
-                              )}
+                              <Search size={18} className={styles.suggestIcon} />
+                              <div>
+                                  <div className={styles.suggestTitle}>{s.title}</div>
+                                  {s.artist && (
+                                      <div className={styles.suggestSubtitle}>{s.artist}</div>
+                                  )}
+                              </div>
                           </button>
                       ))
                   }
@@ -206,10 +209,13 @@ const Header = () => {
                                   }
                               }}
                           >
-                              <div className={styles.suggestTitle}>{s.title}</div>
-                              {s.artist && (
-                                  <div className={styles.suggestSubtitle}>{s.artist}</div>
-                              )}
+                              <Search size={18} className={styles.suggestIcon} />
+                              <div>
+                                  <div className={styles.suggestTitle}>{s.title}</div>
+                                  {s.artist && (
+                                      <div className={styles.suggestSubtitle}>{s.artist}</div>
+                                  )}
+                              </div>
                           </button>
                       ))
                   }
