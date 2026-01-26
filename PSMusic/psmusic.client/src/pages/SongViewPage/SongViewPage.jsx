@@ -49,8 +49,6 @@ export default function SongViewPage() {
         const resOther = await axiosInstance.get(`/song/${song.id}/related`);
         let related = resOther.data || [];
 
-        console.log(related)
-
         const mappedRelated = related.map(item => ({
           id: item.id,
           title: item.title,
@@ -84,7 +82,7 @@ export default function SongViewPage() {
           setLyrics(parsed);
         }
       } catch (err) {
-        console.error("Lỗi khi tải dữ liệu:", err);
+        // console.error("Lỗi khi tải dữ liệu:", err);
       } finally {
         setLoading(false);
       }
@@ -111,7 +109,7 @@ export default function SongViewPage() {
       downloadLink.click();
       document.body.removeChild(downloadLink);
     } catch (error) {
-      console.error("Lỗi khi tải bài hát:", error);
+      // console.error("Lỗi khi tải bài hát:", error);
       alert("Có lỗi xảy ra khi tải bài hát");
     } finally {
       setDownloading(false);
@@ -128,7 +126,7 @@ export default function SongViewPage() {
 
   const handleAddToPlaylist = (song, playlist) => {
     // TODO: Implement add to playlist
-    console.log("Add to playlist", song, playlist);
+    // console.log("Add to playlist", song, playlist);
   };
 
   if (loading) return <p>Đang tải...</p>;

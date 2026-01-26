@@ -134,10 +134,7 @@ const HomePage = () => {
             <p style={{ color: 'var(--text-secondary)' }}>Không có thể loại nào</p>
           )}
         </div>
-          </section>
-
-       <div className="recommendSys" />
-
+      </section>
 
       {/* Artists Section */}
       <section className={styles['content-section']}>
