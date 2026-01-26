@@ -154,17 +154,20 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
     return (
 
-        <div className={styles[handleRowStyle(activeTab)]}>
+        <div 
+            className={styles[handleRowStyle(activeTab)]}
+            {...(activeTab === "Bài hát" && {
+                onClick: () => onPlay?.(item),
+                onMouseEnter: () => setIsHoverCover(true),
+                onMouseLeave: () => setIsHoverCover(false)
+            })}
+        >
             {/* COVER + TITLE + ARTIST */}
             {activeTab === "Bài hát" ? (
                 <>
                     {/* Cột 1: avatar + tên bài hát */}
-                    <div className={styles["sr-col-cover-title"]} onClick={() => onPlay?.(item)}>
-                        <div
-                            className={styles["sr-avatar-wrapper"]}
-                            onMouseEnter={() => setIsHoverCover(true)}
-                            onMouseLeave={() => setIsHoverCover(false)}
-                        >
+                    <div className={styles["sr-col-cover-title"]}>
+                        <div className={styles["sr-avatar-wrapper"]}>
                             <img
                                 className={styles["sr-cover"]}
                                 src={item.imageUrl}
@@ -201,7 +204,10 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
                         <button
                             className={styles["sr-title-songtab"]}
-                            onClick={() => onTitleClick?.(item)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onTitleClick?.(item);
+                            }}
                         >
                             {item.title}
                         </button>
@@ -219,7 +225,11 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                                         <span
                                             key={a.id || `artist-${idx}`} // Sử dụng index làm dự phòng nếu id null
                                             className={styles.artistName}
-                                            onClick={() => onViewArtist?.(a.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onViewArtist?.(a.id)}
+                                            }
+                                            // onClick={() => onViewArtist?.(a.id)}
                                         >
                                             {a.name}
                                             {idx < displayed.length - 1 ? ", " : ""}
@@ -281,7 +291,10 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
                     <div className={styles[handleMetaStyle(activeTab)]}>
                         <button
                             className={styles[handleTitleStyle(activeTab)]}
-                            onClick={() => onTitleClick?.(item)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onTitleClick?.(item);
+                            }}
                         >
                             {item.title}
                         </button>
