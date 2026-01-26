@@ -8,7 +8,7 @@ import { useDataCache } from "../../contexts/DataCacheContext";
 import styles from "./TopChartsPage.module.css";
 
 const TopChartsPage = () => {
-    const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData } = useDataCache();
+    const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData, clearCache } = useDataCache();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -124,6 +124,9 @@ const TopChartsPage = () => {
 
                 // 2. Update global cache for sync
                 updateSongFavoriteStatus(songId, res.isFavorited);
+                
+                // 3. Clear favorites cache to force refresh on next visit
+                clearCache('favorites');
             }
         } catch (err) {
             console.error("Toggle favorite error:", err);

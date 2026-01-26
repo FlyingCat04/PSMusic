@@ -7,18 +7,30 @@ import { usePlayer } from "../../contexts/PlayerContext";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import SongRow from "../../components/SongRow/SongRow";
 import { useNavigate } from "react-router-dom";
+import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
+import { useDataCache } from "../../contexts/DataCacheContext";
 
 export default function FavoritePlaylistPage() {
-  const [songs, setSongs] = useState([]);
-  const [showAllFavorites, setShowAllFavorites] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(false);
   const { playSong, currentSong, playPlaylist, updateCurrentPlaylist } =
     usePlayer();
   const navigate = useNavigate();
+  const { getFavoritesData, setFavoritesData, clearCache } = useDataCache();
+  
+  // Initialize with cached data if available
+  const initialCache = getFavoritesData();
+  const [songs, setSongs] = useState(initialCache || []);
+  const [showAllFavorites, setShowAllFavorites] = useState(false);
+  const [loading, setLoading] = useState(!initialCache);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const fetchFavorites = async () => {
+      // Skip if we already have cached data
+      const cachedData = getFavoritesData();
+      if (cachedData) {
+        return;
+      }
+
       try {
         setLoading(true);
 
@@ -37,6 +49,7 @@ export default function FavoritePlaylistPage() {
         }));
 
         setSongs(fetchedSongs);
+        setFavoritesData(fetchedSongs);
       } catch (err) {
         console.error("Lỗi khi tải playlist yêu thích:", err);
       } finally {
@@ -45,7 +58,7 @@ export default function FavoritePlaylistPage() {
     };
 
     fetchFavorites();
-  }, []);
+  }, [getFavoritesData, setFavoritesData]);
 
   const handleDownloadPlaylist = async () => {
     if (!songs.length) return;
@@ -146,7 +159,7 @@ export default function FavoritePlaylistPage() {
     updateCurrentPlaylist(newOrder);
   };
 
-  if (loading) return <p>Đang tải playlist...</p>;
+  if (loading) return <LoadSpinner />;
   if (!songs.length) return <p>Không có bài hát yêu thích nào.</p>;
 
   return (

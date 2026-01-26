@@ -28,7 +28,7 @@ export default function PlayerControl() {
     toggleRepeat,
   } = usePlayer();
 
-  const { updateSongFavoriteStatus, lastFavoriteUpdate } = useDataCache();
+  const { updateSongFavoriteStatus, lastFavoriteUpdate, clearCache } = useDataCache();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -82,6 +82,9 @@ export default function PlayerControl() {
       setPlayerData((prev) => 
         prev ? { ...prev, isFavorited: newStatus } : prev
       );
+      
+      // Clear favorites cache to force refresh on next visit
+      clearCache('favorites');
     } catch (err) {
       console.error("Lỗi toggle favorite:", err);
     } finally {

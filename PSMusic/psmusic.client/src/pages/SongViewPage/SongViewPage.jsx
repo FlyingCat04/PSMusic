@@ -6,6 +6,7 @@ import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import { usePlayer } from "../../contexts/PlayerContext";
 import axiosInstance from "../../services/axiosInstance";
 import TrackTable from "../../components/TrackTable/TrackTable";
+import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 
 const DEFAULT_SONG_IMAGE =
   "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
@@ -129,7 +130,7 @@ export default function SongViewPage() {
     // console.log("Add to playlist", song, playlist);
   };
 
-  if (loading) return <p>Đang tải...</p>;
+  if (loading) return <LoadSpinner />;
   if (!songDetail) return <p>Không tìm thấy bài hát</p>;
 
   return (
