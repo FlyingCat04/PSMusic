@@ -1,12 +1,16 @@
 .page {
     min-height: 100vh;
-    background: linear-gradient( 
+    /* background: linear-gradient( 
         to bottom, 
         color-mix(in srgb, var(--bg-hero) 30%, transparent),
-        var(--background-dark) 
-    );
+        var(--sidebar-bg) 
+    ); */
+    background: linear-gradient(to bottom,
+            color-mix(in srgb, var(--sidebar-bg) 30%, transparent),
+            var(--background-main));
     color: #fff;
     border-radius: 8px;
+    margin-bottom: 24px;
 }
 
 .hero {
@@ -19,11 +23,9 @@
 .heroBg {
     position: absolute;
     inset: -40px;
-    background: linear-gradient( 
-        to bottom, 
-        color-mix(in srgb, var(--bg-hero) 30%, transparent),
-        var(--background-dark) 
-    );
+    background: linear-gradient(to bottom,
+            color-mix(in srgb, var(--bg-hero) 30%, transparent),
+            var(--background-dark));
     opacity: 0.55;
 }
 
@@ -40,7 +42,7 @@
     height: 192px;
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
 }
 
 .heroMeta {
@@ -68,7 +70,7 @@
     border-radius: 999px;
     padding: 14px 32px;
     background: var(--primary-purple);
-    color: var(--text-primary);    
+    color: var(--text-primary);
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
