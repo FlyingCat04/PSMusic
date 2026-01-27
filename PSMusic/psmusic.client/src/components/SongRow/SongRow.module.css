@@ -13,15 +13,15 @@
 
 .sr-row:hover {
     background: var(--component-hover-bg);
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    /* border-color: var(--primary-purple);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6); */
 }
 
 /* Song row khi ở tab Bài hát: 4 cột bằng nhau
    [cover + title] [artist] [duration] [menu] */
 .sr-song-tab {
     display: grid;
-    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) auto;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) 60px;
     align-items: center;
     column-gap: 20px;
     background: none;
@@ -33,8 +33,8 @@
 
 .sr-song-tab:hover {
     background: var(--component-hover-bg);
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    /* border-color: var(--primary-purple);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1); */
 }
 
 
