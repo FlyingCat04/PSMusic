@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Play, Heart } from "lucide-react";
+import { Play } from "lucide-react";
 import styles from "./SongRow.module.css";
 
 const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, onFavorite, activeTab = "", hideInnerArtist = false, hideDuration = false }) => {

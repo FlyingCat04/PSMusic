@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import RatingModal from "../Modal/RatingModal";
 import styles from "./PlayerControl.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
+import { useAuth } from "../../hooks/useAuth";
 import { useDataCache } from "../../contexts/DataCacheContext";
 import axiosInstance from "../../services/axiosInstance";
 
@@ -26,7 +27,9 @@ export default function PlayerControl() {
     repeat,
     toggleShuffle,
     toggleRepeat,
+    setIsPlaying,
   } = usePlayer();
+  const { user } = useAuth();
 
   const { updateSongFavoriteStatus, lastFavoriteUpdate, clearCache } = useDataCache();
 
@@ -68,7 +71,17 @@ export default function PlayerControl() {
     togglePlay();
   };
 
-  const toggleFavorite = async () => {
+  const toggleFavorite = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!user) {
+      if (audioRef.current) audioRef.current.pause();
+      setIsPlaying(false);
+      navigate("/auth");
+      return;
+    }
     if (!currentSong?.id || updatingFavorite) return;
 
     try {
@@ -98,6 +111,12 @@ export default function PlayerControl() {
   };
 
   const toggleRating = () => {
+    if (!user) {
+      if (audioRef.current) audioRef.current.pause();
+      setIsPlaying(false);
+      navigate("/auth");
+      return;
+    }
     setIsModalOpen(true);
   };
 

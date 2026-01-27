@@ -9,10 +9,17 @@ import SongRow from "../../components/SongRow/SongRow";
 import { useNavigate } from "react-router-dom";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import { useDataCache } from "../../contexts/DataCacheContext";
+import { useAuth } from "../../hooks/useAuth";
+import topChartsService from "../../services/topChartsService";
 
 export default function FavoritePlaylistPage() {
-  const { playSong, currentSong, isPlaying, playPlaylist, updateCurrentPlaylist } =
+  const [songs, setSongs] = useState([]);
+  const [showAllFavorites, setShowAllFavorites] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
+  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying } =
     usePlayer();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { getFavoritesData, setFavoritesData, clearCache } = useDataCache();
   

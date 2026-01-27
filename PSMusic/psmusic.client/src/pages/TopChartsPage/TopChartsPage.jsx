@@ -4,10 +4,14 @@ import { ChevronRight } from "lucide-react";
 import TrackTable from "../../components/TrackTable/TrackTable";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import topChartsService from "../../services/topChartsService";
+import { useAuth } from "../../hooks/useAuth";
+import { usePlayer } from "../../contexts/PlayerContext";
 import { useDataCache } from "../../contexts/DataCacheContext";
 import styles from "./TopChartsPage.module.css";
 
 const TopChartsPage = () => {
+    const { user } = useAuth();
+    const { audioRef, setIsPlaying } = usePlayer();
     const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData, clearCache } = useDataCache();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);

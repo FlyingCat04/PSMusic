@@ -34,7 +34,7 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
 
     const handleFavoriteClick = (e) => {
         e.stopPropagation();
-        if (onFavorite) onFavorite(song);
+        if (onFavorite) onFavorite(song, e);
     };
 
     const handleMenuClick = (e) => {
