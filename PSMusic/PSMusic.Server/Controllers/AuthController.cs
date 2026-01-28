@@ -52,8 +52,22 @@ namespace PSMusic.Server.Controllers
                 {
                     Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
                 }
-                
-                return Ok(new { result.IsSuccess, result.Message, result.Token });
+
+                if (!result.UserId.HasValue) return Unauthorized(); 
+                var user = await _userService.GetUserById(result.UserId.Value);
+                return Ok(new { 
+                    result.IsSuccess, 
+                    result.Message, 
+                    result.Token,
+                    User = new
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        Email = user.Email,
+                        DisplayName = user.DisplayName,
+                        AvatarUrl = user.AvatarURL
+                    }
+                });
             }
             else return BadRequest(new { result.IsSuccess, result.Message });
         }
@@ -70,7 +84,23 @@ namespace PSMusic.Server.Controllers
             var result = await _authService.Refresh(refreshToken);
             if (result.IsSuccess)
             {
-                return Ok(new { result.IsSuccess, result.Message, result.Token });
+                if (!result.UserId.HasValue) return Unauthorized();
+                var user = await _userService.GetUserById(result.UserId.Value);
+
+                return Ok(new
+                {
+                    result.IsSuccess,
+                    result.Message,
+                    result.Token,
+                    User = new
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        Email = user.Email,
+                        DisplayName = user.DisplayName,
+                        AvatarUrl = user.AvatarURL
+                    }
+                });
             }
             
             return Ok(new { result.IsSuccess, result.Message });
@@ -115,7 +145,6 @@ namespace PSMusic.Server.Controllers
                 SameSite = SameSiteMode.None,
             };
 
-            Response.Cookies.Delete("AccessToken", cookieOptions);
             Response.Cookies.Delete("RefreshToken", cookieOptions);
             return Ok(new { IsSuccess = true, Message = "Đăng xuất thành công" });
         }

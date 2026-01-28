@@ -6,7 +6,7 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { useNavigate } from 'react-router-dom'; 
 import styles from './Header.module.css';
 import axiosInstance from '../../services/axiosInstance';
-import userService from '../../services/userService';
+// import userService from '../../services/userService';
 import { useAuth } from '../../hooks/useAuth';
 
 const Header = () => {
@@ -17,25 +17,8 @@ const Header = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [loadingSuggest, setLoadingSuggest] = useState(false);
     const [topResults, setTopResults] = useState([]);
-    const [avatarURL, setAvatarURL] = useState(null);
     const [avatarError, setAvatarError] = useState(false);
-
-    useEffect(() => {
-      const fetchUserData = async () => {
-        if (user?.id) {
-          const result = await userService.getUserById(user.id);
-          if (result.isSuccess && result.data?.avatarURL) {
-            setAvatarURL(result.data.avatarURL);
-            setAvatarError(false);
-          } else {
-            setAvatarURL(null);
-            setAvatarError(true);
-          }
-        }
-      };
-
-      fetchUserData();
-    }, [user]);
+    const avatarURL = user?.avatarUrl || null;
 
     const handleImageError = () => {
       setAvatarError(true);
