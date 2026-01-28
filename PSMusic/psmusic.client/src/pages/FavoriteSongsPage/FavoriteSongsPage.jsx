@@ -13,22 +13,18 @@ import { useAuth } from "../../hooks/useAuth";
 import topChartsService from "../../services/topChartsService";
 
 export default function FavoritePlaylistPage() {
-  const [songs, setSongs] = useState([]);
   const [showAllFavorites, setShowAllFavorites] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying } =
     usePlayer();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { getFavoritesData, setFavoritesData, clearCache } = useDataCache();
+  const initialCache = getFavoritesData();
   
   // Initialize with cached data if available
-  const initialCache = getFavoritesData();
   const [songs, setSongs] = useState(initialCache || []);
-  const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [loading, setLoading] = useState(!initialCache);
-  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const fetchFavorites = async () => {
