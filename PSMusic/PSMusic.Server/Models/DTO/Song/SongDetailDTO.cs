@@ -39,8 +39,6 @@ namespace PSMusic.Server.Models.DTO.Song
         public string ImageUrl { get; set; } = string.Empty;
         public int Favorite { get; set; } 
         public int Reviews { get; set; } 
-        public bool IsFavorited { get; set; } 
-        public bool IsReviewed { get; set; } 
         public string LyricUrl { get; set; } = string.Empty;
         public string AudioUrl { get; set; } = string.Empty;
         public string Duration { get; set; } = "00:00";
@@ -57,8 +55,6 @@ namespace PSMusic.Server.Models.DTO.Song
         public int Likes { get; set; }                          // Đổi tên từ FavoriteCount thành Likes cho khớp Client
         public string AudioUrl { get; set; } = string.Empty;    // Mp3Url
         public string LyricUrl { get; set; } = string.Empty;    // LrcUrl
-        public bool IsFavorited { get; set; } 
-        public bool IsReviewed { get; set; }    
         public string Duration { get; set; } = "00:00";
 
     }

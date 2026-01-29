@@ -2,6 +2,7 @@
 import { Heart, Shuffle, Repeat, Repeat1 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import RatingModal from "../Modal/RatingModal";
+import AuthModal from "../Modal/AuthModal";
 import styles from "./PlayerControl.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
 import { useAuth } from "../../hooks/useAuth";
@@ -37,6 +38,7 @@ export default function PlayerControl() {
   const [isMuted, setIsMuted] = useState(false);
   const [lastVolume, setLastVolume] = useState(0.5);
   const [updatingFavorite, setUpdatingFavorite] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const songToDisplay = playerData || currentSong;
   const isFavorited = !!playerData?.isFavorited;
@@ -77,9 +79,7 @@ export default function PlayerControl() {
       e.stopPropagation();
     }
     if (!user) {
-      if (audioRef.current) audioRef.current.pause();
-      setIsPlaying(false);
-      navigate("/auth");
+      setIsAuthModalOpen(true);
       return;
     }
     if (!currentSong?.id || updatingFavorite) return;
@@ -112,9 +112,7 @@ export default function PlayerControl() {
 
   const toggleRating = () => {
     if (!user) {
-      if (audioRef.current) audioRef.current.pause();
-      setIsPlaying(false);
-      navigate("/auth");
+      setIsAuthModalOpen(true);
       return;
     }
     setIsModalOpen(true);
@@ -504,6 +502,14 @@ export default function PlayerControl() {
           isReviewed={isRated}
         />
       )}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onStopMusic={() => {
+          if (audioRef.current) audioRef.current.pause();
+          setIsPlaying(false);
+        }}
+      />
     </>
   );
 }

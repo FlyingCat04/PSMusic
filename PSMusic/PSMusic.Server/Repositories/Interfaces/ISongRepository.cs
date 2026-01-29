@@ -12,9 +12,9 @@ namespace PSMusic.Server.Repositories.Interfaces
         Task<IEnumerable<Song>> GetRandomSongsAsync(int count);
         Task<IEnumerable<Song>?> GetByArtistId(int id);
         Task<IEnumerable<Song>?> GetPopularSongWithCategory(int id);
-        Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId);
+        Task<SongDetail2DTO?> GetSongDetail_DTO(int songId);
         Task<List<Song>> GetRelatedSongs(int songId);
-        Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id, int userId);
+        Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id);
         Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId);
         Task<int> GetFavoriteCount(int songId);
         Task<bool> ToggleFavorite(int songId, int userId);

@@ -276,9 +276,9 @@ namespace PSMusic.Server.Services.Implementations
             return songs.Paginate(page, size);
         }
 
-        public async Task<SongDetail2DTO?> GetSongDetail(int songId, int userId)
+        public async Task<SongDetail2DTO?> GetSongDetail(int songId)
         {            
-            var result = await _songRepository.GetSongDetail_DTO(songId, userId);
+            var result = await _songRepository.GetSongDetail_DTO(songId);
             return result;
         }
 
@@ -288,9 +288,9 @@ namespace PSMusic.Server.Services.Implementations
             return _mapper.Map<List<RelatedSongDTO>>(songEntities);
         }
 
-        public async Task<SongPlayerDTO?> GetSongForPlayer(int id, int userId)
+        public async Task<SongPlayerDTO?> GetSongForPlayer(int id)
         {
-            var result = await _songRepository.GetSongForPlayer_DTO(id, userId);
+            var result = await _songRepository.GetSongForPlayer_DTO(id);
             return result;
         }
 
