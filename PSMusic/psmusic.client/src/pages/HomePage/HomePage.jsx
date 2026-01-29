@@ -205,7 +205,7 @@ const HomePage = () => {
       <section className={styles['content-section']}>
         <div className={styles['section-header']}>
           <h2 className={styles['section-title']}>Nhạc Pop Thịnh Hành</h2>
-          <Link to="/charts/pop" className={styles['see-all-link']}>
+          <Link to="/charts" className={styles['see-all-link']}>
             Tất cả
             <ChevronRight />
           </Link>

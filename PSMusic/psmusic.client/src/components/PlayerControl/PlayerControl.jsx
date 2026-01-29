@@ -56,7 +56,11 @@ export default function PlayerControl() {
   useEffect(() => {
     if (lastFavoriteUpdate && currentSong && lastFavoriteUpdate.songId === currentSong.id) {
         setPlayerData(prev => 
-            prev ? { ...prev, isFavorited: lastFavoriteUpdate.isFavorited } : prev
+            prev ? { 
+                ...prev, 
+                isFavorited: lastFavoriteUpdate.isFavorited,
+                likes: lastFavoriteUpdate.isFavorited ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1) 
+            } : prev
         );
     }
   }, [lastFavoriteUpdate, currentSong]);
@@ -93,7 +97,11 @@ export default function PlayerControl() {
       updateSongFavoriteStatus(currentSong.id, newStatus);
 
       setPlayerData((prev) => 
-        prev ? { ...prev, isFavorited: newStatus } : prev
+        prev ? { 
+            ...prev, 
+            isFavorited: newStatus,
+            likes: newStatus ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1) 
+        } : prev
       );
       
       // Clear favorites cache to force refresh on next visit
@@ -121,7 +129,7 @@ export default function PlayerControl() {
   const handleReviewSubmitted = (reviewData) => {
     //console.log("✅ Đánh giá đã được gửi:", reviewData);
     setPlayerData((prev) =>
-      prev ? { ...prev, isReviewed: true } : prev
+      prev ? { ...prev, isReviewed: true, reviews: (prev.reviews || 0) + 1 } : prev
     );
   };
 
@@ -212,7 +220,13 @@ export default function PlayerControl() {
         <div className={styles["player-main-row"]}>
           <div className={styles["player-info-left"]}>
             <img
-              src={songToDisplay.singerUrl}
+              src={
+                songToDisplay.singerUrl ||
+                songToDisplay.coverUrl ||
+                songToDisplay.imageUrl ||
+                songToDisplay.avatarUrl ||
+                "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png"
+              }
               alt={artistToDisplay}
               className={styles["singer-avatar"]}
             />
@@ -373,8 +387,8 @@ export default function PlayerControl() {
                   width="20"
                   height="20"
                   viewBox="0 0 24 24"
-                  fill={isRated ? "#fff" : "none"}
-                  stroke={isRated ? "#fff" : "currentColor"}
+                  fill={isRated ? "white" : "none"}
+                  stroke={isRated ? "white" : "currentColor"}
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"

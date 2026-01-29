@@ -98,7 +98,9 @@ namespace PSMusic.Server.Controllers
         [HttpGet("{songId}/detail")]
         public async Task<IActionResult> GetSongDetail(int songId)
         {
-            var result = await _songService.GetSongDetail(songId);
+            var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = userId_str != null ? int.Parse(userId_str) : 0;
+            var result = await _songService.GetSongDetail(songId, userId);
             if (result == null) return NotFound(new { message = "Không tìm thấy bài hát" });
             return Ok(result);
         }
@@ -116,7 +118,9 @@ namespace PSMusic.Server.Controllers
         [HttpGet("{songId}/player")]
         public async Task<ActionResult> GetSongForPlayer(int songId)
         {
-            var song = await _songService.GetSongForPlayer(songId);
+            var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = userId_str != null ? int.Parse(userId_str) : 0;
+            var song = await _songService.GetSongForPlayer(songId, userId);
             if (song == null) return NotFound(new { message = "Không tìm thấy bài hát" });
             return Ok(song);
         }

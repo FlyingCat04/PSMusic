@@ -129,7 +129,7 @@ namespace PSMusic.Server.Repositories.Implementations
                     .Count(st => st.SongId == s.Id))
                 .ToListAsync();
         }
-        public async Task<SongDetail2DTO?> GetSongDetail_DTO(int songId)
+        public async Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId)
         {
             var item = await _dbContext.Song
                 .Where(s => s.Id == songId)
@@ -142,6 +142,8 @@ namespace PSMusic.Server.Repositories.Implementations
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
                     Favorite = s.Favorites.Count(f => f.IsFavorite),
                     Reviews = s.Ratings.Count(),
+                    IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
+                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId),
                     Duration = s.Duration
                 })
                 .FirstOrDefaultAsync();
@@ -157,6 +159,8 @@ namespace PSMusic.Server.Repositories.Implementations
                 Artist = item.Artist,
                 Favorite = item.Favorite,
                 Reviews = item.Reviews,
+                IsFavorited = item.IsFavorited,
+                IsReviewed = item.IsReviewed,
                 Duration = item.Duration.HasValue ? item.Duration.Value.ToString(@"mm\:ss") : "00:00"
             };
         }
@@ -177,7 +181,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync(); 
         } 
 
-        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id)
+        public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id, int userId)
         {
             var item = await _dbContext.Song
                 .AsNoTracking()
@@ -191,6 +195,9 @@ namespace PSMusic.Server.Repositories.Implementations
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
                     SingerUrl = s.AvatarUrl ?? "",
                     Likes = s.Favorites.Count(f => f.IsFavorite),
+                    Reviews = s.Ratings.Count(),
+                    IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
+                    IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId),
                     Duration = s.Duration
                 })
                 .FirstOrDefaultAsync();
@@ -206,6 +213,9 @@ namespace PSMusic.Server.Repositories.Implementations
                 Artist = item.Artist,
                 SingerUrl = item.SingerUrl,
                 Likes = item.Likes,
+                Reviews = item.Reviews,
+                IsFavorited = item.IsFavorited,
+                IsReviewed = item.IsReviewed,
                 Duration = item.Duration.HasValue ? item.Duration.Value.ToString(@"mm\:ss") : "00:00"
             };
         }

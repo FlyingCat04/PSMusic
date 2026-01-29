@@ -7,6 +7,7 @@ import { usePlayer } from "../../contexts/PlayerContext";
 import axiosInstance from "../../services/axiosInstance";
 import TrackTable from "../../components/TrackTable/TrackTable";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
+import toast from 'react-hot-toast';
 
 const DEFAULT_SONG_IMAGE =
   "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
@@ -105,7 +106,7 @@ export default function SongViewPage() {
       document.body.removeChild(downloadLink);
     } catch (error) {
       // console.error("Lỗi khi tải bài hát:", error);
-      alert("Có lỗi xảy ra khi tải bài hát");
+      toast.error("Có lỗi xảy ra khi tải bài hát");
     } finally {
       setDownloading(false);
     }
@@ -158,7 +159,7 @@ export default function SongViewPage() {
               <Heart
                 size={22}
                 color="white"
-                fill={songDetail.favorite > 0 ? "white" : "transparent"}
+                fill={songDetail.isFavorited ? "white" : "transparent"}
               />
               <span>{songDetail.favorite}</span>
             </div>
@@ -167,7 +168,7 @@ export default function SongViewPage() {
               <Star
                 size={22}
                 color="white"
-                fill={songDetail.reviews > 0 ? "white" : "transparent"}
+                fill={songDetail.isReviewed ? "white" : "transparent"}
               />
               <span>{songDetail.reviews}</span>
             </div>

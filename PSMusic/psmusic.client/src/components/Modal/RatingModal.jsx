@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Star, Send } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
 import styles from "./RatingModal.module.css";
+import toast from 'react-hot-toast';
 
 const USER_NAME = "Bạn (User hiện tại)";
 
@@ -102,7 +103,7 @@ const RatingModal = ({
 
     if (userHasRated) return;
     if (rating === 0) {
-      alert("Vui lòng chọn số sao để đánh giá!");
+      toast.error("Vui lòng chọn số sao để đánh giá!");
       return;
     }
 
@@ -146,7 +147,7 @@ const RatingModal = ({
       setHover(0);
     } catch (err) {
       //console.error("Lỗi gửi đánh giá:", err);
-      alert("Không thể gửi đánh giá. Vui lòng thử lại.");
+      toast.error("Không thể gửi đánh giá. Vui lòng thử lại.");
     } finally {
       setSubmitting(false);
     }
