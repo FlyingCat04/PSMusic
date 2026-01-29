@@ -241,7 +241,7 @@ export default function SongViewPage() {
         <div className={styles["artist-list"]}>
           <h2>Nghệ sĩ</h2>
 
-          {relatedArtists.length > 0 ? (
+          {relatedArtists.length > 0 && (
             relatedArtists.map((artist) => (
               <div
                 key={artist.id}
@@ -255,8 +255,6 @@ export default function SongViewPage() {
                 </div>
               </div>
             ))
-          ) : (
-            <p>Không có nghệ sĩ liên quan</p>
           )}
         </div>
       </div>

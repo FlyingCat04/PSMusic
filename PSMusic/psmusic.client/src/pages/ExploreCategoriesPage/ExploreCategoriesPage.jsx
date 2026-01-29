@@ -91,21 +91,19 @@ const ExploreCategoriesPage = () => {
             {/* Categories Grid Section */}
             <section className={styles['content-section']}>
                 <div className={styles['category-grid']}>
-                    {categories.length > 0 ? (
+                    {categories.length > 0 &&
                         categories.slice(0, 16).map((category) => (
                             <GenreCard
                                 key={category.id}
                                 genre={{
                                     id: category.id,
                                     title: category.name,
-                                    imageUrl: category.avatarUrl || 'https://via.placeholder.com/200',
+                                    imageUrl: category.avatarUrl,
                                     color: category.color || '#FF4E50'
                                 }}
                             />
                         ))
-                    ) : (
-                        <p style={{ color: 'var(--text-secondary)' }}>Không có thể loại nào</p>
-                    )}
+                    }
                 </div>
             </section>
 

@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useRef, useLayoutEffect } fr
 import axiosInstance from "../services/axiosInstance";
 import authService from "../services/authService";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDataCache } from "./DataCacheContext";
 
 const AuthContext = createContext({
     user: null,
@@ -19,6 +20,7 @@ const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const isRefreshing = useRef(false);
     const failedQueue = useRef([]);
+    const { clearCache } = useDataCache();
 
     const processQueue = (error, token = null) => {
         failedQueue.current.forEach((prom) => {
@@ -123,6 +125,7 @@ const AuthProvider = ({ children }) => {
         setUser(null);
         setAccessToken(null);
         delete axiosInstance.defaults.headers.common["Authorization"];
+        clearCache();
         navigate("/discover");
     }
 

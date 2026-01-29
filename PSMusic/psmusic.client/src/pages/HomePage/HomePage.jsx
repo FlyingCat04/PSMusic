@@ -118,7 +118,7 @@ const HomePage = () => {
           </Link>
         </div>
         <div className={styles['genre-grid']}>
-          {categories.length > 0 ? (
+          {categories.length > 0 && (
             categories.slice(0, 8).map((category) => (
               <GenreCard 
                 key={category.id || category.categoryId} 
@@ -130,8 +130,6 @@ const HomePage = () => {
                 }} 
               />
             ))
-          ) : (
-            <p style={{ color: 'var(--text-secondary)' }}>Không có thể loại nào</p>
           )}
         </div>
       </section>
@@ -147,7 +145,7 @@ const HomePage = () => {
         </div>
         <div className={styles['scrollable-container']}>
           <div className={styles['songs-grid-column-scrollable']} ref={artistsScrollRef}>
-            {artists.length > 0 ? (
+            {artists.length > 0 && (
               artists.map((artist) => (
                 <ItemCardColumn 
                   key={artist.id || artist.artistId} 
@@ -160,8 +158,6 @@ const HomePage = () => {
                   type="artist"
                 />
               ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có nghệ sĩ nào</p>
             )}
           </div>
         </div>
@@ -178,7 +174,7 @@ const HomePage = () => {
         </div>
         <div className={styles['scrollable-container']}>
           <div className={styles['songs-grid-column-scrollable']} ref={songsScrollRef}>
-            {songs.length > 0 ? (
+            {songs.length > 0 && (
               songs.map((song) => (
                 <ItemCardColumn 
                   key={song.id || song.songId} 
@@ -194,8 +190,6 @@ const HomePage = () => {
                   type="song"
                 />
               ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
             )}
           </div>
         </div>
@@ -212,7 +206,7 @@ const HomePage = () => {
         </div>
         <div className={styles['scrollable-container']}>
           <div className={styles['songs-grid-column-scrollable']} ref={popSongsScrollRef}>
-            {popSongs.length > 0 ? (
+            {popSongs.length > 0 && (
               popSongs.map((song) => (
                 <ItemCardColumn 
                   key={song.id || song.songId} 
@@ -228,8 +222,6 @@ const HomePage = () => {
                   type="song"
                 />
               ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
             )}
           </div>
         </div>
@@ -246,7 +238,7 @@ const HomePage = () => {
         </div>
         <div className={styles['scrollable-container']}>
           <div className={styles['songs-grid-column-scrollable']} ref={youthSongsScrollRef}>
-            {youthSongs.length > 0 ? (
+            {youthSongs.length > 0 && (
               youthSongs.map((song) => (
                 <ItemCardColumn 
                   key={song.id || song.songId} 
@@ -262,8 +254,6 @@ const HomePage = () => {
                   type="song"
                 />
               ))
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Không có bài hát nào</p>
             )}
           </div>
         </div>

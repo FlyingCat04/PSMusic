@@ -10,13 +10,13 @@ import { PlayerProvider } from './contexts/PlayerContext'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <PlayerProvider>
-          <DataCacheProvider>
-              <App />
-          </DataCacheProvider>
-        </PlayerProvider>
-      </AuthProvider>
+      <DataCacheProvider>
+        <AuthProvider>
+          <PlayerProvider>
+            <App />
+          </PlayerProvider>
+        </AuthProvider>
+      </DataCacheProvider>
     </BrowserRouter>
   </StrictMode>,
 )
