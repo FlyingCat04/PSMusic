@@ -40,18 +40,6 @@ export function PlayerProvider({ children }) {
     let cancelled = false;
 
     const fetchPlayerData = async () => {
-      if (!user) {
-        if (!cancelled) {
-          setPlayerData({
-            ...currentSong,
-            isFavorited: false,
-            isReviewed: false,
-            audioUrl: currentSong.audioUrl || currentSong.mp3Url
-          });
-        }
-        return;
-      }
-
       try {
         const res = await PlayerControlService.getPlayerData(currentSong.id);
 

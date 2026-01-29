@@ -195,6 +195,7 @@ namespace PSMusic.Server.Repositories.Implementations
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
                     SingerUrl = s.AvatarUrl ?? "",
                     Likes = s.Favorites.Count(f => f.IsFavorite),
+                    Reviews = s.Ratings.Count(),
                     IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
                     IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId),
                     Duration = s.Duration
@@ -212,6 +213,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 Artist = item.Artist,
                 SingerUrl = item.SingerUrl,
                 Likes = item.Likes,
+                Reviews = item.Reviews,
                 IsFavorited = item.IsFavorited,
                 IsReviewed = item.IsReviewed,
                 Duration = item.Duration.HasValue ? item.Duration.Value.ToString(@"mm\:ss") : "00:00"

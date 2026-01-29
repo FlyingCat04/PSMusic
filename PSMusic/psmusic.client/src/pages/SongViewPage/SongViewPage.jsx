@@ -7,6 +7,7 @@ import { usePlayer } from "../../contexts/PlayerContext";
 import axiosInstance from "../../services/axiosInstance";
 import TrackTable from "../../components/TrackTable/TrackTable";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
+import toast from 'react-hot-toast';
 
 const DEFAULT_SONG_IMAGE =
   "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
@@ -29,8 +30,6 @@ export default function SongViewPage() {
   const [downloading, setDownloading] = useState(false);
   const lyricsRef = useRef(null);
   const { playSong, currentTime, currentSong, isPlaying } = usePlayer();
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [isReviewed, setIsReviewed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,14 +37,10 @@ export default function SongViewPage() {
       try {
         setLoading(true);
 
-        const resDetail = await axiosInstance.get(`/song/${songId}/detail`, {
-          params: { userId: 1 },
-        });
+        const resDetail = await axiosInstance.get(`/song/${songId}/detail`);
 
         const song = resDetail.data;
         setSongDetail(song);
-        setIsFavorited(song.isFavorited);
-        setIsReviewed(song.isReviewed);
 
         const resOther = await axiosInstance.get(`/song/${song.id}/related`);
         let related = resOther.data || [];
@@ -111,7 +106,7 @@ export default function SongViewPage() {
       document.body.removeChild(downloadLink);
     } catch (error) {
       // console.error("Lỗi khi tải bài hát:", error);
-      alert("Có lỗi xảy ra khi tải bài hát");
+      toast.error("Có lỗi xảy ra khi tải bài hát");
     } finally {
       setDownloading(false);
     }
@@ -164,7 +159,7 @@ export default function SongViewPage() {
               <Heart
                 size={22}
                 color="white"
-                fill={isFavorited ? "white" : "transparent"}
+                fill={songDetail.isFavorited ? "white" : "transparent"}
               />
               <span>{songDetail.favorite}</span>
             </div>
@@ -173,7 +168,7 @@ export default function SongViewPage() {
               <Star
                 size={22}
                 color="white"
-                fill={isReviewed ? "white" : "transparent"}
+                fill={songDetail.isReviewed ? "white" : "transparent"}
               />
               <span>{songDetail.reviews}</span>
             </div>
@@ -267,7 +262,13 @@ export default function SongViewPage() {
       </div>
 
       <div className={styles["other-songs-section"]}>
-        <h2>Bài hát khác của {songDetail.artist.split(",")[0]}</h2>
+        <h2>
+          Bài hát khác của {
+            relatedArtists.length > 0 
+              ? relatedArtists.map(a => a.name).join(", ") 
+              : songDetail.artist
+          }
+        </h2>
 
         <div
           className={`${styles["song-list-wrapper"]} ${showAllOtherSongs

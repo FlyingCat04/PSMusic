@@ -11,12 +11,11 @@ import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
 import { useDataCache } from "../../contexts/DataCacheContext";
 import { useAuth } from "../../hooks/useAuth";
 import topChartsService from "../../services/topChartsService";
+import toast from 'react-hot-toast';
 
 export default function FavoritePlaylistPage() {
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying } =
-    usePlayer();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { getFavoritesData, setFavoritesData, clearCache } = useDataCache();
@@ -25,12 +24,16 @@ export default function FavoritePlaylistPage() {
   // Initialize with cached data if available
   const [songs, setSongs] = useState(initialCache || []);
   const [loading, setLoading] = useState(!initialCache);
+  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying } =
+    usePlayer();
 
   useEffect(() => {
     const fetchFavorites = async () => {
       // Skip if we already have cached data
       const cachedData = getFavoritesData();
       if (cachedData) {
+        if (!songs.length) setSongs(cachedData); 
+        setLoading(false);
         return;
       }
 
@@ -90,7 +93,7 @@ export default function FavoritePlaylistPage() {
       }
     } catch (error) {
       //console.error("Lỗi khi tải playlist:", error);
-      alert("Có lỗi xảy ra khi tải playlist");
+      toast.error("Có lỗi xảy ra khi tải playlist");
     } finally {
       setDownloading(false);
     }
