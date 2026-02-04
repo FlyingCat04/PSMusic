@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  psmusic-server:
+    container_name: psmusic-server
+    build:
+      context: ./PSMusic.Server
+      dockerfile: Dockerfile
+    ports:
+      - "7215:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DBConnection=${DB_CONNECTION}
+      - Jwt__Key=HongNamEntertainmentSuperSecretKeyyyyyyyy666
+      - Jwt__Issuer=PSMusic
+      - Jwt__Audience=PSMusicUsers
+      - Jwt__ExpiryMinutes=60
+    restart: always
+    networks:
+      - app-network
+    env_file:
+      - .env
+
+networks:
+  app-network:
+    driver: bridge
