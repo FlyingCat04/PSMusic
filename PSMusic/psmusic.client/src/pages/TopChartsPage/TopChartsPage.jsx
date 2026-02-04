@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import TrackTable from "../../components/TrackTable/TrackTable";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
+import EmptyState from "../../components/EmptyState/EmptyState";
 import topChartsService from "../../services/topChartsService";
 import { useAuth } from "../../hooks/useAuth";
 import { usePlayer } from "../../contexts/PlayerContext";
@@ -14,7 +15,7 @@ const TopChartsPage = () => {
     const { audioRef, setIsPlaying } = usePlayer();
     const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData, clearCache } = useDataCache();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     // State cho các danh sách
@@ -28,6 +29,7 @@ const TopChartsPage = () => {
             setPopularArtists(cachedData.popularArtists || []);
             setPopularCategories(cachedData.popularCategories || []);
             setCategorySongs(cachedData.categorySongs || {});
+            setLoading(false);
         } else {
             fetchAllData();
         }
@@ -96,16 +98,13 @@ const TopChartsPage = () => {
     }
 
     if (error) {
-        return (
-            <div className={styles["charts-main-content"]}>
-                <div className={styles["error-container"]}>
-                    <p>{error}</p>
-                    <button onClick={fetchAllData} className={styles["retry-button"]}>
-                        Thử lại
-                    </button>
-                </div>
-            </div>
-        );
+        return <EmptyState message="Sorry :( No content available at the moment" />;
+    }
+
+    const hasNoData = popularCategories.length === 0;
+
+    if (hasNoData && !loading) {
+        return <EmptyState message="Sorry :( No content available at the moment" />;
     }
 
     const handleToggleFavorite = async (song) => {
@@ -192,7 +191,6 @@ const TopChartsPage = () => {
     };
 
     return (
-        window.scrollTo(0, 0),
         <div className={styles["charts-main-content"]}>
             {/* 2 category đầu tiên - Dual Column */}
             {popularCategories.length > 0 && (

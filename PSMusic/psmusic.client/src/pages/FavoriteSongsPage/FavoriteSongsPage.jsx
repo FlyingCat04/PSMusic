@@ -8,6 +8,7 @@ import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import SongRow from "../../components/SongRow/SongRow";
 import { useNavigate } from "react-router-dom";
 import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
+import NoFavoriteState from "../../components/NoFavoriteState/NoFavoriteState";
 import { useDataCache } from "../../contexts/DataCacheContext";
 import { useAuth } from "../../hooks/useAuth";
 import topChartsService from "../../services/topChartsService";
@@ -166,7 +167,7 @@ export default function FavoritePlaylistPage() {
   };
 
   if (loading) return <LoadSpinner />;
-  if (!songs.length) return <p>Không có bài hát yêu thích nào.</p>;
+  if (!songs.length) return <NoFavoriteState />;
 
   return (
     <div className={styles["song-view-container"]}>
