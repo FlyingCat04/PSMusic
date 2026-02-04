@@ -62,8 +62,10 @@ namespace PSMusic.Server.Services.Implementations
             var user = await _userRepository.GetUserById(int.Parse(userId));
             if (user == null) return new AuthResDTO { IsSuccess = false, Message = "Người dùng không tồn tại" };
 
+            var newRefreshToken = _tokenGenerator.GenerateRefreshToken(user);
+
             var newToken = _tokenGenerator.GenerateToken(user);
-            return new AuthResDTO { IsSuccess = true, Message = "Refresh thành công", Token = newToken, UserId = user.Id };
+            return new AuthResDTO { IsSuccess = true, Message = "Refresh thành công", Token = newToken, RefreshToken = newRefreshToken, UserId = user.Id };
         }
     }
 }

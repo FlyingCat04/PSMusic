@@ -94,6 +94,28 @@ namespace PSMusic.Server.Controllers
             var result = await _authService.Refresh(refreshToken);
             if (result.IsSuccess)
             {
+                if (!string.IsNullOrEmpty(result.RefreshToken))
+                {
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Path = "/",
+                        Expires = DateTimeOffset.UtcNow.AddMinutes(10080)
+                    };
+
+                    if (_env.IsDevelopment())
+                    {
+                        cookieOptions.Secure = true;
+                        cookieOptions.SameSite = SameSiteMode.None;
+                    }
+                    else
+                    {
+                        cookieOptions.Secure = false;
+                        cookieOptions.SameSite = SameSiteMode.Unspecified;
+                    }
+
+                    Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
+                }
                 if (!result.UserId.HasValue) return Unauthorized();
                 var user = await _userService.GetUserById(result.UserId.Value);
 
