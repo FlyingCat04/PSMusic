@@ -9,7 +9,7 @@ const userService = {
                 data: res.data,
             };
         } catch (error) {
-            //console.error("Get user error:", error);
+            console.error("Get user error:", error);
             return {
                 isSuccess: false,
                 message: error.response?.data?.message || "Không thể lấy thông tin người dùng",

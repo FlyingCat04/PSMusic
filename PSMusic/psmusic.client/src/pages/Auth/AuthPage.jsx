@@ -15,8 +15,8 @@ export default function AuthPage() {
   return (
     <div className={styles.app}>
       <div className={containerClass}>
-        <SignUpForm activeType={type} />
-        <SignInForm activeType={type} />
+        <SignUpForm />
+        <SignInForm />
 
         <div className={styles.overlayContainer}>
           <div className={styles.overlay}>

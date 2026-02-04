@@ -8,7 +8,7 @@ const topChartsService = {
             });
             return res.data;
         } catch (error) {
-            //console.error("Error fetching popular artists:", error);
+            console.error("Error fetching popular artists:", error);
             throw error;
         }
     },
@@ -20,7 +20,7 @@ const topChartsService = {
             });
             return res.data;
         } catch (error) {
-            //console.error("Error fetching popular categories:", error);
+            console.error("Error fetching popular categories:", error);
             throw error;
         }
     },
@@ -32,7 +32,7 @@ const topChartsService = {
             });
             return res.data;
         } catch (error) {
-            //console.error(`Error fetching popular songs for category ${categoryId}:`, error);
+            console.error(`Error fetching popular songs for category ${categoryId}:`, error);
             throw error;
         }
     },
@@ -42,7 +42,7 @@ const topChartsService = {
             const res = await axiosInstance.post(`/song/${songId}/favorite-toggle`);
             return res.data;
         } catch (error) {
-            //console.error("Error toggling favorite:", error);
+            console.error("Error toggling favorite:", error);
             throw error;
         }
     }

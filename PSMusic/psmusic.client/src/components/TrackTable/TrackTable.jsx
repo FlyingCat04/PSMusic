@@ -9,11 +9,8 @@ const TrackTable = ({
     onTitleClick,
     onAddToPlaylist,
     onViewArtist,
-    onFavorite,
     page = 1,
     pageSize = 10,
-    showRank = false,
-    hideDuration = false,
 }) => {
     const startIndex = (page - 1) * pageSize;
     const { playSong, currentSong, isPlaying } = usePlayer();
@@ -26,11 +23,9 @@ const TrackTable = ({
                 <div className={styles.headerMain}>
                     <div className={styles.colTitle}>Tên bài hát</div>
                     <div className={styles.colArtist}>Nghệ sĩ</div>
-                    {!hideDuration && (
-                        <div className={styles.colTime}>
-                            <Clock3 size={16} />
-                        </div>
-                    )}
+                    <div className={styles.colTime}>
+                        <Clock3 size={16} />
+                    </div>
                 </div>
             </div>
 
@@ -40,9 +35,7 @@ const TrackTable = ({
                     const displayIndex = startIndex + index + 1; // số thứ tự thực
                     return (
                         <div key={song.id} className={styles.row}>
-                            <div className={`${styles.colIndex} ${showRank ? styles.rankColumn : ''} ${showRank && index < 3 ? styles[`rank-${index + 1}`] : ''}`}>
-                                {showRank ? index + 1 : displayIndex}
-                            </div>
+                            <div className={styles.colIndex}>{displayIndex}</div>
                             <SongRow
                                 item={song}
                                 showPlayingIcon={currentSong?.id === song.id && isPlaying}
@@ -55,9 +48,7 @@ const TrackTable = ({
                                 onTitleClick={onTitleClick}
                                 onAddToPlaylist={onAddToPlaylist}
                                 onViewArtist={onViewArtist}
-                                onFavorite={onFavorite}
                                 activeTab="Bài hát"
-                                hideDuration={hideDuration}
                             />
                         </div>
                     );

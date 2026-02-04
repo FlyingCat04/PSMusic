@@ -1,25 +1,16 @@
-import { React, useState, useContext, useEffect } from "react";
+import { React, useState, useContext } from "react";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
-import { Eye, EyeOff } from "lucide-react";
 import styles from "./SignIn.module.css";
 
-function SignInForm({ activeType }) {
+function SignInForm() {
   const [state, setState] = useState({name: "", password: ""});
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-
-  useEffect(() => {
-    setState({ name: "", password: "" });
-    setError("");
-    setSuccess("");
-    setShowPassword(false);
-  }, [activeType]);
 
   const handleChange = evt => {
     const value = evt.target.value;
@@ -55,7 +46,7 @@ function SignInForm({ activeType }) {
 
   //       if (!response.ok) {
   //           setLoading(false)
-  //           //console.log(data.message)
+  //           console.log(data.message)
   //           setError("Tên đăng nhập hoặc mật khẩu không đúng.");
   //           return;
   //     }
@@ -76,7 +67,7 @@ function SignInForm({ activeType }) {
 
   //   } catch (err) {
   //     setLoading(false)
-  //     //console.error(err);
+  //     console.error(err);
   //     setError("Lỗi kết nối đến máy chủ.");
   //   }
   // };
@@ -118,7 +109,7 @@ function SignInForm({ activeType }) {
     }
     // try {
     //   const res = await axiosInstance.post("/auth/login", { username: name, password: password });
-    //   //console.log('Cookies:', document.cookie);
+    //   console.log('Cookies:', document.cookie);
     //   const data = res.data;
     //   if (data.isSuccess)
     //   {
@@ -131,11 +122,11 @@ function SignInForm({ activeType }) {
     //     setState({ name: "", password: "" });
     //     setError("");
     //     const res = await axiosInstance.get("/auth/me");
-    //     //console.log(res.data);
+    //     console.log(res.data);
     //   }
     //   else {
     //     setLoading(false);
-    //     //console.error("Login error:", err.response || err);
+    //     console.error("Login error:", err.response || err);
     //     setError(
     //       err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng."
     //     );
@@ -143,15 +134,11 @@ function SignInForm({ activeType }) {
       
     // } catch (err) {
     //   setLoading(false);
-    //   //console.error("Login error:", err.response || err);
+    //   console.error("Login error:", err.response || err);
     //   setError(
     //     err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng."
     //   );
     // }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -167,22 +154,13 @@ function SignInForm({ activeType }) {
                       value={state.name}
                       onChange={handleChange}
                   />
-                  <div className={styles.passwordWrapper}>
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        placeholder="Mật khẩu"
-                        value={state.password}
-                        onChange={handleChange}
-                    />
-                    <button
-                      type="button" // Quan trọng: Tránh submit form
-                      className={styles.eyeButton}
-                      onClick={togglePasswordVisibility}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
+                  <input
+                      type="password"
+                      name="password"
+                      placeholder="Mật khẩu"
+                      value={state.password}
+                      onChange={handleChange}
+                  />
                   {error && (<small style={{ color: "red", marginTop: "4px", fontSize: "12px" }}>{error}</small>)}
                   {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
                   {/* <a href="#">Quên mật khẩu?</a> */}

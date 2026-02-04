@@ -168,6 +168,12 @@
   border-radius: 50%;
 }
 
+@media (max-width: 910px) {
+  .header-button.primary {
+    display: none;
+  }
+}
+
 @media (max-width: 810px) {
   .icon-button {
     display: none;
@@ -198,19 +204,13 @@
     border: none;
     cursor: pointer;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 2px;
 }
 
     .suggestItem:hover {
         background: rgba(255,255,255,0.06);
     }
-
-.suggestIcon {
-    flex-shrink: 0;
-    color: var(--text-tertiary, #b3b3b3);
-}
 
 .suggestTitle {
     font-size: 14px;

@@ -4,14 +4,13 @@ import { ChevronRight } from 'lucide-react';
 import GenreCard from '../../components/GenreCard/GenreCard';
 import ItemCardColumn from '../../components/ItemCardColumn/ItemCardColumn';
 import LoadSpinner from '../../components/LoadSpinner/LoadSpinner';
-import EmptyState from '../../components/EmptyState/EmptyState';
 import exploreCategoriesService from '../../services/exploreCategoriesService';
 import { useDataCache } from '../../contexts/DataCacheContext';
 import styles from './ExploreCategoriesPage.module.css';
 
 const ExploreCategoriesPage = () => {
     const { getExploreCategoriesData, setExploreCategoriesData } = useDataCache();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [categories, setCategories] = useState([]);
     const [categorySongs, setCategorySongs] = useState({});
@@ -21,7 +20,6 @@ const ExploreCategoriesPage = () => {
         if (cachedData) {
             setCategories(cachedData.categories || []);
             setCategorySongs(cachedData.categorySongs || {});
-            setLoading(false);
         } else {
             fetchData();
         }
@@ -62,7 +60,7 @@ const ExploreCategoriesPage = () => {
             // Cache data
             setExploreCategoriesData(data);
         } catch (err) {
-            //console.error('Error fetching explore categories data:', err);
+            console.error('Error fetching explore categories data:', err);
             setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
         } finally {
             setLoading(false);
@@ -74,36 +72,42 @@ const ExploreCategoriesPage = () => {
     }
 
     if (error) {
-        return <EmptyState message="Sorry :( No content available at the moment" />;
-    }
-
-    const hasNoData = categories.length === 0;
-
-    if (hasNoData && !loading) {
-        return <EmptyState message="Sorry :( No content available at the moment" />;
+        return (
+            window.scrollTo(0, 0),
+            <div className={styles['explore-main-content']}>
+                <div className={styles['error-container']}>
+                    <p>{error}</p>
+                    <button onClick={fetchData} className={styles['retry-button']}>
+                        Thử lại
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     return (
         window.scrollTo(0, 0),
         <div className={styles['explore-main-content']}>
             {/* Categories Grid Section */}
-            {categories.length > 0 && (
-                <section className={styles['content-section']}>
-                    <div className={styles['category-grid']}>
-                        {categories.slice(0, 16).map((category) => (
+            <section className={styles['content-section']}>
+                <div className={styles['category-grid']}>
+                    {categories.length > 0 ? (
+                        categories.slice(0, 16).map((category) => (
                             <GenreCard
                                 key={category.id}
                                 genre={{
                                     id: category.id,
                                     title: category.name,
-                                    imageUrl: category.avatarUrl,
+                                    imageUrl: category.avatarUrl || 'https://via.placeholder.com/200',
                                     color: category.color || '#FF4E50'
                                 }}
                             />
-                        ))}
-                    </div>
-                </section>
-            )}
+                        ))
+                    ) : (
+                        <p style={{ color: 'var(--text-secondary)' }}>Không có thể loại nào</p>
+                    )}
+                </div>
+            </section>
 
             {/* Category Songs Sections */}
             {categories.map((category) => {

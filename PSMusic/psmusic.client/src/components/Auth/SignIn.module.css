@@ -32,7 +32,6 @@
     padding: 12px 15px;
     margin: 8px 0;
     width: 100%;
-    outline: none;
 }
 
 .submit-btn {
@@ -45,35 +44,4 @@
     text-transform: uppercase;
     transition: transform 80ms ease-in;
     background: linear-gradient(135deg, #8e44ad, #c0392b);
-}
-
-.passwordWrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.passwordWrapper input {
-    padding-right: 45px !important;
-}
-
-.eyeButton {
-    position: absolute;
-    right: 12px;
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #666;
-    transition: color 0.2s;
-    z-index: 5;
-}
-
-.eyeButton:hover {
-    color: #8e44ad;
 }

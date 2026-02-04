@@ -15,14 +15,12 @@ export const DataCacheProvider = ({ children }) => {
         homePage: null,
         topCharts: null,
         exploreCategories: null,
-        favorites: null,
     });
 
     const [timestamps, setTimestamps] = useState({
         homePage: null,
         topCharts: null,
         exploreCategories: null,
-        favorites: null,
     });
 
     const [lastFavoriteUpdate, setLastFavoriteUpdate] = useState(null);
@@ -51,11 +49,6 @@ export const DataCacheProvider = ({ children }) => {
         setTimestamps(prev => ({ ...prev, exploreCategories: Date.now() }));
     };
 
-    const setFavoritesData = (data) => {
-        setCache(prev => ({ ...prev, favorites: data }));
-        setTimestamps(prev => ({ ...prev, favorites: Date.now() }));
-    };
-
     const getHomePageData = () => {
         return isCacheValid('homePage') ? cache.homePage : null;
     };
@@ -68,17 +61,13 @@ export const DataCacheProvider = ({ children }) => {
         return isCacheValid('exploreCategories') ? cache.exploreCategories : null;
     };
 
-    const getFavoritesData = () => {
-        return isCacheValid('favorites') ? cache.favorites : null;
-    };
-
     const clearCache = (key) => {
         if (key) {
             setCache(prev => ({ ...prev, [key]: null }));
             setTimestamps(prev => ({ ...prev, [key]: null }));
         } else {
-            setCache({ homePage: null, topCharts: null, exploreCategories: null, favorites: null });
-            setTimestamps({ homePage: null, topCharts: null, exploreCategories: null, favorites: null });
+            setCache({ homePage: null, topCharts: null, exploreCategories: null });
+            setTimestamps({ homePage: null, topCharts: null, exploreCategories: null });
         }
     };
 
@@ -121,11 +110,10 @@ export const DataCacheProvider = ({ children }) => {
         setHomePageData,
         setTopChartsData,
         setExploreCategoriesData,
-        setFavoritesData,
         getHomePageData,
         getTopChartsData,
         getExploreCategoriesData,
-        getFavoritesData,
+        clearCache,
         clearCache,
         updateSongFavoriteStatus,
         lastFavoriteUpdate,

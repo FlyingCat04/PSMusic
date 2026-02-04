@@ -1,23 +1,14 @@
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
 import authService from "../../services/authService"
 import emailValidationService from "../../services/emailValidationService";
-import { Eye, EyeOff } from "lucide-react";
 import styles from "./SignUp.module.css";
 
-function SignUpForm({ activeType }) {
+function SignUpForm() {
   const [state, setState] = useState({ name: "", email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setState({ name: "", email: "", password: "" });
-    setError("");
-    setSuccess("");
-    setShowPassword(false);
-}, [activeType]);
 
   const handleChange = evt => {
     const value = evt.target.value;
@@ -107,14 +98,10 @@ function SignUpForm({ activeType }) {
 
         // } catch (err) {
         //     setLoading(false)
-        //     //console.error(err);
+        //     console.error(err);
         //     setError("Lỗi kết nối đến máy chủ.");
         // };
     }
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
   return (
       <>
@@ -136,22 +123,13 @@ function SignUpForm({ activeType }) {
                       onChange={handleChange}
                       placeholder="Email"
                   />
-                  <div className={styles.passwordWrapper}>
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={state.password}
-                        onChange={handleChange}
-                        placeholder="Mật khẩu"
-                    />
-                    <button
-                        type="button"
-                        className={styles.eyeButton}
-                        onClick={togglePasswordVisibility}
-                    >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                </div>
+                  <input
+                      type="password"
+                      name="password"
+                      value={state.password}
+                      onChange={handleChange}
+                      placeholder="Mật khẩu"
+                  />
                   {error && (<small style={{ color: "red", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{error}</small>)}
                   {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
                   <button className={styles['submit-btn']}>Đăng ký</button>

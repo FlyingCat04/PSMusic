@@ -80,7 +80,7 @@ export default function MusicPlayerPage() {
                     .filter(Boolean);
                 setLyrics(parsed);
             } catch (err) {
-                //console.error("Failed to load lyrics", err);
+                console.error("Failed to load lyrics", err);
             }
         };
         fetchLyrics();

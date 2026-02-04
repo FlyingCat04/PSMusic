@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
 using PSMusic.Server.Services.Interfaces;
 using System.Security.Claims;
 
@@ -42,7 +41,6 @@ namespace PSMusic.Server.Controllers
         // GET api/song/popular?page=1&size=10
         [HttpGet("popular")]
         //[Authorize]
-        [OutputCache(Duration = 600, VaryByQueryKeys = new[] { "page", "size" })]
         public async Task<IActionResult> GetPopularSong(int page = 1, int size = 10)
         {
             var popularSongs = await _songService.GetPopularSongs(page, size);
@@ -57,7 +55,8 @@ namespace PSMusic.Server.Controllers
             foreach (var s in randomSongs)
             {
                 s.Likes = await _songService.GetFavoriteCount(s.Id);
-                s.SingerUrl = s.CoverUrl ?? string.Empty;
+                var mainArtist = await _artistService.GetArtistsBySongId(s.Id);
+                s.SingerUrl = mainArtist.FirstOrDefault()?.AvatarUrl ?? string.Empty;
             }
 
             return Ok(randomSongs);
@@ -98,10 +97,11 @@ namespace PSMusic.Server.Controllers
 
         // GET api/song/1/detail
         [HttpGet("{songId}/detail")]
+        [Authorize]
         public async Task<IActionResult> GetSongDetail(int songId)
         {
             var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            int userId = userId_str != null ? int.Parse(userId_str) : 0;
+            int userId = userId_str != null ? int.Parse(userId_str) : 0;    // Default 0 if userId is not provided
             var result = await _songService.GetSongDetail(songId, userId);
             if (result == null) return NotFound(new { message = "Không tìm thấy bài hát" });
             return Ok(result);
@@ -118,12 +118,15 @@ namespace PSMusic.Server.Controllers
 
         // GET: api/song/1/player
         [HttpGet("{songId}/player")]
+        [Authorize]
         public async Task<ActionResult> GetSongForPlayer(int songId)
         {
             var userId_str = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            int userId = userId_str != null ? int.Parse(userId_str) : 0;
+            int userId = userId_str != null ? int.Parse(userId_str) : 0 ;    // Default 0 if userId is not provided
+
+            if (userId <= 0) return BadRequest(new { message = "UserId không hợp lệ" });
+
             var song = await _songService.GetSongForPlayer(songId, userId);
-            if (song == null) return NotFound(new { message = "Không tìm thấy bài hát" });
             return Ok(song);
         }
 

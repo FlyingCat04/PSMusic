@@ -5,7 +5,6 @@ import styles from './ClientLayout.module.css';
 import { Outlet, useLocation } from 'react-router-dom';
 import PlayerControl from '../../components/PlayerControl/PlayerControl';
 import { usePlayer } from '../../contexts/PlayerContext';
-import { Toaster } from 'react-hot-toast';
 
 const ClientLayout = () => {
     const { isPlayerVisible } = usePlayer();
@@ -14,19 +13,6 @@ const ClientLayout = () => {
 
   return (
     <div className={styles.appLayout}>
-      <Toaster 
-          position="top-right" 
-          containerStyle={{
-              top: '75px',
-              zIndex: 99999,
-          }}
-          toastOptions={{
-              style: {
-                  background: '#fff',
-                  color: '#000',
-              },
-          }}
-      />
       <Sidebar />
       <div className={styles.appBody}>
         <Header />

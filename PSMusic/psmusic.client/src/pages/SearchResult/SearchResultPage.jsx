@@ -163,7 +163,7 @@ const SearchResultPage = () => {
                 // tuỳ backend, nếu có totalPages hoặc total thì set chính xác
                 
             } catch (err) {
-                //console.error(err);
+                console.error(err);
                 setError("Không tải được kết quả tìm kiếm. Vui lòng thử lại.");
             } finally {
                 setLoading(false);

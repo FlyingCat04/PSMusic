@@ -8,14 +8,12 @@
 import PlayerControlService from "../services/PlayerControlService";
 import axiosInstance from "../services/axiosInstance";
 import LoadSpinner from "../components/LoadSpinner/LoadSpinner";
-import { useAuth } from "../hooks/useAuth";
 
 
 const PlayerContext = createContext();
 export const usePlayer = () => useContext(PlayerContext);
 
 export function PlayerProvider({ children }) {
-  const { user } = useAuth();
   const audioRef = useRef(null);
 
   const [currentSong, setCurrentSong] = useState(null);
@@ -51,7 +49,7 @@ export function PlayerProvider({ children }) {
           setPlayerData(res.data);
         }
       } catch (err) {
-        //console.error("Fetch player data failed:", err);
+        console.error("Fetch player data failed:", err);
       }
     };
 
@@ -72,7 +70,7 @@ export function PlayerProvider({ children }) {
     if (isPlaying) {
       audioRef.current.play().catch((err) => {
         if (err.name !== "AbortError") {
-          //console.error("Play error:", err);
+          console.error("Play error:", err);
         }
       });
     }
@@ -106,6 +104,14 @@ export function PlayerProvider({ children }) {
     setIsPlayerVisible(true);
   };
 
+  const handleTimeUpdate = () => {
+    if (!audioRef.current) return;
+    setCurrentTime(audioRef.current.currentTime);
+  };
+
+  const handleLoaded = () => {
+    setDuration(audioRef.current.duration);
+  };
 
   const loadInitialQueue = async () => {
     const res = await PlayerControlService.getNextBatch();
@@ -124,7 +130,6 @@ export function PlayerProvider({ children }) {
 
   const toggleShuffle = () => {
     if (shuffle) {
-      // Disabling shuffle: Restore from originalQueue
       setShuffle(false);
       if (originalQueue.length > 0) {
         const currentSongId = currentSong?.id;
@@ -132,7 +137,7 @@ export function PlayerProvider({ children }) {
           (song) => song.id === currentSongId
         );
         if (originalIndex !== -1) {
-          setQueue([...originalQueue]);
+          setQueue(originalQueue);
           setQueueIndex(originalIndex);
           if (currentPlaylist) {
             setCurrentPlaylistIndex(originalIndex);
@@ -140,20 +145,18 @@ export function PlayerProvider({ children }) {
         }
       }
     } else {
-      // Enabling shuffle: Keep current song at index 0, shuffle rest
       setShuffle(true);
-      const currentOrder = [...queue];
-      setOriginalQueue(currentOrder);
+      setOriginalQueue([...queue]);
 
+      const shuffledQueue = shuffleQueue(queue);
       const currentSongId = currentSong?.id;
-      const otherSongs = currentOrder.filter((s) => s.id !== currentSongId);
-      const shuffledOthers = shuffleQueue(otherSongs);
-      const newQueue = currentSong ? [currentSong, ...shuffledOthers] : shuffledOthers;
+      const newIndex = shuffledQueue.findIndex(
+        (song) => song.id === currentSongId
+      );
 
-      setQueue(newQueue);
-      setQueueIndex(0);
-      if (currentPlaylist) {
-        // We don't necessarily update currentPlaylistIndex as it relates to the original order
+      if (newIndex !== -1) {
+        setQueue(shuffledQueue);
+        setQueueIndex(newIndex);
       }
     }
   };
@@ -202,15 +205,13 @@ export function PlayerProvider({ children }) {
   };
 
   const playNextSong = async () => {
-    // Repeat One logic
     if (repeat === 2 && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
       return;
     }
 
-    // Playlist logic (if playback is scoped to a specific playlist)
-    if (currentPlaylist && !shuffle && currentPlaylistIndex < currentPlaylist.length - 1) {
+    if (currentPlaylist && currentPlaylistIndex < currentPlaylist.length - 1) {
       const nextIndex = currentPlaylistIndex + 1;
       setCurrentPlaylistIndex(nextIndex);
       playSong(currentPlaylist[nextIndex]);
@@ -227,41 +228,46 @@ export function PlayerProvider({ children }) {
       return;
     }
 
-    // Queue logic
+    if (
+      repeat === 1 &&
+      currentPlaylist &&
+      currentPlaylistIndex === currentPlaylist.length - 1
+    ) {
+      setCurrentPlaylistIndex(0);
+      playSong(currentPlaylist[0]);
+      return;
+    }
+
     if (queueIndex < queue.length - 1) {
+      playSong(queue[queueIndex]);
       const nextIndex = queueIndex + 1;
       setQueueIndex(nextIndex);
-      playSong(queue[nextIndex]);
 
-      // Proactive fetch if nearing end
-      if (queue.length - nextIndex <= 3) {
+      if (queue.length - nextIndex <= 2) {
         const res = await PlayerControlService.getNextBatch();
-        if (res.data && res.data.length > 0) {
-          const newBatch = shuffle ? shuffleQueue(res.data) : res.data;
-          setQueue((prev) => [...prev, ...newBatch]);
+        setQueue((prev) => [...prev, ...res.data]);
+        if (shuffle) {
           setOriginalQueue((prev) => [...prev, ...res.data]);
         }
       }
       return;
     }
 
-    // End of queue reached
-    if (repeat === 1) {
-      // Repeat All: Loop back to start
+    if (repeat === 1 && queueIndex === queue.length - 1) {
       setQueueIndex(0);
       playSong(queue[0]);
       return;
     }
 
-    // No repeat, fetch more songs
     const res = await PlayerControlService.getNextBatch();
-    if (res.data && res.data.length > 0) {
-      const newBatch = shuffle ? shuffleQueue(res.data) : res.data;
-      const startIndex = queue.length; // New index in the updated queue
-      setQueue((prev) => [...prev, ...newBatch]);
-      setOriginalQueue((prev) => [...prev, ...res.data]);
-      setQueueIndex(startIndex);
-      playSong(newBatch[0]);
+    if (res.data.length > 0) {
+      const newQueue = shuffle ? shuffleQueue(res.data) : res.data;
+      setQueue(newQueue);
+      if (shuffle) {
+        setOriginalQueue(res.data);
+      }
+      setQueueIndex(0);
+      playSong(newQueue[0]);
     }
   };
 
@@ -322,16 +328,27 @@ export function PlayerProvider({ children }) {
   useEffect(() => {
     if (!audioRef.current) return;
     const audio = audioRef.current;
-    
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration);
-    
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("loadedmetadata", onLoadedMetadata);
-    
+    audio.volume = volume;
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoaded);
     return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoaded);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    const audio = audioRef.current;
+    audio.volume = volume;
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoaded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoaded);
     };
   }, []);
 
@@ -342,21 +359,20 @@ export function PlayerProvider({ children }) {
   }, [volume]);
 
   useEffect(() => {
-    if (!user || !currentSong) return;
+    if (!currentSong) return;
 
     if (!hasStreamed && currentTime >= 20) {
       PlayerControlService.streamSong(currentSong.id);
 
       setHasStreamed(true);
     }
-  }, [currentTime, currentSong, hasStreamed, user]);
+  }, [currentTime, currentSong, hasStreamed]);
 
   const value = {
     audioRef,
     currentSong,
     playerData,
     isPlaying,
-    setIsPlaying,
     setPlayerData,
     currentTime,
     duration,
@@ -385,6 +401,8 @@ export function PlayerProvider({ children }) {
       <audio
         ref={audioRef}
         onEnded={playNextSong}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoaded}
       />
     </PlayerContext.Provider>
   );

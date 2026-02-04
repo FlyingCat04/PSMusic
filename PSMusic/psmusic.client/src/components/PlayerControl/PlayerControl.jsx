@@ -2,10 +2,8 @@
 import { Heart, Shuffle, Repeat, Repeat1 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import RatingModal from "../Modal/RatingModal";
-import AuthModal from "../Modal/AuthModal";
 import styles from "./PlayerControl.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
-import { useAuth } from "../../hooks/useAuth";
 import { useDataCache } from "../../contexts/DataCacheContext";
 import axiosInstance from "../../services/axiosInstance";
 
@@ -28,17 +26,14 @@ export default function PlayerControl() {
     repeat,
     toggleShuffle,
     toggleRepeat,
-    setIsPlaying,
   } = usePlayer();
-  const { user } = useAuth();
 
-  const { updateSongFavoriteStatus, lastFavoriteUpdate, clearCache } = useDataCache();
+  const { updateSongFavoriteStatus, lastFavoriteUpdate } = useDataCache();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [lastVolume, setLastVolume] = useState(0.5);
   const [updatingFavorite, setUpdatingFavorite] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const songToDisplay = playerData || currentSong;
   const isFavorited = !!playerData?.isFavorited;
@@ -56,11 +51,7 @@ export default function PlayerControl() {
   useEffect(() => {
     if (lastFavoriteUpdate && currentSong && lastFavoriteUpdate.songId === currentSong.id) {
         setPlayerData(prev => 
-            prev ? { 
-                ...prev, 
-                isFavorited: lastFavoriteUpdate.isFavorited,
-                likes: lastFavoriteUpdate.isFavorited ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1) 
-            } : prev
+            prev ? { ...prev, isFavorited: lastFavoriteUpdate.isFavorited } : prev
         );
     }
   }, [lastFavoriteUpdate, currentSong]);
@@ -77,15 +68,7 @@ export default function PlayerControl() {
     togglePlay();
   };
 
-  const toggleFavorite = async (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (!user) {
-      setIsAuthModalOpen(true);
-      return;
-    }
+  const toggleFavorite = async () => {
     if (!currentSong?.id || updatingFavorite) return;
 
     try {
@@ -97,17 +80,10 @@ export default function PlayerControl() {
       updateSongFavoriteStatus(currentSong.id, newStatus);
 
       setPlayerData((prev) => 
-        prev ? { 
-            ...prev, 
-            isFavorited: newStatus,
-            likes: newStatus ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1) 
-        } : prev
+        prev ? { ...prev, isFavorited: newStatus } : prev
       );
-      
-      // Clear favorites cache to force refresh on next visit
-      clearCache('favorites');
     } catch (err) {
-      //console.error("Lỗi toggle favorite:", err);
+      console.error("Lỗi toggle favorite:", err);
     } finally {
       setUpdatingFavorite(false);
     }
@@ -119,23 +95,19 @@ export default function PlayerControl() {
   };
 
   const toggleRating = () => {
-    if (!user) {
-      setIsAuthModalOpen(true);
-      return;
-    }
     setIsModalOpen(true);
   };
 
   const handleReviewSubmitted = (reviewData) => {
-    //console.log("✅ Đánh giá đã được gửi:", reviewData);
+    console.log("✅ Đánh giá đã được gửi:", reviewData);
     setPlayerData((prev) =>
-      prev ? { ...prev, isReviewed: true, reviews: (prev.reviews || 0) + 1 } : prev
+      prev ? { ...prev, isReviewed: true } : prev
     );
   };
 
   const handleDownload = () => {
     if (!songToDisplay?.audioUrl) {
-      //console.error("Không có URL để tải bài hát");
+      console.error("Không có URL để tải bài hát");
       return;
     }
 
@@ -152,7 +124,7 @@ export default function PlayerControl() {
       downloadLink.click();
       document.body.removeChild(downloadLink);
     } catch (error) {
-      //console.error("Lỗi khi tải bài hát:", error);
+      console.error("Lỗi khi tải bài hát:", error);
     }
   };
 
@@ -220,13 +192,7 @@ export default function PlayerControl() {
         <div className={styles["player-main-row"]}>
           <div className={styles["player-info-left"]}>
             <img
-              src={
-                songToDisplay.singerUrl ||
-                songToDisplay.coverUrl ||
-                songToDisplay.imageUrl ||
-                songToDisplay.avatarUrl ||
-                "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png"
-              }
+              src={songToDisplay.singerUrl}
               alt={artistToDisplay}
               className={styles["singer-avatar"]}
             />
@@ -246,7 +212,6 @@ export default function PlayerControl() {
             <div
               className={`${styles["icon-button"]} ${updatingFavorite ? styles["disabled"] : ""}`}
               onClick={toggleFavorite}
-              data-tooltip={isFavorited ? "Bỏ yêu thích" : "Yêu thích"}
               style={{
                 cursor: updatingFavorite ? "not-allowed" : "pointer",
                 display: "flex",
@@ -268,7 +233,6 @@ export default function PlayerControl() {
                 shuffle ? styles["active"] : ""
               }`}
               onClick={toggleShuffle}
-              data-tooltip={shuffle ? "Tắt trộn bài" : "Bật trộn bài"}
             >
               <Shuffle
                 size={24}
@@ -277,7 +241,7 @@ export default function PlayerControl() {
               />
             </button>
 
-            <button className={styles["control-btn"]} onClick={playPrevSong} data-tooltip="Bài trước">
+            <button className={styles["control-btn"]} onClick={playPrevSong}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -330,7 +294,7 @@ export default function PlayerControl() {
               )}
             </button>
 
-            <button className={styles["control-btn"]} onClick={playNextSong} data-tooltip="Bài tiếp theo">
+            <button className={styles["control-btn"]} onClick={playNextSong}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -352,12 +316,12 @@ export default function PlayerControl() {
                 repeat > 0 ? styles["active"] : ""
               }`}
               onClick={toggleRepeat}
-              data-tooltip={
+              data-repeat-mode={
                 repeat === 1
-                  ? "Lặp lại tất cả"
+                  ? "Repeat All"
                   : repeat === 2
-                    ? "Lặp lại 1 bài"
-                    : "Tắt lặp lại"
+                    ? "Repeat One"
+                    : "Repeat Off"
               }
             >
               {repeat === 2 ? (
@@ -379,7 +343,6 @@ export default function PlayerControl() {
                   isRated ? styles["rated"] : ""
                 }`}
                 onClick={toggleRating}
-                data-tooltip="Đánh giá bài hát"
                 disabled={!currentSong}
               >
                 <svg
@@ -387,8 +350,8 @@ export default function PlayerControl() {
                   width="20"
                   height="20"
                   viewBox="0 0 24 24"
-                  fill={isRated ? "white" : "none"}
-                  stroke={isRated ? "white" : "currentColor"}
+                  fill={isRated ? "#fff" : "none"}
+                  stroke={isRated ? "#fff" : "currentColor"}
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -400,7 +363,6 @@ export default function PlayerControl() {
               <button
                 className={styles["control-btn"]}
                 onClick={handleDownload}
-                data-tooltip="Tải bài hát"
                 disabled={!songToDisplay?.audioUrl}
               >
                 <svg
@@ -422,11 +384,7 @@ export default function PlayerControl() {
             </div>
 
             <div className={styles["volume-control-container"]}>
-              <button
-                className={styles["control-btn"]}
-                onClick={toggleMute}
-                data-tooltip={isMuted || volume === 0 ? "Bật âm thanh" : "Tắt âm thanh"}
-              >
+              <button className={styles["control-btn"]} onClick={toggleMute}>
                 {isMuted || volume === 0 ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -516,14 +474,6 @@ export default function PlayerControl() {
           isReviewed={isRated}
         />
       )}
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
-        onStopMusic={() => {
-          if (audioRef.current) audioRef.current.pause();
-          setIsPlaying(false);
-        }}
-      />
     </>
   );
 }

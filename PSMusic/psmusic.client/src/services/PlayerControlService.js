@@ -9,7 +9,7 @@ const PlayerControlService = {
         data: res.data,
       };
     } catch (error) {
-      //console.error("Get nect batch error:", error);
+      console.error("Get nect batch error:", error);
       return {
         isSuccess: false,
         message:
@@ -26,7 +26,7 @@ const PlayerControlService = {
         isSuccess: true,
       };
     } catch (error) {
-      //console.error("Stream song error:", error);
+      console.error("Stream song error:", error);
       return {
         isSuccess: false,
         message: error.response?.data?.message || "Không thể stream bài hát",
@@ -42,7 +42,7 @@ const PlayerControlService = {
         data: res.data,
       };
     } catch (error) {
-      //console.error("Get player data error:", error);
+      console.error("Get player data error:", error);
       return {
         isSuccess: false,
         message:

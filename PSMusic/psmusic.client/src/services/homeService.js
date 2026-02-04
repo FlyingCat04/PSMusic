@@ -15,7 +15,7 @@ const homeService = {
                 songs: songsRes.data?.items || []
             };
         } catch (error) {
-            //console.error("Error fetching popular data:", error);
+            console.error("Error fetching popular data:", error);
             throw error;
         }
     },
@@ -25,7 +25,7 @@ const homeService = {
             const res = await axiosInstance.get("/category/popular");
             return res.data?.items || [];
         } catch (error) {
-            //console.error("Error fetching popular categories:", error);
+            console.error("Error fetching popular categories:", error);
             throw error;
         }
     },
@@ -35,7 +35,7 @@ const homeService = {
             const res = await axiosInstance.get("/artist/popular");
             return res.data?.items || [];
         } catch (error) {
-            //console.error("Error fetching popular artists:", error);
+            console.error("Error fetching popular artists:", error);
             throw error;
         }
     },
@@ -45,7 +45,7 @@ const homeService = {
             const res = await axiosInstance.get("/song/popular");
             return res.data?.items || [];
         } catch (error) {
-            //console.error("Error fetching popular songs:", error);
+            console.error("Error fetching popular songs:", error);
             throw error;
         }
     }

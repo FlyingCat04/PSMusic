@@ -224,7 +224,7 @@ const CategoryPage = () => {
                 });
 
             } catch (err) {
-                //console.error(err);
+                console.error(err);
             } finally {
                 setLoading(false);
             }
@@ -249,7 +249,7 @@ const CategoryPage = () => {
                 setArtists(items.map(mapArtist));
                 setArtistTotalPages(data.totalPages || 1);
             } catch (err) {
-                //console.error(err);
+                console.error(err);
             }
         };
 
@@ -272,7 +272,7 @@ const CategoryPage = () => {
                 setSongs(items.map(mapSong));
                 setSongTotalPages(data.totalPages || 1);
             } catch (err) {
-                //console.error(err);
+                console.error(err);
             }
         };
 
@@ -284,7 +284,7 @@ const CategoryPage = () => {
 
         const img = new Image();
         img.crossOrigin = "Anonymous";
-        //console.log(category.imageUrl);
+        console.log(category.imageUrl);
         img.src = category.imageUrl;
 
         img.onload = () => {
@@ -313,7 +313,7 @@ const CategoryPage = () => {
                 document.documentElement.style.setProperty("--artist-play-bg", playBg);
                 document.documentElement.style.setProperty("--artist-play-text", playText);
             } catch (err) {
-                //console.warn("Không lấy được màu dominant:", err);
+                console.warn("Không lấy được màu dominant:", err);
             }
         };
     }, [category]);

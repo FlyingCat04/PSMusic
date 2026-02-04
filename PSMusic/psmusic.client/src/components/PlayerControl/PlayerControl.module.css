@@ -60,7 +60,8 @@
 }
 
 .song-title:hover {
-  color: var(--primary-purple);
+  color: #1db954;
+  text-decoration: underline;
 }
 
 .song-artist {
@@ -70,7 +71,6 @@
 }
 
 .icon-button {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -82,27 +82,6 @@
   flex-shrink: 0;
 }
 
-.icon-button::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  top: 125%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.icon-button:not(.disabled):hover::after {
-  opacity: 1;
-}
-
 .icon-button:not(.disabled):hover {
   opacity: 0.8;
 }
@@ -111,7 +90,6 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 
 .control-buttons {
   display: flex;
@@ -123,7 +101,6 @@
 }
 
 .control-btn {
-  position: relative;
   background: none;
   border: none;
   color: #b3b3b3;
@@ -133,28 +110,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.control-btn::after { 
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-}
-
-.control-btn:hover::after {
-  opacity: 1;
 }
 
 .control-btn:hover {
@@ -305,6 +260,28 @@
   position: relative;
 }
 
+.repeat-btn::after {
+  content: attr(data-repeat-mode);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.repeat-btn:hover::after {
+  opacity: 1;
+}
+
 .rating-btn.rated {
   color: #fff;
 }
@@ -385,6 +362,7 @@
   .control-buttons {
     order: 2;
     justify-content: center;
+    margin-bottom: 5px;
   }
   
   .player-controls-right {

@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect, useRef, useLayoutEffect } fr
 import axiosInstance from "../services/axiosInstance";
 import authService from "../services/authService";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDataCache } from "./DataCacheContext";
 
 const AuthContext = createContext({
     user: null,
@@ -20,7 +19,6 @@ const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const isRefreshing = useRef(false);
     const failedQueue = useRef([]);
-    const { clearCache } = useDataCache();
 
     const processQueue = (error, token = null) => {
         failedQueue.current.forEach((prom) => {
@@ -41,45 +39,24 @@ const AuthProvider = ({ children }) => {
     //     checkAuth();
     // }, [location.pathname]);
 
-    // useEffect(() => {
-    //     const initializeAuth = async () => {
-    //         try {
-    //             const res = await authService.refresh();
-    //             if (res.isSuccess && res.token) {
-    //                 const newToken = res.token;
-    //                 setAccessToken(newToken);
-    //                 axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-    //                 // await checkAuth();
-    //             } else {
-    //                 setLoading(false);
-    //             }
-    //         } catch (error) {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     initializeAuth();
-    // }, []);
-
     useEffect(() => {
-        const init = async () => {
+        const initializeAuth = async () => {
             try {
                 const res = await authService.refresh();
-                if (res?.token && res?.user) {
-                    setAccessToken(res.token);
-                    setUser(res.user);
-                    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${res.token}`;
+                if (res.isSuccess && res.token) {
+                    const newToken = res.token;
+                    setAccessToken(newToken);
+                    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+                    await checkAuth();
                 } else {
-                    setAccessToken(null);
-                    setUser(null);
+                    setLoading(false);
                 }
             } catch (error) {
-                setAccessToken(null);
-                setUser(null);
+                setLoading(false);
             }
-            setLoading(false);
         };
-        init();
+
+        initializeAuth();
     }, []);
 
     useLayoutEffect(() => {
@@ -90,21 +67,21 @@ const AuthProvider = ({ children }) => {
         }
     }, [accessToken]);
 
-    // const checkAuth = async () => {
-    //     try {
-    //         const result = await authService.getCurrentUser();
-    //         if (result.isSuccess) {
-    //             setUser(result.data);
-    //         }
-    //     } catch (error) {
-    //         if (error.message !== "Chưa đăng nhập hoặc phiên đăng nhập đã hết hạn") {
-    //             //console.error("Auth check failed:", error.message);
-    //         }
-    //         setUser(null);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // }
+    const checkAuth = async () => {
+        try {
+            const result = await authService.getCurrentUser();
+            if (result.isSuccess) {
+                setUser(result.data);
+            }
+        } catch (error) {
+            if (error.message !== "Chưa đăng nhập hoặc phiên đăng nhập đã hết hạn") {
+                console.error("Auth check failed:", error.message);
+            }
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const login = async (username, password) => {
         const result = await authService.login(username, password);
@@ -112,9 +89,8 @@ const AuthProvider = ({ children }) => {
         if (result.isSuccess) {
             const token = result.token;
             setAccessToken(token);
-            setUser(result.user);
             axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            // await checkAuth();
+            await checkAuth();
         }
         
         return result;
@@ -125,7 +101,6 @@ const AuthProvider = ({ children }) => {
         setUser(null);
         setAccessToken(null);
         delete axiosInstance.defaults.headers.common["Authorization"];
-        clearCache();
         navigate("/discover");
     }
 
@@ -134,7 +109,7 @@ const AuthProvider = ({ children }) => {
     //         (response) => response,
     //         async (error) => {
     //             if (error.response?.status === 401) {
-    //                 //console.warn("Cần đăng nhập!!");
+    //                 console.warn("Cần đăng nhập!!");
     //             }
     //             return Promise.reject(error);
     //         }
@@ -176,13 +151,10 @@ const AuthProvider = ({ children }) => {
                     try {
                         const res = await authService.refresh(); 
                         
-                        if (res?.token) {
+                        if (res.isSuccess && res.token) {
                             const newToken = res.token;
                             
                             setAccessToken(newToken);
-                            if (res?.user) {
-                                setUser(res.user);
-                            }
                             axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
                             
                             processQueue(null, newToken);
@@ -193,7 +165,7 @@ const AuthProvider = ({ children }) => {
                             throw new Error("Refresh failed logic");
                         }
                     } catch (refreshError) {
-                        //console.error("Refresh Token API Error:", refreshError);
+                        console.error("Refresh Token API Error:", refreshError);
                         processQueue(refreshError, null);
                         logout(); 
                         return Promise.reject(refreshError);
@@ -212,7 +184,7 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, accessToken, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, accessToken, login, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     )

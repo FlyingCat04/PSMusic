@@ -6,66 +6,42 @@ import styles from "./FavoriteSongsPage.module.css";
 import { usePlayer } from "../../contexts/PlayerContext";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import SongRow from "../../components/SongRow/SongRow";
-import { useNavigate } from "react-router-dom";
-import LoadSpinner from "../../components/LoadSpinner/LoadSpinner";
-import NoFavoriteState from "../../components/NoFavoriteState/NoFavoriteState";
-import { useDataCache } from "../../contexts/DataCacheContext";
-import { useAuth } from "../../hooks/useAuth";
-import topChartsService from "../../services/topChartsService";
-import toast from 'react-hot-toast';
 
 export default function FavoritePlaylistPage() {
-  const [showAllFavorites, setShowAllFavorites] = useState(false);
+  const [songs, setSongs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const { getFavoritesData, setFavoritesData, clearCache } = useDataCache();
-  const initialCache = getFavoritesData();
-  
-  // Initialize with cached data if available
-  const [songs, setSongs] = useState(initialCache || []);
-  const [loading, setLoading] = useState(!initialCache);
-  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying } =
+  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist } =
     usePlayer();
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      // Skip if we already have cached data
-      const cachedData = getFavoritesData();
-      if (cachedData) {
-        if (!songs.length) setSongs(cachedData); 
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
 
         const resFavorited = await axiosInstance.get("/song/favorites");
-        //console.log(resFavorited.data)
-
+        
         const fetchedSongs = (resFavorited.data || []).map(song => ({
           ...song,
-          artists: song.artists
-            ? song.artists.map(artist => ({
-              name: artist.name,
-              id: artist.id
-            }))
+          artists: song.artist 
+            ? song.artist.split(',').map(name => ({
+                name: name.trim(),
+                id: null
+              }))
             : [],
           mp3Url: song.audioUrl
         }));
 
         setSongs(fetchedSongs);
-        setFavoritesData(fetchedSongs);
       } catch (err) {
-        //console.error("Lỗi khi tải playlist yêu thích:", err);
+        console.error("Lỗi khi tải playlist yêu thích:", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchFavorites();
-  }, [getFavoritesData, setFavoritesData]);
+  }, []);
 
   const handleDownloadPlaylist = async () => {
     if (!songs.length) return;
@@ -93,8 +69,8 @@ export default function FavoritePlaylistPage() {
         }
       }
     } catch (error) {
-      //console.error("Lỗi khi tải playlist:", error);
-      toast.error("Có lỗi xảy ra khi tải playlist");
+      console.error("Lỗi khi tải playlist:", error);
+      alert("Có lỗi xảy ra khi tải playlist");
     } finally {
       setDownloading(false);
     }
@@ -104,8 +80,11 @@ export default function FavoritePlaylistPage() {
     const countMap = {};
 
     songs.forEach((song) => {
-      const artists = song.artists
-        ? song.artists.map((artist) => artist.name)
+      const artists = song.artist
+        ? song.artist
+            .split(",")
+            .map((artist) => artist.trim())
+            .filter((artist) => artist !== "")
         : [];
 
       artists.forEach((artist) => {
@@ -123,8 +102,9 @@ export default function FavoritePlaylistPage() {
     if (sorted.length === 3)
       return `${sorted[0]}, ${sorted[1]} và ${sorted[2]}`;
 
-    return `${sorted[0]}, ${sorted[1]}, ${sorted[2]} và ${sorted.length - 3
-      } nghệ sĩ khác`;
+    return `${sorted[0]}, ${sorted[1]}, ${sorted[2]} và ${
+      sorted.length - 3
+    } nghệ sĩ khác`;
   }, [songs]);
 
   const currentSongCover = songs[0] || {};
@@ -147,14 +127,6 @@ export default function FavoritePlaylistPage() {
     }
   };
 
-  const handleTitleClick = (song) => {
-    navigate(`/song/${song.id}`);
-  };
-
-  const handleViewArtist = (artistId) => {
-    navigate(`/artist/${artistId}`);
-  };
-
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
@@ -166,8 +138,8 @@ export default function FavoritePlaylistPage() {
     updateCurrentPlaylist(newOrder);
   };
 
-  if (loading) return <LoadSpinner />;
-  if (!songs.length) return <NoFavoriteState />;
+  if (loading) return <p>Đang tải playlist...</p>;
+  if (!songs.length) return <p>Không có bài hát yêu thích nào.</p>;
 
   return (
     <div className={styles["song-view-container"]}>
@@ -204,11 +176,7 @@ export default function FavoritePlaylistPage() {
       <div className={styles["other-songs-section"]}>
         <h2>Kéo thả để sắp xếp thứ tự phát</h2>
 
-        <div className={`${styles["tracklist"]} ${showAllFavorites
-          ? styles["tracklist-expanded"]
-          : styles["tracklist-collapsed"]
-          }`}>
-
+        <div className={styles["tracklist"]}>
           {/* HEADER */}
           <div className={styles["header"]}>
             <div className={styles["colIndex"]}>#</div>
@@ -238,18 +206,16 @@ export default function FavoritePlaylistPage() {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`${styles["row"]} ${snapshot.isDragging ? styles["dragging"] : ""
-                            }`}
+                          className={`${styles["row"]} ${
+                            snapshot.isDragging ? styles["dragging"] : ""
+                          }`}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
                           <div className={styles["colIndex"]}>{index + 1}</div>
-                          <SongRow
-                            item={song}
-                            showPlayingIcon={currentSong?.id === song.id && isPlaying}
-                            onTitleClick={handleTitleClick}
-                            onViewArtist={handleViewArtist}
+                          <SongRow 
+                            item={song} 
                             onPlay={() => handlePlaySong(song, index)}
                             activeTab="Bài hát"
                           />
@@ -262,16 +228,7 @@ export default function FavoritePlaylistPage() {
               )}
             </Droppable>
           </DragDropContext>
-
         </div>
-        {songs.length > 4 && (
-          <button
-            className={styles["btn-toggle-favorites"]}
-            onClick={() => setShowAllFavorites(!showAllFavorites)}
-          >
-            {showAllFavorites ? "Thu gọn" : "Xem thêm"}
-          </button>
-        )}
       </div>
 
       {currentSong && <PlayerControl />}
