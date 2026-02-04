@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Play } from "lucide-react";
 import styles from "./SongRow.module.css";
 
-const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewArtist, activeTab = "", hideInnerArtist= false}) => {
+const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewArtist, activeTab = "", hideInnerArtist = false, hideDuration = false }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isHoverCover, setIsHoverCover] = useState(false);
     //const [artistMenuOpen, setArtistMenuOpen] = useState(false);
@@ -17,6 +17,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
 
     //const [artistMenuPlacement, setArtistMenuPlacement] = useState("right"); // "right" | "left"
     //const artistMenuRef = useRef(null);
+    const [duration, setDuration] = useState(null);
 
     const menuRef = useRef(null);
 
