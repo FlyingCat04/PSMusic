@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Play } from "lucide-react";
 import styles from "./SongRow.module.css";
 
-const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToPlaylist, onViewArtist, onFavorite, activeTab = "", hideInnerArtist = false, hideDuration = false }) => {
+const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewArtist, activeTab = "", hideInnerArtist = false, hideDuration = false }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isHoverCover, setIsHoverCover] = useState(false);
     //const [artistMenuOpen, setArtistMenuOpen] = useState(false);
@@ -15,6 +15,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
 
     //const [artistMenuPlacement, setArtistMenuPlacement] = useState("right"); // "right" | "left"
     //const artistMenuRef = useRef(null);
+    const [duration, setDuration] = useState(null);
 
     const menuRef = useRef(null);
 
@@ -71,6 +72,21 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onAddToP
     //const filteredPlaylists = playlists.filter((pl) =>
     //    pl.name.toLowerCase().includes(playlistQuery.toLowerCase())
     //);
+
+    useEffect(() => {
+        if (activeTabChose !== "Bài hát") {
+            setDuration(null);
+            return;
+        }
+
+        if (item.duration) {
+            setDuration(item.duration);
+        } else {
+            setDuration("00:00");
+        }
+
+        
+    }, [activeTabChose, item]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
