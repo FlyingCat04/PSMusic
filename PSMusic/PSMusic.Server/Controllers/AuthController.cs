@@ -13,11 +13,13 @@ namespace PSMusic.Server.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _env;
 
-        public AuthController(IAuthService authService, IUserService userService)
+        public AuthController(IAuthService authService, IUserService userService, IWebHostEnvironment env)
         {
             _authService = authService;
             _userService = userService;
+            _env = env;
         }
 
         // POST api/auth/register
@@ -44,10 +46,17 @@ namespace PSMusic.Server.Controllers
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true, // Set to true in production
-                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddMinutes(10080) // 7 days
                 };
+                if(_env.IsDevelopment())
+                {
+                    cookieOptions.Secure = true;
+                    cookieOptions.SameSite = SameSiteMode.None;
+                } else
+                {
+                    cookieOptions.Secure = false;
+                    cookieOptions.SameSite = SameSiteMode.Lax;
+                }
                 if (result.RefreshToken != null)
                 {
                     Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
