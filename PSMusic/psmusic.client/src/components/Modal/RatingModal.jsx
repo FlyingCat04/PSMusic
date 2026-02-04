@@ -136,7 +136,7 @@ const RatingModal = ({
 
       setReviews((prev) => [newReview, ...prev]);
 
-      setSuccessMessage(`🎉 Đã gửi đánh giá ${rating} sao thành công!`);
+      // setSuccessMessage(`🎉 Đã gửi đánh giá ${rating} sao thành công!`);
 
       if (onReviewSubmitted) {
         onReviewSubmitted(savedReview);
@@ -163,27 +163,20 @@ const RatingModal = ({
           <X size={20} />
         </button>
 
-        <h3>🌟 Đánh Giá và Bình luận về "{songTitle}"</h3>
+        <h3>Đánh Giá và Bình luận về "{songTitle}"</h3>
+        <hr className={styles["separator"]} />
 
         {successMessage && (
           <div className={styles["success-message"]}>{successMessage}</div>
         )}
 
+
         <div className={styles["rate-input-container"]}>
-          {userHasRated ? (
-            <div className={styles["rated-section"]}>
-              <p className={styles["rated-message"]}>
-                ✅ Bạn đã đánh giá bài hát này rồi!
-              </p>
-              <p className={styles["rated-note"]}>
-                Cảm ơn bạn đã đóng góp đánh giá cho bài hát này.
-              </p>
-            </div>
-          ) : (
+          {!userHasRated && (
             <form className={styles["rating-form"]} onSubmit={handleSubmit}>
-              <p className={styles["rate-prompt"]}>
+              {/* <p className={styles["rate-prompt"]}>
                 Cảm nhận của bạn về bài hát này:
-              </p>
+              </p> */}
 
               <div className={styles["star-rating"]}>
                 {[...Array(5)].map((_, index) => {
@@ -207,11 +200,11 @@ const RatingModal = ({
                 })}
               </div>
 
-              <p className={styles["rating-text"]}>
+              {/* <p className={styles["rating-text"]}>
                 {rating > 0
                   ? `Bạn đã chọn ${rating} sao!`
                   : "Chọn số sao của bạn"}
-              </p>
+              </p> */}
 
               <textarea
                 placeholder="Viết bình luận của bạn (Không bắt buộc)..."
@@ -226,8 +219,8 @@ const RatingModal = ({
                 className={styles["submit-rating-btn"]}
                 disabled={rating === 0 || submitting}
               >
-                <Send size={18} />
-                {submitting ? "Đang gửi..." : "Gửi Đánh Giá"}
+                {/* <Send size={18} /> */}
+                {submitting ? "Đang gửi..." : "Gửi đánh giá"}
               </button>
             </form>
           )}
@@ -236,11 +229,12 @@ const RatingModal = ({
         <hr className={styles["separator"]} />
 
         <div className={styles["reviews-list-container"]}>
-          <h4>💬 {reviews.length} Bình luận từ cộng đồng</h4>
+          <h4>Bình luận từ cộng đồng</h4>
 
           {loading ? (
             <p className={styles["loading-reviews"]}>Đang tải đánh giá...</p>
-          ) : reviews.length > 0 ? (
+          ) : reviews.length > 0 && (
+            
             <div className={styles["reviews-list"]}>
               {reviews.map((review) => (
                 <div
@@ -261,10 +255,6 @@ const RatingModal = ({
                 </div>
               ))}
             </div>
-          ) : (
-            <p className={styles["no-reviews"]}>
-              Chưa có đánh giá nào cho bài hát này.
-            </p>
           )}
         </div>
       </div>

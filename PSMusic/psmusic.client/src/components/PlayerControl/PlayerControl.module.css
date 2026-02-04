@@ -60,8 +60,7 @@
 }
 
 .song-title:hover {
-  color: #1db954;
-  text-decoration: underline;
+  color: var(--primary-purple);
 }
 
 .song-artist {
@@ -386,7 +385,6 @@
   .control-buttons {
     order: 2;
     justify-content: center;
-    margin-bottom: 5px;
   }
   
   .player-controls-right {
