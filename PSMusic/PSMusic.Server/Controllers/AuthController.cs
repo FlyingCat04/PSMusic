@@ -46,6 +46,7 @@ namespace PSMusic.Server.Controllers
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
+                    Path = "/",
                     Expires = DateTime.UtcNow.AddMinutes(10080) // 7 days
                 };
                 if(_env.IsDevelopment())
@@ -150,9 +151,17 @@ namespace PSMusic.Server.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
             };
+            if (_env.IsDevelopment())
+            {
+                cookieOptions.Secure = true;
+                cookieOptions.SameSite = SameSiteMode.None;
+            }
+            else
+            {
+                cookieOptions.Secure = false;
+                cookieOptions.SameSite = SameSiteMode.Lax;
+            }
 
             Response.Cookies.Delete("RefreshToken", cookieOptions);
             return Ok(new { IsSuccess = true, Message = "Đăng xuất thành công" });
