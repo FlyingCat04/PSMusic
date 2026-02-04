@@ -26,6 +26,7 @@ namespace PSMusic.Server.Models.DTO.Song
         public string LrcUrl { get; set; } = string.Empty;
         public string Mp3Url { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; } = string.Empty;
+        public string Duration { get; set; } = "00:00";
         public List<PartialArtistDTO> Artists { get; set; } = new List<PartialArtistDTO>();
         public bool IsFavorited { get; set; }
         public string Duration { get; set; } = "00:00";
@@ -55,10 +56,11 @@ namespace PSMusic.Server.Models.DTO.Song
         public string CoverUrl { get; set; } = string.Empty;    // Trong DB là AvatarUrl của bài hát, Client gọi là CoverUrl
         public string SingerUrl { get; set; } = string.Empty;   // Cái này mới: Ảnh đại diện của Ca sĩ
         public int Likes { get; set; }                          // Đổi tên từ FavoriteCount thành Likes cho khớp Client
+        public int Reviews { get; set; }
+        public bool IsFavorited { get; set; } 
+        public bool IsReviewed { get; set; }   
         public string AudioUrl { get; set; } = string.Empty;    // Mp3Url
         public string LyricUrl { get; set; } = string.Empty;    // LrcUrl
-        public bool IsFavorited { get; set; } 
-        public bool IsReviewed { get; set; }    
         public string Duration { get; set; } = "00:00";
 
     }

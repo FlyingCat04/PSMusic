@@ -32,7 +32,7 @@ namespace PSMusic.Server.Services.Implementations
             {
                 var token = _tokenGenerator.GenerateToken(user);
                 var refreshToken = _tokenGenerator.GenerateRefreshToken(user);
-                return new AuthResDTO { IsSuccess = true, Message = "Đăng nhập thành công", Token = token, RefreshToken = refreshToken }; 
+                return new AuthResDTO { IsSuccess = true, Message = "Đăng nhập thành công", Token = token, RefreshToken = refreshToken, UserId = user.Id }; 
             }
             else return new AuthResDTO { IsSuccess = false, Message = "Sai mật khẩu" };
         }
@@ -62,8 +62,10 @@ namespace PSMusic.Server.Services.Implementations
             var user = await _userRepository.GetUserById(int.Parse(userId));
             if (user == null) return new AuthResDTO { IsSuccess = false, Message = "Người dùng không tồn tại" };
 
+            var newRefreshToken = _tokenGenerator.GenerateRefreshToken(user);
+
             var newToken = _tokenGenerator.GenerateToken(user);
-            return new AuthResDTO { IsSuccess = true, Message = "Refresh thành công", Token = newToken };
+            return new AuthResDTO { IsSuccess = true, Message = "Refresh thành công", Token = newToken, RefreshToken = newRefreshToken, UserId = user.Id };
         }
     }
 }

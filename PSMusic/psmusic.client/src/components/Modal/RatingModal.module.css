@@ -23,7 +23,7 @@
     padding: 30px;
     border-radius: 12px;
     width: 90%;
-    max-width: 900px;
+    max-width: 720px;
     max-height: 80vh;
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -57,8 +57,7 @@
 }
 
 .rating-modal h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
+    margin: 0;
     font-size: 1.5rem;
 }
 
@@ -70,7 +69,7 @@
 }
 
 .rate-input-container {
-    padding-bottom: 10px;
+    padding: 0;
 }
 
 .rate-prompt {
@@ -93,7 +92,7 @@
     display: flex;
     justify-content: center;
     gap: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .rating-text {
@@ -107,24 +106,27 @@
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     border-radius: 8px;
     border: 1px solid #333;
     background-color: #2a2a2a;
     color: white;
     resize: vertical;
-    font-size: 1rem;
+    font-family: Lexend;
+    font-size: 0.875rem;
 }
 
 .submit-rating-btn {
     margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #1DB954;
+    padding: 16px 20px;
+    background-color: var(--primary-purple);
     color: white;
     border: none;
     border-radius: 25px;
     cursor: pointer;
-    font-weight: bold;
+    font-family: Lexend;
+    font-size: 0.875rem;
+    font-weight: 600;
     transition: background-color 0.2s, opacity 0.2s;
     display: flex;
     align-items: center;
@@ -134,7 +136,7 @@
 }
 
 .submit-rating-btn:hover:not(:disabled) {
-    background-color: #1ed760;
+    background-color: var(--primary-purple-hover);
 }
 
 .submit-rating-btn:disabled {
@@ -207,6 +209,9 @@
 }
 
 .no-reviews {
+    font-family: Lexend;
+    font-size: 0.875rem;
+    font-weight: 500;
     text-align: center;
     padding: 20px;
     color: #b3b3b3;

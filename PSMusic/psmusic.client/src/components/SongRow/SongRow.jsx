@@ -10,8 +10,6 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
     //const [playlistMenuOpen, setPlaylistMenuOpen] = useState(false);
     //const [playlistQuery, setPlaylistQuery] = useState("");
 
-    const [duration, setDuration] = useState(null);
-
     //const [playlistMenuPlacement, setPlaylistMenuPlacement] = useState("right");
     //const playlistMenuRef = useRef(null);
 
@@ -20,23 +18,33 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
 
     const menuRef = useRef(null);
 
-    //const mp3Url = item?.mp3Url || null;
     const activeTabChose = activeTab || "";
-    
+
 
     const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
 
-    const formatTime = (timeStr) => {
-        if (!timeStr) return "00:00";
-        const parts = timeStr.split(':');
-        if (parts.length === 3 && parts[0] === "00") {
-            return `${parts[1]}:${parts[2]}`; 
+    // Format duration
+    const formatDuration = (duration) => {
+        if (!duration) return "";
+
+        // Nếu đã đúng format MM:SS (2 phần, không có dấu chấm)
+        const parts = duration.split(':');
+        if (parts.length === 2 && !duration.includes('.')) {
+            return duration; // "03:46"
         }
 
-        return timeStr; 
+        // Nếu là format đầy đủ "HH:MM:SS.milliseconds" hoặc "HH:MM:SS"
+        if (parts.length >= 2) {
+            const minutes = parts[1]; // phút
+            const secondsPart = parts[2] || '00'; // giây (có thể có phần thập phân)
+            const seconds = secondsPart.split('.')[0]; // bỏ phần milliseconds
+            return `${minutes}:${seconds}`;
+        }
+
+        return duration; // fallback
     };
 
-    const handleRowStyle = () => { 
+    const handleRowStyle = () => {
         return activeTab === "Bài hát" ? "sr-song-tab" : "sr-row";
     };
 
@@ -154,24 +162,27 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
     //            if (onViewArtist) onViewArtist(item.artistId);
     //            break;
     //        default:
-    //            console.warn("No handler for action:", action);
+    //            //console.warn("No handler for action:", action);
     //    }
     //    setMenuOpen(false);
     //};
 
     return (
 
-        <div className={styles[handleRowStyle(activeTab)]}>
+        <div
+            className={styles[handleRowStyle(activeTab)]}
+            {...(activeTab === "Bài hát" && {
+                onClick: () => onPlay?.(item),
+                onMouseEnter: () => setIsHoverCover(true),
+                onMouseLeave: () => setIsHoverCover(false)
+            })}
+        >
             {/* COVER + TITLE + ARTIST */}
             {activeTab === "Bài hát" ? (
                 <>
                     {/* Cột 1: avatar + tên bài hát */}
-                    <div className={styles["sr-col-cover-title"]} onClick={() => onPlay?.(item)}>
-                        <div
-                            className={styles["sr-avatar-wrapper"]}
-                            onMouseEnter={() => setIsHoverCover(true)}
-                            onMouseLeave={() => setIsHoverCover(false)}
-                        >
+                    <div className={styles["sr-col-cover-title"]}>
+                        <div className={styles["sr-avatar-wrapper"]}>
                             <img
                                 className={styles["sr-cover"]}
                                 src={item.imageUrl}
@@ -208,7 +219,10 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
 
                         <button
                             className={styles["sr-title-songtab"]}
-                            onClick={() => onTitleClick?.(item)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onTitleClick?.(item);
+                            }}
                         >
                             {item.title}
                         </button>
@@ -216,8 +230,8 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
 
                     {/* Cột 2: nghệ sĩ */}
                     <div className={styles["sr-col-artist"]}>
-                        {item.artists && item.artists.length > 0 ? (() => { 
-                            const maxArtists = 3; 
+                        {item.artists && item.artists.length > 0 ? (() => {
+                            const maxArtists = 3;
                             const displayed = item.artists.slice(0, maxArtists);
                             const hasMore = item.artists.length > maxArtists;
                             return (
@@ -226,7 +240,12 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
                                         <span
                                             key={a.id || `artist-${idx}`} // Sử dụng index làm dự phòng nếu id null
                                             className={styles.artistName}
-                                            onClick={() => onViewArtist?.(a.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onViewArtist?.(a.id)
+                                            }
+                                            }
+                                        // onClick={() => onViewArtist?.(a.id)}
                                         >
                                             {a.name}
                                             {idx < displayed.length - 1 ? ", " : ""}
@@ -242,14 +261,14 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
             ) : (
                 <>
                     {/* layout cũ cho tab khác */}
-                        <div className={styles["sr-avatar-wrapper"]}
-                            onClick={() => onPlay?.(item)}
-                            onMouseEnter={() => setIsHoverCover(true)}
-                            onMouseLeave={() => setIsHoverCover(false)}
-                        >
+                    <div className={styles["sr-avatar-wrapper"]}
+                        onClick={() => onPlay?.(item)}
+                        onMouseEnter={() => setIsHoverCover(true)}
+                        onMouseLeave={() => setIsHoverCover(false)}
+                    >
                         <img
                             className={styles["sr-cover"]}
-                            onClick={() => onPlay?.(item)} 
+                            onClick={() => onPlay?.(item)}
                             src={item.imageUrl}
                             alt=""
                             onError={(e) => {
@@ -288,47 +307,67 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
                     <div className={styles[handleMetaStyle(activeTab)]}>
                         <button
                             className={styles[handleTitleStyle(activeTab)]}
-                            onClick={() => onTitleClick?.(item)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onTitleClick?.(item);
+                            }}
                         >
                             {item.title}
                         </button>
                         {!hideInnerArtist && (
                             <div className={styles["sr-subtitle"]}>
-                            {(() => {
-                                const maxArtists = 2;
-                                const displayed = item.artists.slice(0, maxArtists);
-                                const hasMore = item.artists.length > maxArtists;
+                                {(() => {
+                                    const maxArtists = 2;
+                                    const displayed = item.artists.slice(0, maxArtists);
+                                    const hasMore = item.artists.length > maxArtists;
 
-                                return (
-                                    <>
-                                        {displayed.map((a, idx) => (
-                                            <span
-                                                key={a.id || `inner-artist-${idx}`} // Khắc phục lỗi key null tại đây
-                                                className={styles.artistName}
-                                                onClick={() => onViewArtist?.(a.id)}
-                                            >
-                                                {a.name}
-                                                {idx < displayed.length - 1 ? ", " : ""}
-                                            </span>
-                                        ))}
+                                    return (
+                                        <>
+                                            {displayed.map((a, idx) => (
+                                                <span
+                                                    key={a.id || `inner-artist-${idx}`} // Khắc phục lỗi key null tại đây
+                                                    className={styles.artistName}
+                                                    onClick={() => onViewArtist?.(a.id)}
+                                                >
+                                                    {a.name}
+                                                    {idx < displayed.length - 1 ? ", " : ""}
+                                                </span>
+                                            ))}
 
-                                        {hasMore && <span className={styles.moreArtists}>…</span>}
-                                    </>
-                                );
-                            })()}
+                                            {hasMore && <span className={styles.moreArtists}>…</span>}
+                                        </>
+                                    );
+                                })()}
                             </div>
                         )}
                     </div>
                 </>
             )}
-             
+
 
             {/* ACTIONS */}
-            {activeTab === "Bài hát" && duration && (
+            {activeTab === "Bài hát" && item.duration && !hideDuration && (
                 <span className={styles["sr-duration"]}>
-                    {formatTime(duration)}
+                    {formatDuration(item.duration)}
                 </span>
             )}
+
+            {/* Nút Favorite */}
+            {/* {activeTab === "Bài hát" && onFavorite && (
+                <button
+                    className={styles["sr-btn-favorite"]}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onFavorite(item);
+                    }}
+                >
+                    <Heart
+                        size={18}
+                        fill={item.isFavorited ? "#9b4de0" : "transparent"}
+                        color={item.isFavorited ? "#9b4de0" : "currentColor"}
+                    />
+                </button>
+            )} */}
             {/*<div className={styles["sr-right"]}>*/}
             {/*    <button*/}
             {/*        type="button"*/}

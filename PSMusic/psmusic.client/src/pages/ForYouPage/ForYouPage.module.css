@@ -1,0 +1,9 @@
+.header {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.recommendSys {
+    margin: 0;
+}

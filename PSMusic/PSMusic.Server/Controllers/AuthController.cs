@@ -13,11 +13,13 @@ namespace PSMusic.Server.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _env;
 
-        public AuthController(IAuthService authService, IUserService userService)
+        public AuthController(IAuthService authService, IUserService userService, IWebHostEnvironment env)
         {
             _authService = authService;
             _userService = userService;
+            _env = env;
         }
 
         // POST api/auth/register
@@ -44,16 +46,38 @@ namespace PSMusic.Server.Controllers
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true, // Set to true in production
-                    SameSite = SameSiteMode.None,
+                    Path = "/",
                     Expires = DateTime.UtcNow.AddMinutes(10080) // 7 days
                 };
+                if(_env.IsDevelopment())
+                {
+                    cookieOptions.Secure = true;
+                    cookieOptions.SameSite = SameSiteMode.None;
+                } else
+                {
+                    cookieOptions.Secure = false;
+                    cookieOptions.SameSite = SameSiteMode.Unspecified;
+                }
                 if (result.RefreshToken != null)
                 {
                     Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
                 }
-                
-                return Ok(new { result.IsSuccess, result.Message, result.Token });
+
+                if (!result.UserId.HasValue) return Unauthorized(); 
+                var user = await _userService.GetUserById(result.UserId.Value);
+                return Ok(new { 
+                    result.IsSuccess, 
+                    result.Message, 
+                    result.Token,
+                    User = new
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        Email = user.Email,
+                        DisplayName = user.DisplayName,
+                        AvatarUrl = user.AvatarURL
+                    }
+                });
             }
             else return BadRequest(new { result.IsSuccess, result.Message });
         }
@@ -70,7 +94,45 @@ namespace PSMusic.Server.Controllers
             var result = await _authService.Refresh(refreshToken);
             if (result.IsSuccess)
             {
-                return Ok(new { result.IsSuccess, result.Message, result.Token });
+                if (!string.IsNullOrEmpty(result.RefreshToken))
+                {
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Path = "/",
+                        Expires = DateTimeOffset.UtcNow.AddMinutes(10080)
+                    };
+
+                    if (_env.IsDevelopment())
+                    {
+                        cookieOptions.Secure = true;
+                        cookieOptions.SameSite = SameSiteMode.None;
+                    }
+                    else
+                    {
+                        cookieOptions.Secure = false;
+                        cookieOptions.SameSite = SameSiteMode.Unspecified;
+                    }
+
+                    Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
+                }
+                if (!result.UserId.HasValue) return Unauthorized();
+                var user = await _userService.GetUserById(result.UserId.Value);
+
+                return Ok(new
+                {
+                    result.IsSuccess,
+                    result.Message,
+                    result.Token,
+                    User = new
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        Email = user.Email,
+                        DisplayName = user.DisplayName,
+                        AvatarUrl = user.AvatarURL
+                    }
+                });
             }
             
             return Ok(new { result.IsSuccess, result.Message });
@@ -111,11 +173,18 @@ namespace PSMusic.Server.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
             };
+            if (_env.IsDevelopment())
+            {
+                cookieOptions.Secure = true;
+                cookieOptions.SameSite = SameSiteMode.None;
+            }
+            else
+            {
+                cookieOptions.Secure = false;
+                cookieOptions.SameSite = SameSiteMode.Unspecified;
+            }
 
-            Response.Cookies.Delete("AccessToken", cookieOptions);
             Response.Cookies.Delete("RefreshToken", cookieOptions);
             return Ok(new { IsSuccess = true, Message = "Đăng xuất thành công" });
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSMusic.Server.Data;
+using PSMusic.Server.Models.DTO.Artist;
 using PSMusic.Server.Models.DTO.Song;
 using PSMusic.Server.Models.Entities;
 using PSMusic.Server.Repositories.Interfaces;
@@ -192,10 +193,9 @@ namespace PSMusic.Server.Repositories.Implementations
                     AudioUrl = s.Mp3Url ?? "",
                     LyricUrl = s.LrcUrl ?? "",
                     Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
-                    SingerUrl = s.SongArtists
-                        .Select(sa => sa.Artist.AvatarUrl)
-                        .FirstOrDefault() ?? "",
+                    SingerUrl = s.AvatarUrl ?? "",
                     Likes = s.Favorites.Count(f => f.IsFavorite),
+                    Reviews = s.Ratings.Count(),
                     IsFavorited = userId != 0 && s.Favorites.Any(f => f.UserId == userId && f.IsFavorite),
                     IsReviewed = userId != 0 && s.Ratings.Any(r => r.UserId == userId),
                     Duration = s.Duration
@@ -213,6 +213,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 Artist = item.Artist,
                 SingerUrl = item.SingerUrl,
                 Likes = item.Likes,
+                Reviews = item.Reviews,
                 IsFavorited = item.IsFavorited,
                 IsReviewed = item.IsReviewed,
                 Duration = item.Duration.HasValue ? item.Duration.Value.ToString(@"mm\:ss") : "00:00"
@@ -221,34 +222,32 @@ namespace PSMusic.Server.Repositories.Implementations
 
         public async Task<List<FavoriteSongDTO>> GetFavoriteSongs(int userId)
         {
-            var songs = await _dbContext.Favorite
+            return await _dbContext.Favorite
                 .AsNoTracking()
                 .Where(f => f.UserId == userId && f.IsFavorite)
-                .Select(f => f.Song) 
-                .Select(s => new 
-                {
-                    s.Id,
-                    Title = s.Name,
-                    ImageUrl = s.AvatarUrl ?? "", 
-                    LyricUrl = s.LrcUrl ?? "", 
-                    AudioUrl = s.Mp3Url ?? "",
-                    Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
-                    Duration = s.Duration
-                })
-                .ToListAsync();
-
-            return songs.Select(s => new FavoriteSongDTO 
+                .Select(f => f.Song)
+                .Select(s => new FavoriteSongDTO
                 {
                     Id = s.Id,
-                    Title = s.Title,
-                    ImageUrl = s.ImageUrl, 
-                    LyricUrl = s.LyricUrl, 
-                    AudioUrl = s.AudioUrl,
-                    Artist = s.Artist,
-                    Duration = s.Duration.HasValue ? s.Duration.Value.ToString(@"mm\:ss") : "00:00"
+                    Title = s.Name,
+                    ImageUrl = s.AvatarUrl ?? "",
+                    LyricUrl = s.LrcUrl ?? "",
+                    AudioUrl = s.Mp3Url ?? "",
+                    Duration = s.Duration.HasValue 
+                        ? s.Duration.Value.ToString(@"mm\:ss") 
+                        : "00:00",
+
+                    Artists = s.SongArtists
+                        .Select(sa => new ArtistDTO
+                        {
+                            Id = sa.Artist.Id,
+                            Name = sa.Artist.Name
+                        })
+                        .ToList()
                 })
-                .ToList();
+                .ToListAsync();
         }
+
 
         public async Task<int> GetFavoriteCount(int songId)
         {

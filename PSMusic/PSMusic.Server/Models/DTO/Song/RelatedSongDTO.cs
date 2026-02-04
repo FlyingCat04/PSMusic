@@ -1,3 +1,5 @@
+using PSMusic.Server.Models.DTO.Artist;
+
 namespace PSMusic.Server.Models.DTO.Song
 {
     public class RelatedSongDTO
@@ -7,16 +9,19 @@ namespace PSMusic.Server.Models.DTO.Song
         public string ImageUrl { get; set; } = string.Empty;
         public string Mp3Url { get; set; } = string.Empty;
         public string Duration { get; set; } = "00:00";
+        public string Artist { get; set; } = string.Empty;
+        public IEnumerable<PartialArtistDTO> Artists { get; set; } = new List<PartialArtistDTO>();
     }
 
     public class FavoriteSongDTO
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public string Artist { get; set; } = string.Empty; 
         public string ImageUrl { get; set; } = string.Empty; // Map từ AvatarUrl
         public string LyricUrl { get; set; } = string.Empty;
         public string AudioUrl { get; set; } = string.Empty;
         public string Duration { get; set; } = "00:00";
+
+        public List<ArtistDTO> Artists { get; set; } = new();
     }
 }

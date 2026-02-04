@@ -12,6 +12,7 @@ import ArtistPage from './pages/ArtistPage/ArtistPage';
 import TopChartsPage from './pages/TopChartsPage/TopChartsPage';
 import ExploreCategoriesPage from './pages/ExploreCategoriesPage/ExploreCategoriesPage';
 import CategoryPage from './pages/CategoryPage/CategoryPage';
+import ForYouPage from './pages/ForYouPage/ForYouPage';
 import './App.css';
 
 const App = () => {
@@ -28,7 +29,7 @@ const App = () => {
                 <Route path="discover" element={<HomePage />} />
                 <Route path="genres" element={<ExploreCategoriesPage />} />
                 <Route path="charts" element={<TopChartsPage />} />
-                <Route path="for-you" element={<div>Dành cho bạn</div>} />
+                <Route path="for-you" element={<ForYouPage />} />
                 {/* <Route path="favorites" element={<div>Bài Hát Yêu Thích</div>} /> */}
                 <Route path="/song/:songId" element={<SongViewPage />} />
                 <Route path="/artist/:id" element={<ArtistPage />} />

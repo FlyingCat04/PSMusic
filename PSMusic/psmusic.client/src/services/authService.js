@@ -10,7 +10,7 @@ const authService = {
             });
             return res.data;
         } catch (error) {
-            console.log(error.response);
+            //console.log(error.response);
             if (error.response?.status === 400)
             {
                 return {
@@ -18,7 +18,7 @@ const authService = {
                     message: error.response.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng"
                 };
             }
-            console.error("Login API error:", error);
+            //console.error("Login API error:", error);
             return { isSuccess: false, message: "Đã xảy ra lỗi không xác định" };
         }
     },
@@ -30,7 +30,7 @@ const authService = {
             throw new Error("Không thể lấy thông tin người dùng");
         } catch (error) {
             if (error.response?.status !== 401) {
-                console.error("Get current user error:", error);
+                //console.error("Get current user error:", error);
             }
 
             if (error.response?.status === 401) {
@@ -48,7 +48,7 @@ const authService = {
             const res = await axiosInstance.post("/auth/logout");
             if (res.status === 200 && res.data) return res.data;
         } catch (error) {
-            console.error("Logout error:", error);
+            //console.error("Logout error:", error);
             return {
                 isSuccess: true,
                 message: "Đã đăng xuất"
@@ -61,7 +61,7 @@ const authService = {
             const res = await axiosInstance.post("/auth/register", user);
             return res.data;
         } catch (error) {
-            console.error("Register error:", error);
+            //console.error("Register error:", error);
             return { 
                 isSuccess: false,
                 message: error.response.data?.message || "Đăng ký thất bại"
@@ -75,7 +75,7 @@ const authService = {
             if (res.status === 200 && res.data) return res.data;
         } catch (error) {
             if (error.response?.status !== 401) {
-                console.error("Refresh token error:", error);
+                //console.error("Refresh token error:", error);
             }
             return {
                 isSuccess: false,

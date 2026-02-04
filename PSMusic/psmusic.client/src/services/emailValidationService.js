@@ -17,7 +17,7 @@ const emailValidationService = {
                     : "Email không tồn tại hoặc không thể gửi được"
             };
         } catch (error) {
-            console.error("Email validation error:", error);
+            //console.error("Email validation error:", error);
             return {
                 isDeliverable: false,
                 isFormatValid: false,

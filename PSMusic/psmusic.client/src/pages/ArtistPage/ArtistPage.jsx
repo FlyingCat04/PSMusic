@@ -114,6 +114,7 @@ const mapSong = (item) => ({
     artists: item.artists,
     imageUrl: checkImage(item.avatarUrl, DEFAULT_SONG_IMAGE),
     mp3Url: item.mp3Url || "",
+    duration: item.duration,
 });
 
 const mapArtist = (item) => ({
@@ -181,7 +182,7 @@ const ArtistPage = () => {
                 });
 
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setError("Không tải được nghệ sĩ.");
             } finally {
                 setLoadingArtist(false);
@@ -224,7 +225,7 @@ const ArtistPage = () => {
                 document.documentElement.style.setProperty("--artist-play-bg", playBg);
                 document.documentElement.style.setProperty("--artist-play-text", playText);
             } catch (err) {
-                console.warn("Không lấy được màu dominant:", err);
+                //console.warn("Không lấy được màu dominant:", err);
             }
         };
     }, [artist]);
@@ -255,7 +256,7 @@ const ArtistPage = () => {
                 setMainSongs(items.map(mapSong));
                 setMainTotalPages(data.totalPages || 1);
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setError("Không tải được danh sách bài hát chính.");
             } finally {
                 setLoadingMain(false);
@@ -289,7 +290,7 @@ const ArtistPage = () => {
                 setCollabSongs(items.map(mapSong));
                 setCollabTotalPages(data.totalPages || 1);
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setError("Không tải được danh sách bài hát collab.");
             } finally {
                 setLoadingCollab(false);
@@ -321,7 +322,7 @@ const ArtistPage = () => {
                 const total = Math.max(1, Math.ceil(mapped.length / 4));
                 setRelatedArtistTotalPages(total);
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 setRelatedArtists([]);
                 setRelatedArtistTotalPages(1);
             } finally {
@@ -427,34 +428,34 @@ const ArtistPage = () => {
             )}
 
             {/* BÀI HÁT CHÍNH */}
-            { mainSongs.length > 0 && (
-            <section className={styles.section}>
-                <SectionHeader title="Bài hát do nghệ sĩ hát chính" />
-                {loadingMain ? (
-                    <LoadSpinner />
-                ) : (
-                    <>
-                        <div className={styles.songList}>
-                            <TrackTable
-                                songs={mainSongs}
-                                currentSong={currentSong}
-                                isPlaying={isPlaying}
-                                onPlay={playSong}
-                                onTitleClick={handleTitleClick}
-                                onAddToPlaylist={handleAddToPlaylist}
-                                onViewArtist={handleViewArtist}
+            {mainSongs.length > 0 && (
+                <section className={styles.section}>
+                    <SectionHeader title="Bài hát do nghệ sĩ hát chính" />
+                    {loadingMain ? (
+                        <LoadSpinner />
+                    ) : (
+                        <>
+                            <div className={styles.songList}>
+                                <TrackTable
+                                    songs={mainSongs}
+                                    currentSong={currentSong}
+                                    isPlaying={isPlaying}
+                                    onPlay={playSong}
+                                    onTitleClick={handleTitleClick}
+                                    onAddToPlaylist={handleAddToPlaylist}
+                                    onViewArtist={handleViewArtist}
+                                    page={mainPage}
+                                    pageSize={PAGE_SIZE}
+                                />
+                            </div>
+                            <Pagination
                                 page={mainPage}
-                                pageSize={PAGE_SIZE}
+                                totalPages={mainTotalPages}
+                                onChange={handleMainPageChange}
                             />
-                        </div>
-                        <Pagination
-                            page={mainPage}
-                            totalPages={mainTotalPages}
-                            onChange={handleMainPageChange}
-                        />
-                    </>
-                )}
-            </section>
+                        </>
+                    )}
+                </section>
             )}
 
             {/* BÀI HÁT COLLAB */}

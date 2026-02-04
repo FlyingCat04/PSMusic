@@ -48,16 +48,18 @@ builder.Services.AddCors(options =>
     {
         if (builder.Environment.IsDevelopment())
         {
-            policy.WithOrigins("https://localhost:5173")
+            policy.WithOrigins("https://localhost:5173", "http://localhost:5173")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
+
         }
         else
         {
             policy.WithOrigins(
                 "https://psmusic.netlify.app",
-                "https://dev--psmusic.netlify.app"
+                "https://dev--psmusic.netlify.app",
+                "http://10.29.161.75:5173"
             )
                   .AllowAnyHeader()
                   .AllowAnyMethod()
@@ -66,7 +68,7 @@ builder.Services.AddCors(options =>
     });
 });
 // Add services to the container.
-
+builder.Services.AddOutputCache();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -105,6 +107,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseOutputCache();
 
 app.MapControllers();
 
