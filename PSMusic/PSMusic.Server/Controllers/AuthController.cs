@@ -56,7 +56,7 @@ namespace PSMusic.Server.Controllers
                 } else
                 {
                     cookieOptions.Secure = false;
-                    cookieOptions.SameSite = SameSiteMode.Lax;
+                    cookieOptions.SameSite = SameSiteMode.Unspecified;
                 }
                 if (result.RefreshToken != null)
                 {
@@ -160,7 +160,7 @@ namespace PSMusic.Server.Controllers
             else
             {
                 cookieOptions.Secure = false;
-                cookieOptions.SameSite = SameSiteMode.Lax;
+                cookieOptions.SameSite = SameSiteMode.Unspecified;
             }
 
             Response.Cookies.Delete("RefreshToken", cookieOptions);
