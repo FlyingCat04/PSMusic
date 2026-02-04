@@ -59,7 +59,7 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(
                 "https://psmusic.netlify.app",
                 "https://dev--psmusic.netlify.app",
-                "http://10.29.161.75"
+                "http://10.29.161.75:5173"
             )
                   .AllowAnyHeader()
                   .AllowAnyMethod()
