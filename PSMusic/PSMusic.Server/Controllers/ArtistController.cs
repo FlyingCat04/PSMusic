@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using PSMusic.Server.Helpers;
 using PSMusic.Server.Models.DTO.Category;
 using PSMusic.Server.Services.Interfaces;
@@ -23,6 +24,7 @@ namespace PSMusic.Server.Controllers
         // GET api/artist/popular?page=1&size=10
         [HttpGet("popular")]
         //[Authorize]
+        [OutputCache(Duration = 900)]
         public async Task<IActionResult> GetPopularArtists(int page = 1, int size = 10)
         {
             var result = await _artistService.GetPopularArtists(page, size);
