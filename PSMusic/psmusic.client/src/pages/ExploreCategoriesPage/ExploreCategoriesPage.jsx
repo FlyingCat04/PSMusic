@@ -90,7 +90,7 @@ const ExploreCategoriesPage = () => {
             {categories.length > 0 && (
                 <section className={styles['content-section']}>
                     <div className={styles['category-grid']}>
-                        {categories.slice(0, 16).map((category) => (
+                        {categories.slice(0, 12).map((category) => (
                             <GenreCard
                                 key={category.id}
                                 genre={{
