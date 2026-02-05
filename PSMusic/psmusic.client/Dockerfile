@@ -11,7 +11,6 @@ RUN npm config set registry https://registry.npmjs.org/ \
     && npm config set fetch-retry-maxtimeout 600000 \
     && npm config set fetch-retries 5 \
     && npm config set fetch-retry-mintimeout 10000 \
-    && npm config set family=ipv4 \
     && npm ci
 
 # Copy source code
