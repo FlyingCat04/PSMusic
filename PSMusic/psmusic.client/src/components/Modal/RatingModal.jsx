@@ -3,8 +3,7 @@ import { X, Star, Send } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
 import styles from "./RatingModal.module.css";
 import toast from 'react-hot-toast';
-
-const USER_NAME = "Bạn (User hiện tại)";
+import { useAuth } from "../../hooks/useAuth";
 
 const StarRatingDisplay = ({ rating, size = 16 }) => (
   <div className={styles["star-rating-display"]}>
@@ -30,6 +29,9 @@ const RatingModal = ({
   isReviewed = false,
   onReviewSubmitted,
 }) => {
+  const { user } = useAuth();
+  const currentUsername = user?.username || "";
+  
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -40,7 +42,7 @@ const RatingModal = ({
   const [hover, setHover] = useState(0);
 
   const userHasRated =
-    reviews.some((review) => review.user === USER_NAME) || isReviewed;
+    reviews.some((review) => review.user === currentUsername) || isReviewed;
 
   useEffect(() => {
     if (isOpen) {
@@ -110,7 +112,7 @@ const RatingModal = ({
     const newReviewPayload = {
       rating,
       comment: comment.trim() || "(Không có bình luận)",
-      user: USER_NAME,
+      user: currentUsername,
     };
 
     try {
@@ -124,7 +126,7 @@ const RatingModal = ({
 
       const newReview = {
         id: savedReview.id || Date.now(),
-        user: USER_NAME,
+        user: currentUsername,
         rating: rating,
         comment: comment.trim() || "(Không có bình luận)",
         date: new Date().toLocaleDateString("vi-VN"),
@@ -241,7 +243,7 @@ const RatingModal = ({
                 <div
                   key={review.id}
                   className={`${styles["review-item"]} ${
-                    review.user === USER_NAME ? styles["user-review"] : ""
+                    review.user === currentUsername ? styles["user-review"] : ""
                   }`}
                 >
                   <div className={styles["review-header"]}>
