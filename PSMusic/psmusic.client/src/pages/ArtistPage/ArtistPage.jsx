@@ -123,12 +123,13 @@ const mapArtist = (item) => ({
     imageUrl: checkImage(item.avatarUrl, DEFAULT_ARTIST_IMAGE),
 });
 
+
 const ArtistPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
     //const [playingSongId, setPlayingSongId] = useState(null);
-    const { playSong, currentSong, isPlaying } = usePlayer();
+    const { playSong, currentSong, isPlaying, playPlaylist } = usePlayer();
 
     // hero artist
     const [artist, setArtist] = useState({
@@ -360,6 +361,23 @@ const ArtistPage = () => {
         setRelatedArtistPage(newPage);
     };
 
+    const handlePlayArtist = () => {
+        if (mainSongs && mainSongs.length > 0) {
+            playPlaylist(mainSongs, 0, {
+                type: 'ARTIST_MAIN',
+                id: id, 
+                page: 1  
+            }); 
+        }
+        else if (collabSongs && collabSongs.length > 0) {
+            playPlaylist(collabSongs, 0, {
+                type: 'ARTIST_COLLAB',
+                id: id,
+                page: 1
+            });
+        }
+    };
+
     if (!artist) {
         <LoadSpinner />
     }
@@ -395,7 +413,8 @@ const ArtistPage = () => {
                         </h1>
 
                         <div className={styles.actions}>
-                            <button className={styles.playButton}>
+                            <button className={styles.playButton} onClick={handlePlayArtist} 
+                                disabled={mainSongs.length === 0 && collabSongs.length === 0}>
                                 <Play className={styles.playIcon} />
                                 Phát
                             </button>
