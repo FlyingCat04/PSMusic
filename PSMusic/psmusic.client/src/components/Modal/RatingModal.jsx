@@ -3,8 +3,7 @@ import { X, Star, Send } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
 import styles from "./RatingModal.module.css";
 import toast from 'react-hot-toast';
-
-const USER_NAME = "Bạn (User hiện tại)";
+import { useAuth } from "../../hooks/useAuth";
 
 const StarRatingDisplay = ({ rating, size = 16 }) => (
   <div className={styles["star-rating-display"]}>
@@ -30,6 +29,9 @@ const RatingModal = ({
   isReviewed = false,
   onReviewSubmitted,
 }) => {
+  const { user } = useAuth();
+  const currentUsername = user?.username || "";
+  
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -40,7 +42,7 @@ const RatingModal = ({
   const [hover, setHover] = useState(0);
 
   const userHasRated =
-    reviews.some((review) => review.user === USER_NAME) || isReviewed;
+    reviews.some((review) => review.user === currentUsername) || isReviewed;
 
   useEffect(() => {
     if (isOpen) {
@@ -110,7 +112,7 @@ const RatingModal = ({
     const newReviewPayload = {
       rating,
       comment: comment.trim() || "(Không có bình luận)",
-      user: USER_NAME,
+      user: currentUsername,
     };
 
     try {
@@ -124,7 +126,7 @@ const RatingModal = ({
 
       const newReview = {
         id: savedReview.id || Date.now(),
-        user: USER_NAME,
+        user: currentUsername,
         rating: rating,
         comment: comment.trim() || "(Không có bình luận)",
         date: new Date().toLocaleDateString("vi-VN"),
@@ -164,15 +166,16 @@ const RatingModal = ({
         </button>
 
         <h3>Đánh Giá và Bình luận về "{songTitle}"</h3>
-        <hr className={styles["separator"]} />
+        {/* <hr className={styles["separator"]} /> */}
 
         {successMessage && (
           <div className={styles["success-message"]}>{successMessage}</div>
         )}
 
 
-        <div className={styles["rate-input-container"]}>
-          {!userHasRated && (
+        
+        {!userHasRated && (
+          <div className={styles["rate-input-container"]}>
             <form className={styles["rating-form"]} onSubmit={handleSubmit}>
               {/* <p className={styles["rate-prompt"]}>
                 Cảm nhận của bạn về bài hát này:
@@ -223,24 +226,24 @@ const RatingModal = ({
                 {submitting ? "Đang gửi..." : "Gửi đánh giá"}
               </button>
             </form>
-          )}
-        </div>
+          </div>
+        )}
 
-        <hr className={styles["separator"]} />
+        {/* <hr className={styles["separator"]} /> */}
 
         <div className={styles["reviews-list-container"]}>
           <h4>Bình luận từ cộng đồng</h4>
 
           {loading ? (
             <p className={styles["loading-reviews"]}>Đang tải đánh giá...</p>
-          ) : reviews.length > 0 && (
+          ) : reviews.length > 0 ? (
             
             <div className={styles["reviews-list"]}>
               {reviews.map((review) => (
                 <div
                   key={review.id}
                   className={`${styles["review-item"]} ${
-                    review.user === USER_NAME ? styles["user-review"] : ""
+                    review.user === currentUsername ? styles["user-review"] : ""
                   }`}
                 >
                   <div className={styles["review-header"]}>
@@ -255,6 +258,10 @@ const RatingModal = ({
                 </div>
               ))}
             </div>
+          ) : (
+            <p className={styles["no-reviews"]}>
+              Hãy là người đầu tiên đánh giá bài hát này :D
+            </p>
           )}
         </div>
       </div>

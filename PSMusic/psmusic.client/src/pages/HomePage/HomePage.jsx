@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, RefreshCcw } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import GenreCard from '../../components/GenreCard/GenreCard';
-import ItemCardRow from '../../components/ItemCardRow/ItemCardRow';
 import ItemCardColumn from '../../components/ItemCardColumn/ItemCardColumn';
 import LoadSpinner from '../../components/LoadSpinner/LoadSpinner';
 import EmptyState from '../../components/EmptyState/EmptyState';
@@ -135,7 +134,7 @@ const HomePage = () => {
                 genre={{
                   id: category.id || category.categoryId,
                   title: category.name || category.title,
-                  imageUrl: category.avatarUrl || 'https://via.placeholder.com/200',
+                  imageUrl: category.avatarUrl || '',
                   color: category.color || '#FF4E50'
                 }} 
               />
@@ -163,7 +162,7 @@ const HomePage = () => {
                     id: artist.id || artist.artistId,
                     title: artist.name,
                     artist: artist.bio || 'Nghệ sĩ',
-                    imageUrl: artist.avatarUrl || 'https://via.placeholder.com/100'
+                    imageUrl: artist.avatarUrl || ''
                   }}
                   type="artist"
                 />
@@ -194,7 +193,7 @@ const HomePage = () => {
                     artists: Array.isArray(song.artists) 
                       ? song.artists 
                       : [{ name: 'Unknown Artist' }],
-                    imageUrl: song.avatarUrl || 'https://via.placeholder.com/200',
+                    imageUrl: song.avatarUrl || '',
                     mp3Url: song.mp3Url
                   }}
                   type="song"
@@ -226,7 +225,7 @@ const HomePage = () => {
                     artists: Array.isArray(song.artists) 
                       ? song.artists 
                       : [{ name: 'Unknown Artist' }],
-                    imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
+                    imageUrl: song.avatarUrl || song.imageUrl || '',
                     mp3Url: song.mp3Url
                   }}
                   type="song"
@@ -258,7 +257,7 @@ const HomePage = () => {
                     artists: Array.isArray(song.artists) 
                       ? song.artists 
                       : [{ name: 'Unknown Artist' }],
-                    imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
+                    imageUrl: song.avatarUrl || song.imageUrl || '',
                     mp3Url: song.mp3Url
                   }}
                   type="song"

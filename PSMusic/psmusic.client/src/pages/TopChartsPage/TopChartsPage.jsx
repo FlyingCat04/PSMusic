@@ -169,6 +169,7 @@ const TopChartsPage = () => {
                             }))}
                             showRank={true}
                             hideDuration={isDualColumn}
+                            isDualColumn={isDualColumn}
                             onTitleClick={handleTitleClick}
                             onViewArtist={handleViewArtist}
                         />

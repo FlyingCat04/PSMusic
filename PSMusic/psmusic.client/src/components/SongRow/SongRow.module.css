@@ -37,6 +37,23 @@
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1); */
 }
 
+/* Song row trong dual column (charts page) - ẩn duration */
+.sr-dual-column {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 3fr);
+    align-items: center;
+    column-gap: 20px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    position: relative;
+}
+
+.sr-dual-column:hover {
+    background: var(--component-hover-bg);
+}
+
 /* cột title trong tab Bài hát */
 .sr-title-col {
   min-width: 0;

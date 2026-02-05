@@ -59,6 +59,8 @@
 .rating-modal h3 {
     margin: 0;
     font-size: 1.5rem;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #333;
 }
 
 .separator {
@@ -69,7 +71,8 @@
 }
 
 .rate-input-container {
-    padding: 0;
+    padding: 20px 0;
+    border-bottom: 1px solid #333;
 }
 
 .rate-prompt {
@@ -149,6 +152,7 @@
     flex-grow: 1;
     overflow-y: auto;
     padding-right: 5px;
+    padding-top: 20px;
     text-align: left;
 }
 
@@ -173,8 +177,8 @@
 }
 
 .review-item.user-review {
-    border-left: 4px solid #1DB954;
-    background: #253328;
+    /* border-left: 4px solid var(--primary-purple); */
+    background: var(--component-hover-bg);
 }
 
 .review-header {
