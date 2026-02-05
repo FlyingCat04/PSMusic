@@ -6,7 +6,7 @@
 .header {
     display: grid;
     grid-template-columns: 32px minmax(0, 1fr);
-    column-gap: 24px;
+    column-gap: 4px;
     align-items: center;
     padding: 16px 0;
     font-size: 12px;
@@ -22,6 +22,14 @@
 .headerMain {
     display: grid;
     grid-template-columns: minmax(0, 4fr) minmax(0, 3fr) 60px;
+    column-gap: 20px;
+    align-items: center;
+    padding: 0 12px;
+}
+
+.headerMainDual {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 3fr);
     column-gap: 20px;
     align-items: center;
     padding: 0 12px;
@@ -53,7 +61,7 @@
     display: grid;
     grid-template-columns: 32px minmax(0, 1fr);
     align-items: center;
-    column-gap: 24px;
+    column-gap: 4px;
 }
 
 /* số thứ tự trong body */

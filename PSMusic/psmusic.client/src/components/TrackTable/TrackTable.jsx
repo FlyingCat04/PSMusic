@@ -14,6 +14,7 @@ const TrackTable = ({
     pageSize = 10,
     showRank = false,
     hideDuration = false,
+    isDualColumn = false,
 }) => {
     const startIndex = (page - 1) * pageSize;
     const { playSong, currentSong, isPlaying } = usePlayer();
@@ -23,15 +24,31 @@ const TrackTable = ({
             <div className={styles.header}>
                 <div className={styles.colIndex}>#</div>
 
-                <div className={styles.headerMain}>
-                    <div className={styles.colTitle}>Tên bài hát</div>
-                    <div className={styles.colArtist}>Nghệ sĩ</div>
-                    {!hideDuration && (
+                {!hideDuration ? 
+                    <div className={styles.headerMain}>
+                        <div className={styles.colTitle}>Tên bài hát</div>
+                        <div className={styles.colArtist}>Nghệ sĩ</div>
                         <div className={styles.colTime}>
                             <Clock3 size={16} />
                         </div>
-                    )}
-                </div>
+                    </div>
+                :
+                    <div className={styles.headerMainDual}>
+                        <div className={styles.colTitle}>Tên bài hát</div>
+                        <div className={styles.colArtist}>Nghệ sĩ</div>
+                    </div>
+                }
+
+                                    {/* <div className={styles.headerMain}>
+                        <div className={styles.colTitle}>Tên bài hát</div>
+                        <div className={styles.colArtist}>Nghệ sĩ</div>
+                        {!hideDuration && (
+                            <div className={styles.colTime}>
+                                <Clock3 size={16} />
+                            </div>
+                        )}
+                    </div> */}
+
             </div>
 
             {/* BODY */}
@@ -45,6 +62,7 @@ const TrackTable = ({
                             </div>
                             <SongRow
                                 item={song}
+                                isDualColumn={isDualColumn}
                                 showPlayingIcon={currentSong?.id === song.id && isPlaying}
                                 onPlay={() => playSong({
                                     ...song,
