@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  psmusic-server:
+    container_name: psmusic-server
+    build:
+      context: ./PSMusic.Server
+      dockerfile: Dockerfile
+    ports:
+      - "7215:7215"
+    expose:
+      - "7215"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:7215
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  psmusic-client:
+    container_name: psmusic-client
+    build:
+      context: ./psmusic.client
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    expose:
+      - "5173"
+    depends_on:
+      - psmusic-server
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

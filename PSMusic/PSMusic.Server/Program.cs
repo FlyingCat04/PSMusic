@@ -48,7 +48,7 @@ builder.Services.AddCors(options =>
     {
         if (builder.Environment.IsDevelopment())
         {
-            policy.WithOrigins("https://localhost:5173")
+            policy.WithOrigins("https://localhost:5173", "https://localhost:5173")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
@@ -57,7 +57,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(
                 "https://psmusic.netlify.app",
-                "https://dev--psmusic.netlify.app"
+                "https://dev--psmusic.netlify.app",
+                "http://10.29.161.75:5173"
             )
                   .AllowAnyHeader()
                   .AllowAnyMethod()
