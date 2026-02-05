@@ -12,6 +12,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DBConnection=${DB_CONNECTION}
+      - Elasticsearch__Uri=${ELASTICSEARCH_URI}
+      - Elasticsearch__DefaultIndex=${ELASTICSEARCH_DEFAULTINDEX}
+      - Elasticsearch__ApiKey=${ELASTICSEARCH_APIKEY}
       - Jwt__Key=HongNamEntertainmentSuperSecretKeyyyyyyyy666
       - Jwt__Issuer=PSMusic
       - Jwt__Audience=PSMusicUsers
