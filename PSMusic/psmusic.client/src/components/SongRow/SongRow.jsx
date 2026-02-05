@@ -17,13 +17,12 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
 
     //const [artistMenuPlacement, setArtistMenuPlacement] = useState("right"); // "right" | "left"
     //const artistMenuRef = useRef(null);
-    const [duration, setDuration] = useState(null);
 
     const menuRef = useRef(null);
 
     //const mp3Url = item?.mp3Url || null;
     const activeTabChose = activeTab || "";
-    
+
 
     const DEFAULT_SONG_IMAGE = "https://cdn.pixabay.com/photo/2019/08/11/18/27/icon-4399630_1280.png";
 
@@ -31,13 +30,13 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
         if (!timeStr) return "00:00";
         const parts = timeStr.split(':');
         if (parts.length === 3 && parts[0] === "00") {
-            return `${parts[1]}:${parts[2]}`; 
+            return `${parts[1]}:${parts[2]}`;
         }
 
-        return timeStr; 
+        return timeStr;
     };
 
-    const handleRowStyle = () => { 
+    const handleRowStyle = () => {
         return activeTab === "Bài hát" ? "sr-song-tab" : "sr-row";
     };
 
@@ -77,7 +76,7 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
             setDuration("00:00");
         }
 
-        
+
     }, [activeTabChose, item]);
 
     useEffect(() => {
@@ -217,8 +216,8 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
 
                     {/* Cột 2: nghệ sĩ */}
                     <div className={styles["sr-col-artist"]}>
-                        {item.artists && item.artists.length > 0 ? (() => { 
-                            const maxArtists = 3; 
+                        {item.artists && item.artists.length > 0 ? (() => {
+                            const maxArtists = 3;
                             const displayed = item.artists.slice(0, maxArtists);
                             const hasMore = item.artists.length > maxArtists;
                             return (
@@ -243,14 +242,14 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
             ) : (
                 <>
                     {/* layout cũ cho tab khác */}
-                        <div className={styles["sr-avatar-wrapper"]}
-                            onClick={() => onPlay?.(item)}
-                            onMouseEnter={() => setIsHoverCover(true)}
-                            onMouseLeave={() => setIsHoverCover(false)}
-                        >
+                    <div className={styles["sr-avatar-wrapper"]}
+                        onClick={() => onPlay?.(item)}
+                        onMouseEnter={() => setIsHoverCover(true)}
+                        onMouseLeave={() => setIsHoverCover(false)}
+                    >
                         <img
                             className={styles["sr-cover"]}
-                            onClick={() => onPlay?.(item)} 
+                            onClick={() => onPlay?.(item)}
                             src={item.imageUrl}
                             alt=""
                             onError={(e) => {
@@ -295,34 +294,34 @@ const SongRow = ({ item, showPlayingIcon = false, onPlay, onTitleClick, onViewAr
                         </button>
                         {!hideInnerArtist && (
                             <div className={styles["sr-subtitle"]}>
-                            {(() => {
-                                const maxArtists = 2;
-                                const displayed = item.artists.slice(0, maxArtists);
-                                const hasMore = item.artists.length > maxArtists;
+                                {(() => {
+                                    const maxArtists = 2;
+                                    const displayed = item.artists.slice(0, maxArtists);
+                                    const hasMore = item.artists.length > maxArtists;
 
-                                return (
-                                    <>
-                                        {displayed.map((a, idx) => (
-                                            <span
-                                                key={a.id || `inner-artist-${idx}`} // Khắc phục lỗi key null tại đây
-                                                className={styles.artistName}
-                                                onClick={() => onViewArtist?.(a.id)}
-                                            >
-                                                {a.name}
-                                                {idx < displayed.length - 1 ? ", " : ""}
-                                            </span>
-                                        ))}
+                                    return (
+                                        <>
+                                            {displayed.map((a, idx) => (
+                                                <span
+                                                    key={a.id || `inner-artist-${idx}`} // Khắc phục lỗi key null tại đây
+                                                    className={styles.artistName}
+                                                    onClick={() => onViewArtist?.(a.id)}
+                                                >
+                                                    {a.name}
+                                                    {idx < displayed.length - 1 ? ", " : ""}
+                                                </span>
+                                            ))}
 
-                                        {hasMore && <span className={styles.moreArtists}>…</span>}
-                                    </>
-                                );
-                            })()}
+                                            {hasMore && <span className={styles.moreArtists}>…</span>}
+                                        </>
+                                    );
+                                })()}
                             </div>
                         )}
                     </div>
                 </>
             )}
-             
+
 
             {/* ACTIONS */}
             {activeTab === "Bài hát" && duration && (
