@@ -10,7 +10,7 @@ const mainNavItems = [
   { icon: <Disc3 />, label: 'Khám Phá', path: '/discover' },
   { icon: <LayoutGrid />, label: 'Chủ Đề & Thể Loại', path: '/genres' },
   { icon: <BarChart3 />, label: 'Bảng Xếp Hạng', path: '/charts' },
-  { icon: <BookHeart />, label: 'Dành cho bạn', path: '/for-you', protected: true },
+  { icon: <BookHeart />, label: 'Dành cho bạn', path: '/for-you' },
   { icon: <Heart />, label: 'Bài Hát Yêu Thích', path: '/favorites', protected: true },
 ];
 

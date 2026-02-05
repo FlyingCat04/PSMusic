@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Elastic.Clients.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using PSMusic.Server.Helpers;
 using PSMusic.Server.Models.DTO.Artist;
@@ -18,12 +19,14 @@ namespace PSMusic.Server.Services.Implementations
         private readonly ISongRepository _songRepository;
         private readonly IMapper _mapper;
         private readonly IArtistService _artistService;
+        private readonly ElasticsearchClient _elasticClient;
 
-        public SongService(ISongRepository songRepository, IMapper mapper, IArtistService artistService)
+        public SongService(ISongRepository songRepository, IMapper mapper, IArtistService artistService, ElasticsearchClient elasticClient)
         {
             _songRepository = songRepository;
             _mapper = mapper;
             _artistService = artistService;
+            _elasticClient = elasticClient;
         }
 
         public async Task<PagedResult<SongDTO>> GetAll(int page = 1, int size = 10)
@@ -50,66 +53,134 @@ namespace PSMusic.Server.Services.Implementations
             return _mapper.Map<IEnumerable<SongSearchDetailDTO>>(songs);
         }
 
+        //public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
+        //{
+        //    if (page < 1) page = 1;
+        //    if (size < 10) size = 10;
+        //    var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongSearchDetailDTO>();
+        //    var songResults = new List<SearchResultDTO>();
+        //    foreach (var song in songs)
+        //    {
+        //        var artistsForSong = _mapper.Map<IEnumerable<PartialArtistDTO>>(song.Artists);
+        //        TimeSpan duration = TimeSpan.TryParse(song.Duration, out var d) ? d : TimeSpan.Zero;
+        //        songResults.Add(new SearchResultDTO
+        //        {
+        //            Id = song.Id,
+        //            Type = "song",
+        //            AvatarUrl = song.AvatarUrl,
+        //            Mp3Url = song.Mp3Url,
+        //            Name = song.Name,
+        //            Artists = artistsForSong,
+        //            Duration = duration,
+        //        });
+        //    }
+
+
+        //    var artists = await _artistService.SearchByName(keyword) ?? Enumerable.Empty<ArtistDTO>();
+        //    var artistResults = artists.Select(a => new SearchResultDTO
+        //    {
+        //        Id = a.Id,
+        //        Type = "artist",
+        //        AvatarUrl = a.AvatarUrl,
+        //        Name = a.Name,
+        //    })
+        //    .ToList();
+
+        //    SearchResultDTO? topResult = null;
+        //    string normalizedKeyword = TextHelper.Normalize(keyword);
+        //    topResult = artistResults.FirstOrDefault(a =>
+        //        TextHelper.Normalize(a.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
+        //    if (topResult == null)
+        //    {
+        //        topResult = songResults.FirstOrDefault(s =>
+        //            TextHelper.Normalize(s.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
+        //    }
+
+        //    if (topResult != null)
+        //    {
+        //        artistResults.Remove(topResult);
+        //        songResults.Remove(topResult);
+        //    }
+
+        //    var combinedResults = artistResults
+        //        .Concat(songResults)
+        //        .Skip((page - 1) * size)
+        //        .Take(size)
+        //        .ToList();
+
+        //    return new SearchResponseDTO
+        //    {
+        //        Results = combinedResults,
+        //        TopResult = topResult,
+        //        TotalPages = (int)Math.Ceiling((double)(artistResults.Count() + songResults.Count()) / size)
+        //    };
+        //}
+
         public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
         {
             if (page < 1) page = 1;
             if (size < 10) size = 10;
-            var songs = await SearchByName(keyword) ?? Enumerable.Empty<SongSearchDetailDTO>();
-            var songResults = new List<SearchResultDTO>();
-            foreach (var song in songs)
+
+            var response = await _elasticClient.SearchAsync<SearchDocument>(s => s
+                .Indices(new[] { "songs", "artists" })
+                .IgnoreUnavailable(true)
+                .From((page - 1) * size)
+                .Size(size)
+                .Query(q => q
+                    .Bool(b => b
+                        .Should(
+                            sh => sh.MultiMatch(m => m
+                                .Fields(new[] { "name^3", "artists.name^2", "category^1.5", "description" })
+                                .Query(keyword)
+                                .Fuzziness(new Fuzziness("AUTO"))
+                            ),
+                            sh => sh.Term(t => t
+                                .Field("name.keyword")
+                                .Value(keyword)
+                                .CaseInsensitive(true)
+                                .Boost(10)
+                            )
+                        )
+                    )
+                )
+            );
+
+            if (!response.IsValidResponse) return null;
+
+            var searchResults = new List<SearchResultDTO>();
+            SearchResultDTO? topResult = null;
+
+            foreach (var hit in response.Hits)
             {
-                var artistsForSong = _mapper.Map<IEnumerable<PartialArtistDTO>>(song.Artists);
-                TimeSpan duration = TimeSpan.TryParse(song.Duration, out var d) ? d : TimeSpan.Zero;
-                songResults.Add(new SearchResultDTO
+                var doc = hit.Source;
+                if (doc == null) continue;
+
+                TimeSpan.TryParse(doc.Duration, out var duration);
+
+                searchResults.Add(new SearchResultDTO
                 {
-                    Id = song.Id,
-                    Type = "song",
-                    AvatarUrl = song.AvatarUrl,
-                    Mp3Url = song.Mp3Url,
-                    Name = song.Name,
-                    Artists = artistsForSong,
+                    Id = doc.Id,
+                    Type = hit.Index.ToLower().Contains("artist") ? "artist" : "song",
+                    Name = doc.Name,
+                    AvatarUrl = doc.AvatarUrl,
+                    Mp3Url = doc.Mp3Url,
                     Duration = duration,
+                    Artists = doc.Artists
                 });
             }
 
-
-            var artists = await _artistService.SearchByName(keyword) ?? Enumerable.Empty<ArtistDTO>();
-            var artistResults = artists.Select(a => new SearchResultDTO
+            if (searchResults.Any() &&
+                searchResults.First().Name.Equals(keyword, StringComparison.OrdinalIgnoreCase))
             {
-                Id = a.Id,
-                Type = "artist",
-                AvatarUrl = a.AvatarUrl,
-                Name = a.Name,
-            })
-            .ToList();
-
-            SearchResultDTO? topResult = null;
-            string normalizedKeyword = TextHelper.Normalize(keyword);
-            topResult = artistResults.FirstOrDefault(a =>
-                TextHelper.Normalize(a.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
-            if (topResult == null)
-            {
-                topResult = songResults.FirstOrDefault(s =>
-                    TextHelper.Normalize(s.Name).Equals(normalizedKeyword, StringComparison.OrdinalIgnoreCase));
+                topResult = searchResults.First();
+                searchResults.RemoveAt(0);
             }
-
-            if (topResult != null)
-            {
-                artistResults.Remove(topResult);
-                songResults.Remove(topResult);
-            }
-
-            var combinedResults = artistResults
-                .Concat(songResults)
-                .Skip((page - 1) * size)
-                .Take(size)
-                .ToList();
 
             return new SearchResponseDTO
             {
-                Results = combinedResults,
+                Results = searchResults,
                 TopResult = topResult,
-                TotalPages = (int)Math.Ceiling((double)(artistResults.Count() + songResults.Count()) / size)
+                TotalPages = response.Total > 0 ? (int)Math.Ceiling((double)response.Total / size) : 0
             };
         }
 

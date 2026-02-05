@@ -1,7 +1,10 @@
+﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PSMusic.Server.Data;
+using PSMusic.Server.Models.Settings;
 using PSMusic.Server.Repositories.Implementations;
 using PSMusic.Server.Repositories.Interfaces;
 using PSMusic.Server.Services.Implementations;
@@ -11,6 +14,22 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 var key = builder.Configuration["Jwt:Key"];
 
+var elasticConfig = builder.Configuration.GetSection("Elasticsearch").Get<ElasticSettings>();
+
+if (elasticConfig == null) throw new Exception("Elasticsearch can not be empty");
+
+var settings = new ElasticsearchClientSettings(new Uri(elasticConfig.Uri))
+    .DefaultIndex(elasticConfig.DefaultIndex)
+    .DisableDirectStreaming() 
+    .EnableDebugMode();
+
+if (!string.IsNullOrEmpty(elasticConfig.ApiKey))
+{
+    settings.Authentication(new ApiKey(elasticConfig.ApiKey));
+}
+
+var client = new ElasticsearchClient(settings);
+builder.Services.AddSingleton(client);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
