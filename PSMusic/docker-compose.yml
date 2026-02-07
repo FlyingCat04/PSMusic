@@ -19,7 +19,7 @@ services:
       - Jwt__Issuer=PSMusic
       - Jwt__Audience=PSMusicUsers
       - Jwt__ExpiryMinutes=60
-    restart: always
+    restart: unless-stopped
     networks:
       - app-network
     env_file:
@@ -36,7 +36,7 @@ services:
       - "5173:80"
     depends_on:
       - psmusic-server
-    restart: always
+    restart: unless-stopped
     networks:
       - app-network
     dns:
