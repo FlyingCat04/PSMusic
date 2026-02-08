@@ -8,6 +8,7 @@ import LoadSpinner from '../../components/LoadSpinner/LoadSpinner';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import exploreCategoriesService from '../../services/exploreCategoriesService';
 import { useDataCache } from '../../contexts/DataCacheContext';
+import { getTranslatedGenre } from '../../utils/genreTranslation';
 import styles from './ExploreCategoriesPage.module.css';
 
 const ExploreCategoriesPage = () => {
@@ -97,7 +98,7 @@ const ExploreCategoriesPage = () => {
                                 key={category.id}
                                 genre={{
                                     id: category.id,
-                                    title: category.name,
+                                    title: getTranslatedGenre(category.name, t),
                                     imageUrl: category.avatarUrl,
                                     color: category.color || '#FF4E50'
                                 }}
@@ -115,7 +116,7 @@ const ExploreCategoriesPage = () => {
                 return (
                     <section key={category.id} className={styles['content-section']}>
                         <div className={styles['section-header']}>
-                            <h2 className={styles['section-title']}>{t('explore_genre_title', { name: category.name })}</h2>
+                            <h2 className={styles['section-title']}>{t('explore_genre_title', { name: getTranslatedGenre(category.name, t) })}</h2>
                             <Link to={`/category/${category.id}`} className={styles['see-all-link']}>
                                 {t('see_all')}
                                 <ChevronRight />

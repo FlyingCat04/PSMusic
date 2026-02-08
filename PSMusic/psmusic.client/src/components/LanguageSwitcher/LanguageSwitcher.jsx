@@ -10,7 +10,10 @@ const LanguageSwitcher = () => {
 
     const languages = [
         { code: 'vi', label: 'Tiếng Việt' },
-        { code: 'en', label: 'English' }
+        { code: 'en', label: 'English' },
+        { code: 'jp', label: '日本語' },
+        { code: 'ru', label: 'Русский' },
+        { code: 'ger', label: 'Deutsch' }
     ];
 
     const changeLanguage = (lng) => {

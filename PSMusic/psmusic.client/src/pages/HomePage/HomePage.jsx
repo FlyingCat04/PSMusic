@@ -8,6 +8,7 @@ import EmptyState from '../../components/EmptyState/EmptyState';
 import homeService from '../../services/homeService';
 import topChartsService from '../../services/topChartsService';
 import { useDataCache } from '../../contexts/DataCacheContext';
+import { getTranslatedGenre } from '../../utils/genreTranslation';
 import styles from './HomePage.module.css';
 import { useTranslation } from 'react-i18next';
 
@@ -135,7 +136,7 @@ const HomePage = () => {
                 key={category.id || category.categoryId}
                 genre={{
                   id: category.id || category.categoryId,
-                  title: category.name || category.title,
+                  title: getTranslatedGenre(category.name || category.title, t),
                   imageUrl: category.avatarUrl || '',
                   color: category.color || '#FF4E50'
                 }}

@@ -9,6 +9,7 @@ import topChartsService from "../../services/topChartsService";
 import { useAuth } from "../../hooks/useAuth";
 import { usePlayer } from "../../contexts/PlayerContext";
 import { useDataCache } from "../../contexts/DataCacheContext";
+import { getTranslatedGenre } from "../../utils/genreTranslation";
 import styles from "./TopChartsPage.module.css";
 
 const TopChartsPage = () => {
@@ -153,7 +154,7 @@ const TopChartsPage = () => {
         const content = (
             <>
                 <div className={styles["section-header"]}>
-                    <h2 className={styles["section-title"]}>{t('top_chart_title', { name: category.name })}</h2>
+                    <h2 className={styles["section-title"]}>{t('top_chart_title', { name: getTranslatedGenre(category.name, t) })}</h2>
                     <Link to={`/category/${category.id}`} className={styles["see-all-link"]}>
                         {t('see_all')}
                         <ChevronRight />

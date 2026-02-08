@@ -8,6 +8,7 @@ import SquareCard from "../../components/SquareCard/SquareCard";
 import ItemCardColumn from "../../components/ItemCardColumn/ItemCardColumn";
 import Pagination from "../../components/Pagination/Pagination";
 import { usePlayer } from "../../contexts/PlayerContext";
+import { getTranslatedGenre } from "../../utils/genreTranslation";
 import styles from "./CategoryPage.module.css";
 
 const TAB_TO_TYPE = {
@@ -295,7 +296,7 @@ const CategoryPage = () => {
                 />
                 <div className={styles.heroOverlay}>
                     <h1 className={styles.categoryName}>
-                        {category.name}
+                        {getTranslatedGenre(category.name, t)}
                     </h1>
                 </div>
             </section>
