@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
 import { Play, Heart } from 'lucide-react';
 import styles from './ItemCardColumn.module.css';
@@ -14,6 +15,7 @@ const handleImgError = (e) => {
 };
 
 const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
+    const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
     // const { audioRef, togglePlay } = usePlayer();
     const { playSong } = usePlayer();
@@ -30,12 +32,12 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
     }
 
     const imageUrl = item.imageUrl || item.avatarUrl || PLACEHOLDER_DATA_URL;
-    const title = item.title || item.name || 'Unknown';
+    const title = item.title || item.name || t('unknown_title');
     const artists = item.artists || [];
 
     const handlePlayClick = (e) => {
         e.stopPropagation();
-        
+
         // Set audio source and play immediately
         // if (audioRef.current && item.mp3Url) {
         //     audioRef.current.src = item.mp3Url;
@@ -46,9 +48,9 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                 ...item,
                 audioUrl: item.mp3Url
             };
-            playSong(songData);      
+            playSong(songData);
         }
-        
+
         if (onPlay) onPlay(item);
     };
 
@@ -59,31 +61,31 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
 
     return (
         <div className={styles['item-card-column']}>
-            <div 
+            <div
                 className={styles['image-wrapper']}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
                 {type === 'artist' ? (
-                    <Link 
+                    <Link
                         to={`/artist/${item.id}`}
                     >
-                        <img 
-                            src={imageUrl} 
-                            alt={title} 
+                        <img
+                            src={imageUrl}
+                            alt={title}
                             className={styles['item-card-column-image']}
                             onError={handleImgError}
                         />
                     </Link>
                 ) : (
-                    <img 
+                    <img
                         src={imageUrl}
                         alt={title}
                         className={styles['item-card-column-image']}
                         onError={handleImgError}
                     />
                 )}
-                
+
                 {/* Favorite Button - Top Right Corner - Only for songs */}
                 {/*{type !== 'artist' && (*/}
                 {/*    <button */}
@@ -97,7 +99,7 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
 
                 {/* Play Button - Center - Only for songs */}
                 {type !== 'artist' && (
-                    <button 
+                    <button
                         className={`${styles['play-button-overlay']} ${isHovered ? styles['show'] : ''}`}
                         onClick={handlePlayClick}
                         aria-label="Play"
@@ -107,26 +109,26 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                 )}
             </div>
             {type === 'artist' ? (
-                <Link 
+                <Link
                     to={`/artist/${item.id}`}
                     className={styles['item-card-column-title']}
                 >
                     {title}
                 </Link>
             ) : (
-                <Link 
+                <Link
                     to={`/song/${item.id}`}
                     className={styles['item-card-column-title']}
                 >
                     {title}
                 </Link>
             )}
-            {type !== 'artist' && 
+            {type !== 'artist' &&
                 <p className={styles['item-card-column-artist']}>
                     {artists.length > 0 ? (
                         artists.map((artist, index) => (
                             <React.Fragment key={artist.id || index}>
-                                <Link 
+                                <Link
                                     to={`/artist/${artist.id}`}
                                     className={styles['artist-link']}
                                 >
@@ -136,7 +138,7 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                             </React.Fragment>
                         ))
                     ) : (
-                        'Unknown Artist'
+                        t('unknown_artist')
                     )}
                 </p>
             }

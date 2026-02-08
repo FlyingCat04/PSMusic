@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Clock3 } from "lucide-react";
 import SongRow from "../SongRow/SongRow";
 import { usePlayer } from "../../contexts/PlayerContext";
@@ -17,6 +18,7 @@ const TrackTable = ({
     isDualColumn = false,
 }) => {
     const startIndex = (page - 1) * pageSize;
+    const { t } = useTranslation();
     const { playSong, currentSong, isPlaying } = usePlayer();
     return (
         <div className={styles.tracklist}>
@@ -24,22 +26,22 @@ const TrackTable = ({
             <div className={styles.header}>
                 <div className={styles.colIndex}>#</div>
 
-                {!hideDuration ? 
+                {!hideDuration ?
                     <div className={styles.headerMain}>
-                        <div className={styles.colTitle}>Tên bài hát</div>
-                        <div className={styles.colArtist}>Nghệ sĩ</div>
+                        <div className={styles.colTitle}>{t('song_title')}</div>
+                        <div className={styles.colArtist}>{t('artist_col')}</div>
                         <div className={styles.colTime}>
                             <Clock3 size={16} />
                         </div>
                     </div>
-                :
+                    :
                     <div className={styles.headerMainDual}>
-                        <div className={styles.colTitle}>Tên bài hát</div>
-                        <div className={styles.colArtist}>Nghệ sĩ</div>
+                        <div className={styles.colTitle}>{t('song_title')}</div>
+                        <div className={styles.colArtist}>{t('artist_col')}</div>
                     </div>
                 }
 
-                                    {/* <div className={styles.headerMain}>
+                {/* <div className={styles.headerMain}>
                         <div className={styles.colTitle}>Tên bài hát</div>
                         <div className={styles.colArtist}>Nghệ sĩ</div>
                         {!hideDuration && (

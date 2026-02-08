@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
 import authService from "../../services/authService"
 import emailValidationService from "../../services/emailValidationService";
@@ -6,21 +7,22 @@ import { Eye, EyeOff } from "lucide-react";
 import styles from "./SignUp.module.css";
 
 function SignUpForm({ activeType }) {
-  const [state, setState] = useState({ name: "", email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
+    const { t } = useTranslation();
+    const [state, setState] = useState({ name: "", email: "", password: "" });
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setState({ name: "", email: "", password: "" });
-    setError("");
-    setSuccess("");
-    setShowPassword(false);
-}, [activeType]);
+    useEffect(() => {
+        setState({ name: "", email: "", password: "" });
+        setError("");
+        setSuccess("");
+        setShowPassword(false);
+    }, [activeType]);
 
-  const handleChange = evt => {
-    const value = evt.target.value;
+    const handleChange = evt => {
+        const value = evt.target.value;
         setState({
             ...state,
             [evt.target.name]: value
@@ -35,13 +37,14 @@ function SignUpForm({ activeType }) {
         const { name, email, password } = state;
 
         if (!name || !email || !password) {
-            setError("Vui lòng điền đầy đủ thông tin");
+            setLoading(false);
+            setError(t('error_fill_info'));
             return false;
         }
 
         if (password.length < 8) {
             setLoading(false)
-            setError("Mật khẩu phải có ít nhất 8 ký tự");
+            setError(t('error_password_length'));
             return;
         }
 
@@ -50,23 +53,23 @@ function SignUpForm({ activeType }) {
         setSuccess("");
 
         const emailValidation = await emailValidationService.validateEmail(email);
-        
+
 
         if (!emailValidation.isFormatValid) {
             setLoading(false);
-            setError(emailValidation.message || "Format email không hợp lệ")
+            setError(emailValidation.message || t('error_email_format'))
             return;
         }
 
         if (!emailValidation.isDeliverable) {
             setLoading(false);
-            setError(emailValidation.message || "Email không tồn tại hoặc không hợp lệ");
+            setError(emailValidation.message || t('error_email_invalid'));
             return;
         }
-        
+
         if (!emailValidation.isGmail) {
             setLoading(false);
-            setError("Chỉ chấp nhận mail có đuôi @gmail.com");
+            setError(t('error_email_gmail'));
             return;
         }
 
@@ -81,7 +84,7 @@ function SignUpForm({ activeType }) {
         setLoading(false);
 
         if (result.isSuccess) {
-            setSuccess("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+            setSuccess(t('register_success'));
             setState({ name: "", email: "", password: "" });
         } else {
             setError(result.message);
@@ -112,53 +115,53 @@ function SignUpForm({ activeType }) {
         // };
     }
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
-  return (
-      <>
-          {loading && <LoadSpinner />}
-          <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
-              <form className={styles.inputForm} onSubmit={handleOnSubmit}>
-                  <h1>Tạo tài khoản</h1>
-                  <input
-                      type="text"
-                      name="name"
-                      value={state.name}
-                      onChange={handleChange}
-                      placeholder="Tên đăng nhập"
-                  />
-                  <input
-                      type="email"
-                      name="email"
-                      value={state.email}
-                      onChange={handleChange}
-                      placeholder="Email"
-                  />
-                  <div className={styles.passwordWrapper}>
+    return (
+        <>
+            {loading && <LoadSpinner />}
+            <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
+                <form className={styles.inputForm} onSubmit={handleOnSubmit}>
+                    <h1>{t('register_title')}</h1>
                     <input
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={state.password}
+                        type="text"
+                        name="name"
+                        value={state.name}
                         onChange={handleChange}
-                        placeholder="Mật khẩu"
+                        placeholder={t('username_placeholder')}
                     />
-                    <button
-                        type="button"
-                        className={styles.eyeButton}
-                        onClick={togglePasswordVisibility}
-                    >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                </div>
-                  {error && (<small style={{ color: "red", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{error}</small>)}
-                  {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
-                  <button className={styles['submit-btn']}>Đăng ký</button>
-              </form>
-          </div>
-      </>
-  );
+                    <input
+                        type="email"
+                        name="email"
+                        value={state.email}
+                        onChange={handleChange}
+                        placeholder={t('email_placeholder')}
+                    />
+                    <div className={styles.passwordWrapper}>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={state.password}
+                            onChange={handleChange}
+                            placeholder={t('password_placeholder')}
+                        />
+                        <button
+                            type="button"
+                            className={styles.eyeButton}
+                            onClick={togglePasswordVisibility}
+                        >
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                    </div>
+                    {error && (<small style={{ color: "red", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{error}</small>)}
+                    {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
+                    <button className={styles['submit-btn']}>{t('register_btn')}</button>
+                </form>
+            </div>
+        </>
+    );
 }
 
 export default SignUpForm;

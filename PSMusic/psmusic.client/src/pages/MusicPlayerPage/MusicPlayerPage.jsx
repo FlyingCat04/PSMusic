@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import "./MusicPlayerPage.css";
 import { usePlayer } from "../../contexts/PlayerContext";
 import { useParams } from "react-router-dom";
 
 export default function MusicPlayerPage() {
+    const { t } = useTranslation();
     //const { id } = useParams();
     const id = 1;
     const { currentSong, playSong, isPlaying, currentTime } = usePlayer();
@@ -106,7 +108,7 @@ export default function MusicPlayerPage() {
         }
     }, [currentTime, duration, lyrics, song, isPlaying, isUserScrolling]);
 
-    if (!song) return <p>Bài hát không tồn tại</p>;
+    if (!song) return <p>{t('song_not_found')}</p>;
 
     return (
         <div className="music-player-container">
@@ -137,7 +139,7 @@ export default function MusicPlayerPage() {
                                 );
                             })
                         ) : (
-                            <p className="no-lyrics">Đang tải lời bài hát...</p>
+                            <p className="no-lyrics">{t('loading_lyrics')}</p>
                         )}
                     </div>
                 </div>

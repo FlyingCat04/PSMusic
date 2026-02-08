@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
 import { AudioLines, MapPin, Phone, Mail, Facebook, Youtube, Instagram } from 'lucide-react';
 import Logo from '../Logo/Logo';
 import styles from './Footer.module.css';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const footerData = {
     company: {
       name: "PSMusic",
@@ -37,14 +39,14 @@ const Footer = () => {
                 <AudioLines />
               </div>
               <div className={styles['logo-text']}>
-                  <div className={styles['logo-text-main']}>
-                      <span className={styles['logo-text-primary']}>PS</span>
-                      <span className={styles['logo-text-secondary']}>music</span>
-                  </div>
-                  <p className={styles['logo-text-subtitle']}>MXH ÂM NHẠC</p>
+                <div className={styles['logo-text-main']}>
+                  <span className={styles['logo-text-primary']}>PS</span>
+                  <span className={styles['logo-text-secondary']}>music</span>
+                </div>
+                <p className={styles['logo-text-subtitle']}>{t('music_social_network')}</p>
               </div>
             </Link>
-            <p className={styles['company-description']}>{footerData.company.description}</p>
+            <p className={styles['company-description']}>{t('footer_desc')}</p>
             <div className={styles['contact-info']}>
               <p><Phone className={styles['contact-icon']} /> {footerData.company.phone}</p>
               <p><Mail className={styles['contact-icon']} /> {footerData.company.email}</p>
@@ -65,7 +67,7 @@ const Footer = () => {
 
           {/* Social Links */}
           <div className={styles['footer-section']}>
-            <h4 className={styles['footer-title']}>Kết nối với chúng tôi</h4>
+            <h4 className={styles['footer-title']}>{t('connect_with_us')}</h4>
             <div className={styles['social-links']}>
               {footerData.socialLinks.map((social, index) => (
                 <a key={index} href={social.url} className={styles['social-link']} title={social.name}>
@@ -80,8 +82,8 @@ const Footer = () => {
         {/* Footer Bottom */}
         <div className={styles['footer-bottom']}>
           <div className={styles['footer-bottom-content']}>
-            <p>&copy; 2025 PSMusic. Tất cả quyền (không) được bảo lưu.</p>
-            <p>Phát triển bởi Team PSMusic với tất cả tâm huyết!</p>
+            <p>{t('copyright')}</p>
+            <p>{t('developed_by')}</p>
           </div>
         </div>
       </div>

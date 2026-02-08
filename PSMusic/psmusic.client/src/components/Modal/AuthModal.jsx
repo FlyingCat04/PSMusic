@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { Music, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from './AuthModal.module.css';
 
 const AuthModal = ({ isOpen, onClose, onStopMusic }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,17 +42,17 @@ const AuthModal = ({ isOpen, onClose, onStopMusic }) => {
           <Music size={35} className={styles.musicIcon} />
         </div>
 
-        <h1 className={styles.title}>Bắt đầu nghe nhạc</h1>
+        <h1 className={styles.title}>{t('start_listening')}</h1>
         <p className={styles.description}>
-          Đăng nhập bằng tài khoản của bạn để khám phá đầy đủ các tính năng yêu thích và đánh giá bài hát.
+          {t('auth_modal_desc')}
         </p>
 
         <div className={styles.buttonGroup}>
           <button className={styles.loginBtn} onClick={handleLoginRedirect}>
-            Đăng nhập ngay
+            {t('login_now')}
           </button>
           <button className={styles.closeBtn} onClick={onClose}>
-            Để sau
+            {t('maybe_later')}
           </button>
         </div>
       </div>

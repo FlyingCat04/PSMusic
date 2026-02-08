@@ -1,19 +1,25 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./AuthPage.module.css";
 import SignInForm from "../../components/Auth/SignIn";
 import SignUpForm from "../../components/Auth/SignUp";
+import LanguageSwitcher from "../../components/LanguageSwitcher/LanguageSwitcher";
 
 export default function AuthPage() {
+  const { t } = useTranslation();
   const [type, setType] = useState("signIn");
 
   const handleOnClick = (text) => {
     if (text !== type) setType(text);
   };
 
-    const containerClass = `${styles.container} ${type === "signUp" ? styles.rightPanelActive : ""}`;
+  const containerClass = `${styles.container} ${type === "signUp" ? styles.rightPanelActive : ""}`;
 
   return (
     <div className={styles.app}>
+      <div className={styles.languageSwitcherWrapper}>
+        <LanguageSwitcher />
+      </div>
       <div className={containerClass}>
         <SignUpForm activeType={type} />
         <SignInForm activeType={type} />
@@ -21,23 +27,23 @@ export default function AuthPage() {
         <div className={styles.overlayContainer}>
           <div className={styles.overlay}>
             <div className={`${styles.overlayPanel} ${styles.overlayLeft}`}>
-              <h1>Chào mừng!</h1>
-              <p>Nhập vào thông tin tài khoản và bắt đầu khám phá</p>
+              <h1>{t('welcome_msg')}</h1>
+              <p>{t('welcome_desc')}</p>
               <button
                 className={styles.ghost}
                 onClick={() => handleOnClick("signIn")}
               >
-                Đăng nhập
+                {t('login_btn')}
               </button>
             </div>
             <div className={`${styles.overlayPanel} ${styles.overlayRight}`}>
-              <h1>Mừng trở lại!</h1>
-              <p>Hãy đăng nhập bằng tài khoản của bạn và tiếp tục hành trình với chúng tôi</p>
+              <h1>{t('welcome_back_msg')}</h1>
+              <p>{t('welcome_back_desc')}</p>
               <button
                 className={styles.ghost}
                 onClick={() => handleOnClick("signUp")}
               >
-                Đăng ký
+                {t('register_btn')}
               </button>
             </div>
           </div>

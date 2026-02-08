@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext.jsx'
 import { DataCacheProvider } from './contexts/DataCacheContext.jsx'
 import { BrowserRouter } from "react-router-dom";
 import { PlayerProvider } from './contexts/PlayerContext'
+import './i18n'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

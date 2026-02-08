@@ -9,8 +9,10 @@ import homeService from '../../services/homeService';
 import topChartsService from '../../services/topChartsService';
 import { useDataCache } from '../../contexts/DataCacheContext';
 import styles from './HomePage.module.css';
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
+  const { t } = useTranslation();
   const { getHomePageData, setHomePageData } = useDataCache();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +21,7 @@ const HomePage = () => {
   const [songs, setSongs] = useState([]);
   const [popSongs, setPopSongs] = useState([]);
   const [youthSongs, setYouthSongs] = useState([]);
-  
+
   // Refs để cuộn
   const artistsScrollRef = useRef(null);
   const songsScrollRef = useRef(null);
@@ -44,14 +46,14 @@ const HomePage = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Lấy tất cả dữ liệu cùng lúc
       const [homeData, popData, youthData] = await Promise.all([
         homeService.fetchPopularData(),
         topChartsService.getPopularSongsByCategory(1, 1, 10), // Nhạc Pop
         topChartsService.getPopularSongsByCategory(2, 1, 10), // Nhạc Trẻ
       ]);
-      
+
       const data = {
         categories: homeData.categories || [],
         artists: homeData.artists || [],
@@ -59,18 +61,18 @@ const HomePage = () => {
         popSongs: popData?.items || [],
         youthSongs: youthData?.items || [],
       };
-      
+
       setCategories(data.categories);
       setArtists(data.artists);
       setSongs(data.songs);
       setPopSongs(data.popSongs);
       setYouthSongs(data.youthSongs);
-      
+
       // Cache data
       setHomePageData(data);
     } catch (err) {
       //console.error('Error fetching home page data:', err);
-      setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+      setError(t('error_fetching_data'));
     } finally {
       setLoading(false);
     }
@@ -78,10 +80,10 @@ const HomePage = () => {
 
   const handleScroll = (ref, direction) => {
     if (!ref.current) return;
-    
+
     const scrollAmount = 300;
     const newScrollPosition = ref.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
-    
+
     ref.current.scrollTo({
       left: newScrollPosition,
       behavior: 'smooth'
@@ -111,7 +113,7 @@ const HomePage = () => {
   const hasNoData = categories.length === 0 && artists.length === 0 && songs.length === 0 && popSongs.length === 0 && youthSongs.length === 0;
 
   if (hasNoData && !loading) {
-    return <EmptyState message="Sorry :( No content available at the moment" />;
+    return <EmptyState message={t('empty_content')} />;
   }
 
   return (
@@ -121,22 +123,22 @@ const HomePage = () => {
       {categories.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
-            <h2 className={styles['section-title']}>Khám Phá Qua Thể Loại</h2>
+            <h2 className={styles['section-title']}>{t('discover_by_genre')}</h2>
             <Link to="/genres" className={styles['see-all-link']}>
-              Tất cả
+              {t('see_all')}
               <ChevronRight />
             </Link>
           </div>
           <div className={styles['genre-grid']}>
             {categories.slice(0, 8).map((category) => (
-              <GenreCard 
-                key={category.id || category.categoryId} 
+              <GenreCard
+                key={category.id || category.categoryId}
                 genre={{
                   id: category.id || category.categoryId,
                   title: category.name || category.title,
                   imageUrl: category.avatarUrl || '',
                   color: category.color || '#FF4E50'
-                }} 
+                }}
               />
             ))}
           </div>
@@ -147,17 +149,17 @@ const HomePage = () => {
       {artists.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
-            <h2 className={styles['section-title']}>Nghệ Sĩ Thịnh Hành</h2>
+            <h2 className={styles['section-title']}>{t('trending_artists')}</h2>
             <Link to="/charts" className={styles['see-all-link']}>
-              Tất cả
+              {t('see_all')}
               <ChevronRight />
             </Link>
           </div>
           <div className={styles['scrollable-container']}>
             <div className={styles['songs-grid-column-scrollable']} ref={artistsScrollRef}>
               {artists.map((artist) => (
-                <ItemCardColumn 
-                  key={artist.id || artist.artistId} 
+                <ItemCardColumn
+                  key={artist.id || artist.artistId}
                   item={{
                     id: artist.id || artist.artistId,
                     title: artist.name,
@@ -171,27 +173,27 @@ const HomePage = () => {
           </div>
         </section>
       )}
-      
+
       {/* Popular Songs Section */}
       {songs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
-            <h2 className={styles['section-title']}>Bài Hát Thịnh Hành</h2>
+            <h2 className={styles['section-title']}>{t('trending_songs')}</h2>
             <Link to="/charts" className={styles['see-all-link']}>
-              Tất cả
+              {t('see_all')}
               <ChevronRight />
             </Link>
           </div>
           <div className={styles['scrollable-container']}>
             <div className={styles['songs-grid-column-scrollable']} ref={songsScrollRef}>
               {songs.map((song) => (
-                <ItemCardColumn 
-                  key={song.id || song.songId} 
+                <ItemCardColumn
+                  key={song.id || song.songId}
                   item={{
                     id: song.id || song.songId,
                     title: song.title || song.name,
-                    artists: Array.isArray(song.artists) 
-                      ? song.artists 
+                    artists: Array.isArray(song.artists)
+                      ? song.artists
                       : [{ name: 'Unknown Artist' }],
                     imageUrl: song.avatarUrl || '',
                     mp3Url: song.mp3Url
@@ -208,22 +210,22 @@ const HomePage = () => {
       {popSongs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
-            <h2 className={styles['section-title']}>Nhạc Pop Thịnh Hành</h2>
+            <h2 className={styles['section-title']}>{t('trending_pop')}</h2>
             <Link to="/charts" className={styles['see-all-link']}>
-              Tất cả
+              {t('see_all')}
               <ChevronRight />
             </Link>
           </div>
           <div className={styles['scrollable-container']}>
             <div className={styles['songs-grid-column-scrollable']} ref={popSongsScrollRef}>
               {popSongs.map((song) => (
-                <ItemCardColumn 
-                  key={song.id || song.songId} 
+                <ItemCardColumn
+                  key={song.id || song.songId}
                   item={{
                     id: song.id || song.songId,
                     title: song.title || song.name,
-                    artists: Array.isArray(song.artists) 
-                      ? song.artists 
+                    artists: Array.isArray(song.artists)
+                      ? song.artists
                       : [{ name: 'Unknown Artist' }],
                     imageUrl: song.avatarUrl || song.imageUrl || '',
                     mp3Url: song.mp3Url
@@ -240,22 +242,22 @@ const HomePage = () => {
       {youthSongs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
-            <h2 className={styles['section-title']}>Nhạc Trẻ Thịnh Hành</h2>
+            <h2 className={styles['section-title']}>{t('trending_youth')}</h2>
             <Link to="/charts" className={styles['see-all-link']}>
-              Tất cả
+              {t('see_all')}
               <ChevronRight />
             </Link>
           </div>
           <div className={styles['scrollable-container']}>
             <div className={styles['songs-grid-column-scrollable']} ref={youthSongsScrollRef}>
               {youthSongs.map((song) => (
-                <ItemCardColumn 
-                  key={song.id || song.songId} 
+                <ItemCardColumn
+                  key={song.id || song.songId}
                   item={{
                     id: song.id || song.songId,
                     title: song.title || song.name,
-                    artists: Array.isArray(song.artists) 
-                      ? song.artists 
+                    artists: Array.isArray(song.artists)
+                      ? song.artists
                       : [{ name: 'Unknown Artist' }],
                     imageUrl: song.avatarUrl || song.imageUrl || '',
                     mp3Url: song.mp3Url

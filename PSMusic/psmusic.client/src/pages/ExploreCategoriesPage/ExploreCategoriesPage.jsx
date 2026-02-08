@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import GenreCard from '../../components/GenreCard/GenreCard';
@@ -10,6 +11,7 @@ import { useDataCache } from '../../contexts/DataCacheContext';
 import styles from './ExploreCategoriesPage.module.css';
 
 const ExploreCategoriesPage = () => {
+    const { t } = useTranslation();
     const { getExploreCategoriesData, setExploreCategoriesData } = useDataCache();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -63,7 +65,7 @@ const ExploreCategoriesPage = () => {
             setExploreCategoriesData(data);
         } catch (err) {
             //console.error('Error fetching explore categories data:', err);
-            setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+            setError(t('error_fetching_data'));
         } finally {
             setLoading(false);
         }
@@ -74,13 +76,13 @@ const ExploreCategoriesPage = () => {
     }
 
     if (error) {
-        return <EmptyState message="Sorry :( No content available at the moment" />;
+        return <EmptyState message={t('empty_content')} />;
     }
 
     const hasNoData = categories.length === 0;
 
     if (hasNoData && !loading) {
-        return <EmptyState message="Sorry :( No content available at the moment" />;
+        return <EmptyState message={t('empty_content')} />;
     }
 
     return (
@@ -113,9 +115,9 @@ const ExploreCategoriesPage = () => {
                 return (
                     <section key={category.id} className={styles['content-section']}>
                         <div className={styles['section-header']}>
-                            <h2 className={styles['section-title']}>Khám phá thể loại {category.name}</h2>
+                            <h2 className={styles['section-title']}>{t('explore_genre_title', { name: category.name })}</h2>
                             <Link to={`/category/${category.id}`} className={styles['see-all-link']}>
-                                Tất cả
+                                {t('see_all')}
                                 <ChevronRight />
                             </Link>
                         </div>
@@ -126,9 +128,9 @@ const ExploreCategoriesPage = () => {
                                     item={{
                                         id: song.id || song.songId,
                                         title: song.title || song.name,
-                                        artists: Array.isArray(song.artists) 
-                                        ? song.artists 
-                                        : [{ name: 'Unknown Artist' }],
+                                        artists: Array.isArray(song.artists)
+                                            ? song.artists
+                                            : [{ name: t('unknown_artist') }],
                                         imageUrl: song.avatarUrl || song.imageUrl || 'https://via.placeholder.com/200',
                                         mp3Url: song.mp3Url,
                                         // premium: song.premium || false

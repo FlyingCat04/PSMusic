@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { Play } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
@@ -125,6 +126,7 @@ const mapArtist = (item) => ({
 
 
 const ArtistPage = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -183,7 +185,7 @@ const ArtistPage = () => {
 
             } catch (err) {
                 //console.error(err);
-                setError("Không tải được nghệ sĩ.");
+                setError(t('error_loading_artist'));
             } finally {
                 setLoadingArtist(false);
             }
@@ -257,7 +259,7 @@ const ArtistPage = () => {
                 setMainTotalPages(data.totalPages || 1);
             } catch (err) {
                 //console.error(err);
-                setError("Không tải được danh sách bài hát chính.");
+                setError(t('error_loading_main_songs'));
             } finally {
                 setLoadingMain(false);
             }
@@ -291,7 +293,7 @@ const ArtistPage = () => {
                 setCollabTotalPages(data.totalPages || 1);
             } catch (err) {
                 //console.error(err);
-                setError("Không tải được danh sách bài hát collab.");
+                setError(t('error_loading_collab_songs'));
             } finally {
                 setLoadingCollab(false);
             }
@@ -365,9 +367,9 @@ const ArtistPage = () => {
         if (mainSongs && mainSongs.length > 0) {
             playPlaylist(mainSongs, 0, {
                 type: 'ARTIST_MAIN',
-                id: id, 
-                page: 1  
-            }); 
+                id: id,
+                page: 1
+            });
         }
         else if (collabSongs && collabSongs.length > 0) {
             playPlaylist(collabSongs, 0, {
@@ -413,10 +415,10 @@ const ArtistPage = () => {
                         </h1>
 
                         <div className={styles.actions}>
-                            <button className={styles.playButton} onClick={handlePlayArtist} 
+                            <button className={styles.playButton} onClick={handlePlayArtist}
                                 disabled={mainSongs.length === 0 && collabSongs.length === 0}>
                                 <Play className={styles.playIcon} />
-                                Phát
+                                {t('play')}
                             </button>
                         </div>
                     </div>
@@ -430,7 +432,7 @@ const ArtistPage = () => {
             {/* BÀI HÁT CHÍNH */}
             {mainSongs.length > 0 && (
                 <section className={styles.section}>
-                    <SectionHeader title="Bài hát do nghệ sĩ hát chính" />
+                    <SectionHeader title={t('artist_main_songs')} />
                     {loadingMain ? (
                         <LoadSpinner />
                     ) : (
@@ -461,7 +463,7 @@ const ArtistPage = () => {
             {/* BÀI HÁT COLLAB */}
             {collabSongs.length > 0 && (
                 <section className={styles.section}>
-                    <SectionHeader title="Bài hát collab" />
+                    <SectionHeader title={t('artist_collab_songs')} />
                     {loadingCollab ? (
                         <LoadSpinner />
                     ) : (
@@ -492,7 +494,7 @@ const ArtistPage = () => {
             {/* NGHỆ SĨ LIÊN QUAN */}
             {relatedArtists.length > 0 && (
                 <section className={styles.section}>
-                    <SectionHeader title="Nghệ sĩ liên quan" />
+                    <SectionHeader title={t('related_artists')} />
                     <div className={styles["result-grid"]}>
                         {(relatedForView || relatedArtists).map((a) => (
                             <SquareCard

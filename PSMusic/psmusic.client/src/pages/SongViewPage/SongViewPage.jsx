@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { Heart, Star, Play, Download } from "lucide-react";
 import styles from "./SongViewPage.module.css";
@@ -18,6 +19,7 @@ const checkImage = (url, fallback) => {
 };
 
 export default function SongViewPage() {
+  const { t } = useTranslation();
   const { songId } = useParams();
 
   const [songDetail, setSongDetail] = useState(null);
@@ -106,7 +108,8 @@ export default function SongViewPage() {
       document.body.removeChild(downloadLink);
     } catch (error) {
       // console.error("Lỗi khi tải bài hát:", error);
-      toast.error("Có lỗi xảy ra khi tải bài hát");
+      // console.error("Lỗi khi tải bài hát:", error);
+      toast.error(t('download_error'));
     } finally {
       setDownloading(false);
     }
@@ -126,7 +129,7 @@ export default function SongViewPage() {
   };
 
   if (loading) return <LoadSpinner />;
-  if (!songDetail) return <p>Không tìm thấy bài hát</p>;
+  if (!songDetail) return <p>{t('song_not_found')}</p>;
 
   return (
     <div className={styles["song-view-container"]}>
@@ -134,7 +137,7 @@ export default function SongViewPage() {
         <img src={songDetail.imageUrl} alt="" className={styles["song-cover"]} />
 
         <div className={styles["song-info"]}>
-          <div className={styles["song-subtitle"]}>Bài hát</div>
+          <div className={styles["song-subtitle"]}>{t('song')}</div>
           <h1 className={styles["song-title"]}>{songDetail.title}</h1>
           <p className={styles["song-artist"]}>
             {relatedArtists.length > 0 ? (
@@ -179,7 +182,7 @@ export default function SongViewPage() {
               className={styles["btn-play"]}
               onClick={() => playSong(songDetail)}
             >
-              <Play className={styles["button-icon"]} />Phát
+              <Play className={styles["button-icon"]} />{t('play')}
             </button>
 
             <button
@@ -188,7 +191,7 @@ export default function SongViewPage() {
               disabled={downloading}
             >
               <Download className={styles["button-icon"]} />
-              {downloading ? "Đang tải..." : "Tải về"}
+              {downloading ? t('downloading') : t('download')}
             </button>
           </div>
         </div>
@@ -197,7 +200,7 @@ export default function SongViewPage() {
       <div className={styles["lyrics-artists-wrapper"]}>
         <div className={styles["lyrics-card"]}>
           <div className={styles["lyrics-header"]}>
-            <span>Lyrics</span>
+            <span>{t('lyrics')}</span>
           </div>
           <hr />
 
@@ -224,7 +227,7 @@ export default function SongViewPage() {
                 );
               })
             ) : (
-              <p>Đang tải lời bài hát...</p>
+              <p>{t('loading_lyrics')}</p>
             )}
           </div>
 
@@ -233,13 +236,13 @@ export default function SongViewPage() {
               className={styles["btn-toggle-lyrics"]}
               onClick={() => setShowFullLyrics(!showFullLyrics)}
             >
-              {showFullLyrics ? "Thu gọn" : "Hiển thị thêm"}
+              {showFullLyrics ? t('show_less') : t('show_more')}
             </button>
           )}
         </div>
 
         <div className={styles["artist-list"]}>
-          <h2>Nghệ sĩ</h2>
+          <h2>{t('artists')}</h2>
 
           {relatedArtists.length > 0 && (
             relatedArtists.map((artist) => (
@@ -261,9 +264,9 @@ export default function SongViewPage() {
 
       <div className={styles["other-songs-section"]}>
         <h2>
-          Bài hát khác của {
-            relatedArtists.length > 0 
-              ? relatedArtists.map(a => a.name).join(", ") 
+          {t('other_songs_by')} {
+            relatedArtists.length > 0
+              ? relatedArtists.map(a => a.name).join(", ")
               : songDetail.artist
           }
         </h2>
@@ -292,7 +295,7 @@ export default function SongViewPage() {
             className={styles["btn-toggle-songs"]}
             onClick={() => setShowAllOtherSongs(!showAllOtherSongs)}
           >
-            {showAllOtherSongs ? "Thu gọn" : "Xem thêm"}
+            {showAllOtherSongs ? t('show_less') : t('view_more')}
           </button>
         )}
       </div>

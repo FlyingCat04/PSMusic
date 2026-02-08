@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Settings, Globe, Palette } from 'lucide-react';
 import styles from './SettingsDropdown.module.css';
+import { useTranslation } from 'react-i18next';
 
 const SettingsDropdown = () => {
+    const { t } = useTranslation();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [currentTheme, setCurrentTheme] = useState('ruby');
     const dropdownRef = useRef(null);
-
     const themes = {
         ruby: {
             '--background-dark': '#161012',
@@ -106,7 +107,7 @@ const SettingsDropdown = () => {
             Object.entries(themes[theme]).forEach(([property, value]) => {
                 root.style.setProperty(property, value);
             });
-        
+
             localStorage.setItem('selectedTheme', theme);
             setCurrentTheme(theme); // Cập nhật state để theo dõi theme hiện tại
         }
@@ -149,66 +150,66 @@ const SettingsDropdown = () => {
 
     return (
         <div className={styles['settings-dropdown']} ref={dropdownRef}>
-            <button 
+            <button
                 className={styles['icon-button']}
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             >
                 <Settings />
             </button>
-        
+
             {isSettingsOpen && (
-                <div className={styles['dropdown-menu']}>                
-                <div className={styles['dropdown-section']}>
-                    <div className={styles['dropdown-header']}>
-                        <Palette size={16} />
-                        <span>Màu nền</span>
-                    </div>
-                    <div className={styles['dropdown-options']}>
-                        <button 
-                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'ruby' ? styles.active : ''}`}
-                            onClick={() => handleThemeChange('ruby')}
-                        >
-                            <div className={`${styles['theme-preview']} ${styles['ruby-theme']}`}></div>
-                            <span>Ruby</span>
-                        </button>
-                        <button 
-                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'amethyst' ? styles.active : ''}`}
-                            onClick={() => handleThemeChange('amethyst')}
-                        >
-                            <div className={`${styles['theme-preview']} ${styles['amethyst-theme']}`}></div>
-                            <span>Amethyst</span>
-                        </button>
-                        <button 
-                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'sapphire' ? styles.active : ''}`}
-                            onClick={() => handleThemeChange('sapphire')}
-                        >
-                            <div className={`${styles['theme-preview']} ${styles['sapphire-theme']}`}></div>
-                            <span>Sapphire</span>
-                        </button>
-                        <button 
-                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'emerald' ? styles.active : ''}`}
-                            onClick={() => handleThemeChange('emerald')}
-                        >
-                            <div className={`${styles['theme-preview']} ${styles['emerald-theme']}`}></div>
-                            <span>Emerald</span>
-                        </button>
-                        <button 
-                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'topaz' ? styles.active : ''}`}
-                            onClick={() => handleThemeChange('topaz')}
-                        >
-                            <div className={`${styles['theme-preview']} ${styles['topaz-theme']}`}></div>
-                            <span>Topaz</span>
-                        </button>
-                        <button 
-                            className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'aquamarine' ? styles.active : ''}`}
-                            onClick={() => handleThemeChange('aquamarine')}
-                        >
-                            <div className={`${styles['theme-preview']} ${styles['aquamarine-theme']}`}></div>
-                            <span>Aquamarine</span>
-                        </button>
+                <div className={styles['dropdown-menu']}>
+                    <div className={styles['dropdown-section']}>
+                        <div className={styles['dropdown-header']}>
+                            <Palette size={16} />
+                            <span>{t('theme_color')}</span>
+                        </div>
+                        <div className={styles['dropdown-options']}>
+                            <button
+                                className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'ruby' ? styles.active : ''}`}
+                                onClick={() => handleThemeChange('ruby')}
+                            >
+                                <div className={`${styles['theme-preview']} ${styles['ruby-theme']}`}></div>
+                                <span>Ruby</span>
+                            </button>
+                            <button
+                                className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'amethyst' ? styles.active : ''}`}
+                                onClick={() => handleThemeChange('amethyst')}
+                            >
+                                <div className={`${styles['theme-preview']} ${styles['amethyst-theme']}`}></div>
+                                <span>Amethyst</span>
+                            </button>
+                            <button
+                                className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'sapphire' ? styles.active : ''}`}
+                                onClick={() => handleThemeChange('sapphire')}
+                            >
+                                <div className={`${styles['theme-preview']} ${styles['sapphire-theme']}`}></div>
+                                <span>Sapphire</span>
+                            </button>
+                            <button
+                                className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'emerald' ? styles.active : ''}`}
+                                onClick={() => handleThemeChange('emerald')}
+                            >
+                                <div className={`${styles['theme-preview']} ${styles['emerald-theme']}`}></div>
+                                <span>Emerald</span>
+                            </button>
+                            <button
+                                className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'topaz' ? styles.active : ''}`}
+                                onClick={() => handleThemeChange('topaz')}
+                            >
+                                <div className={`${styles['theme-preview']} ${styles['topaz-theme']}`}></div>
+                                <span>Topaz</span>
+                            </button>
+                            <button
+                                className={`${styles['dropdown-option']} ${styles['theme-option']} ${currentTheme === 'aquamarine' ? styles.active : ''}`}
+                                onClick={() => handleThemeChange('aquamarine')}
+                            >
+                                <div className={`${styles['theme-preview']} ${styles['aquamarine-theme']}`}></div>
+                                <span>Aquamarine</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
             )}
         </div>
     );

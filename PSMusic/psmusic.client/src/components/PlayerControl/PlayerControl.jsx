@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Heart, Shuffle, Repeat, Repeat1 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import RatingModal from "../Modal/RatingModal";
@@ -11,6 +12,7 @@ import axiosInstance from "../../services/axiosInstance";
 
 export default function PlayerControl() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {
     currentSong,
     playerData,
@@ -55,13 +57,13 @@ export default function PlayerControl() {
   // Sync favorite status from global event bus
   useEffect(() => {
     if (lastFavoriteUpdate && currentSong && lastFavoriteUpdate.songId === currentSong.id) {
-        setPlayerData(prev => 
-            prev ? { 
-                ...prev, 
-                isFavorited: lastFavoriteUpdate.isFavorited,
-                likes: lastFavoriteUpdate.isFavorited ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1) 
-            } : prev
-        );
+      setPlayerData(prev =>
+        prev ? {
+          ...prev,
+          isFavorited: lastFavoriteUpdate.isFavorited,
+          likes: lastFavoriteUpdate.isFavorited ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1)
+        } : prev
+      );
     }
   }, [lastFavoriteUpdate, currentSong]);
 
@@ -96,14 +98,14 @@ export default function PlayerControl() {
 
       updateSongFavoriteStatus(currentSong.id, newStatus);
 
-      setPlayerData((prev) => 
-        prev ? { 
-            ...prev, 
-            isFavorited: newStatus,
-            likes: newStatus ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1) 
+      setPlayerData((prev) =>
+        prev ? {
+          ...prev,
+          isFavorited: newStatus,
+          likes: newStatus ? (prev.likes || 0) + 1 : Math.max(0, (prev.likes || 1) - 1)
         } : prev
       );
-      
+
       // Clear favorites cache to force refresh on next visit
       clearCache('favorites');
     } catch (err) {
@@ -114,8 +116,8 @@ export default function PlayerControl() {
   };
 
   const handleFavoriteSync = (songId, isFavorited) => {
-       // Call global sync
-       updateSongFavoriteStatus(songId, isFavorited);
+    // Call global sync
+    updateSongFavoriteStatus(songId, isFavorited);
   };
 
   const toggleRating = () => {
@@ -205,7 +207,7 @@ export default function PlayerControl() {
         className={styles["player-controls-new"]}
         style={{ padding: "20px", textAlign: "center", color: "gray" }}
       >
-        Đang chờ tải dữ liệu bài hát...
+        {t('loading_song_data')}
       </div>
     );
   }
@@ -246,7 +248,7 @@ export default function PlayerControl() {
             <div
               className={`${styles["icon-button"]} ${updatingFavorite ? styles["disabled"] : ""}`}
               onClick={toggleFavorite}
-              data-tooltip={isFavorited ? "Bỏ yêu thích" : "Yêu thích"}
+              data-tooltip={isFavorited ? t('remove_favorite') : t('add_favorite')}
               style={{
                 cursor: updatingFavorite ? "not-allowed" : "pointer",
                 display: "flex",
@@ -264,11 +266,10 @@ export default function PlayerControl() {
               )}
             </div>
             <button
-              className={`${styles["control-btn"]} ${styles["shuffle-btn"]} ${
-                shuffle ? styles["active"] : ""
-              }`}
+              className={`${styles["control-btn"]} ${styles["shuffle-btn"]} ${shuffle ? styles["active"] : ""
+                }`}
               onClick={toggleShuffle}
-              data-tooltip={shuffle ? "Tắt trộn bài" : "Bật trộn bài"}
+              data-tooltip={shuffle ? t('disable_shuffle') : t('enable_shuffle')}
             >
               <Shuffle
                 size={24}
@@ -277,7 +278,7 @@ export default function PlayerControl() {
               />
             </button>
 
-            <button className={styles["control-btn"]} onClick={playPrevSong} data-tooltip="Bài trước">
+            <button className={styles["control-btn"]} onClick={playPrevSong} data-tooltip={t('prev_song')}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -330,7 +331,7 @@ export default function PlayerControl() {
               )}
             </button>
 
-            <button className={styles["control-btn"]} onClick={playNextSong} data-tooltip="Bài tiếp theo">
+            <button className={styles["control-btn"]} onClick={playNextSong} data-tooltip={t('next_song')}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -348,16 +349,15 @@ export default function PlayerControl() {
             </button>
 
             <button
-              className={`${styles["control-btn"]} ${styles["repeat-btn"]} ${
-                repeat > 0 ? styles["active"] : ""
-              }`}
+              className={`${styles["control-btn"]} ${styles["repeat-btn"]} ${repeat > 0 ? styles["active"] : ""
+                }`}
               onClick={toggleRepeat}
               data-tooltip={
                 repeat === 1
-                  ? "Lặp lại tất cả"
+                  ? t('repeat_all')
                   : repeat === 2
-                    ? "Lặp lại 1 bài"
-                    : "Tắt lặp lại"
+                    ? t('repeat_one')
+                    : t('repeat_off')
               }
             >
               {repeat === 2 ? (
@@ -375,11 +375,10 @@ export default function PlayerControl() {
           <div className={styles["player-controls-right"]}>
             <div className={styles["right-controls-group"]}>
               <button
-                className={`${styles["control-btn"]} ${styles["rating-btn"]} ${
-                  isRated ? styles["rated"] : ""
-                }`}
+                className={`${styles["control-btn"]} ${styles["rating-btn"]} ${isRated ? styles["rated"] : ""
+                  }`}
                 onClick={toggleRating}
-                data-tooltip="Đánh giá bài hát"
+                data-tooltip={t('rate_song')}
                 disabled={!currentSong}
               >
                 <svg
@@ -400,7 +399,7 @@ export default function PlayerControl() {
               <button
                 className={styles["control-btn"]}
                 onClick={handleDownload}
-                data-tooltip="Tải bài hát"
+                data-tooltip={t('download_song')}
                 disabled={!songToDisplay?.audioUrl}
               >
                 <svg
@@ -425,7 +424,7 @@ export default function PlayerControl() {
               <button
                 className={styles["control-btn"]}
                 onClick={toggleMute}
-                data-tooltip={isMuted || volume === 0 ? "Bật âm thanh" : "Tắt âm thanh"}
+                data-tooltip={isMuted || volume === 0 ? t('unmute') : t('mute')}
               >
                 {isMuted || volume === 0 ? (
                   <svg
@@ -473,9 +472,8 @@ export default function PlayerControl() {
                 onChange={handleVolumeChange}
                 className={styles["volume-range-input"]}
                 style={{
-                  background: `linear-gradient(to right, #fff ${volume * 100}%, #4d4d4d ${
-                    volume * 100
-                  }%)`,
+                  background: `linear-gradient(to right, #fff ${volume * 100}%, #4d4d4d ${volume * 100
+                    }%)`,
                 }}
               />
             </div>
@@ -495,16 +493,15 @@ export default function PlayerControl() {
             onChange={handleSeek}
             className={styles["seek-range-input"]}
             style={{
-                background: `linear-gradient(to right, var(--primary-purple) ${
-                (currentTime / (duration || 1)) * 100
-              }%, #4d4d4d ${(currentTime / (duration || 1)) * 100}%)`,
+              background: `linear-gradient(to right, var(--primary-purple) ${(currentTime / (duration || 1)) * 100
+                }%, #4d4d4d ${(currentTime / (duration || 1)) * 100}%)`,
             }}
           />
           <span className={styles["duration-display"]}>
             {formatTime(duration)}
           </span>
         </div>
-      </div>
+      </div >
 
       {isModalOpen && (
         <RatingModal
@@ -515,10 +512,11 @@ export default function PlayerControl() {
           songTitle={songToDisplay.title}
           isReviewed={isRated}
         />
-      )}
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+      )
+      }
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
         onStopMusic={() => {
           if (audioRef.current) audioRef.current.pause();
           setIsPlaying(false);

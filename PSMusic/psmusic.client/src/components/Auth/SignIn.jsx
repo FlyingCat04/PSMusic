@@ -1,4 +1,5 @@
 import { React, useState, useContext, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import LoadSpinner from "../LoadSpinner/LoadSpinner"
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -6,7 +7,8 @@ import { Eye, EyeOff } from "lucide-react";
 import styles from "./SignIn.module.css";
 
 function SignInForm({ activeType }) {
-  const [state, setState] = useState({name: "", password: ""});
+  const { t } = useTranslation();
+  const [state, setState] = useState({ name: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false)
@@ -86,18 +88,17 @@ function SignInForm({ activeType }) {
 
     const { name, password } = state;
 
-    if (!name || !password)
-    {
-      setError("Vui lòng điền đầy đủ thông tin");
+    if (!name || !password) {
+      setError(t('error_fill_info'));
       return;
     }
 
     if (password.length < 8) {
       setLoading(false)
-      setError("Mật khẩu phải có ít nhất 8 ký tự");
+      setError(t('error_password_length'));
       return;
     }
-    
+
     setLoading(true);
     setError("");
 
@@ -105,9 +106,8 @@ function SignInForm({ activeType }) {
 
     setLoading(false);
 
-    if (result.isSuccess)
-    {
-      setSuccess("Đăng nhập thành công");
+    if (result.isSuccess) {
+      setSuccess(t('login_success'));
       setState({ name: "", password: "" });
 
       setTimeout(() => {
@@ -140,7 +140,7 @@ function SignInForm({ activeType }) {
     //       err.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng."
     //     );
     //   }
-      
+
     // } catch (err) {
     //   setLoading(false);
     //   //console.error("Login error:", err.response || err);
@@ -155,41 +155,41 @@ function SignInForm({ activeType }) {
   };
 
   return (
-      <>
-          {loading && <LoadSpinner />}
-          <div className={`${styles.formContainer} ${styles.signInContainer}`}>
-              <form className={styles.inputForm} onSubmit={handleOnSubmit}>
-                  <h1>Đăng nhập</h1>
-                  <input
-                      type="name"
-                      placeholder="Tên đăng nhập"
-                      name="name"
-                      value={state.name}
-                      onChange={handleChange}
-                  />
-                  <div className={styles.passwordWrapper}>
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        placeholder="Mật khẩu"
-                        value={state.password}
-                        onChange={handleChange}
-                    />
-                    <button
-                      type="button" // Quan trọng: Tránh submit form
-                      className={styles.eyeButton}
-                      onClick={togglePasswordVisibility}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                  {error && (<small style={{ color: "red", marginTop: "4px", fontSize: "12px" }}>{error}</small>)}
-                  {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
-                  {/* <a href="#">Quên mật khẩu?</a> */}
-                  <button className={styles['submit-btn']}>Đăng nhập</button>
-              </form>
+    <>
+      {loading && <LoadSpinner />}
+      <div className={`${styles.formContainer} ${styles.signInContainer}`}>
+        <form className={styles.inputForm} onSubmit={handleOnSubmit}>
+          <h1>{t('login_title')}</h1>
+          <input
+            type="name"
+            placeholder={t('username_placeholder')}
+            name="name"
+            value={state.name}
+            onChange={handleChange}
+          />
+          <div className={styles.passwordWrapper}>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder={t('password_placeholder')}
+              value={state.password}
+              onChange={handleChange}
+            />
+            <button
+              type="button" // Quan trọng: Tránh submit form
+              className={styles.eyeButton}
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
-      </>
+          {error && (<small style={{ color: "red", marginTop: "4px", fontSize: "12px" }}>{error}</small>)}
+          {success && (<small style={{ color: "#33CC00", marginTop: "4px", marginBottom: "10px", fontSize: "12px" }}>{success}</small>)}
+          {/* <a href="#">Quên mật khẩu?</a> */}
+          <button className={styles['submit-btn']}>{t('login_btn')}</button>
+        </form>
+      </div>
+    </>
   );
 }
 

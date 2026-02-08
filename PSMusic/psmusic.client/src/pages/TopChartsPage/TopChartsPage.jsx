@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import TrackTable from "../../components/TrackTable/TrackTable";
@@ -11,6 +12,7 @@ import { useDataCache } from "../../contexts/DataCacheContext";
 import styles from "./TopChartsPage.module.css";
 
 const TopChartsPage = () => {
+    const { t } = useTranslation();
     const { user } = useAuth();
     const { audioRef, setIsPlaying } = usePlayer();
     const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData, clearCache } = useDataCache();
@@ -87,7 +89,7 @@ const TopChartsPage = () => {
             setTopChartsData(data);
         } catch (err) {
             //console.error("Error fetching top charts data:", err);
-            setError("Không thể tải dữ liệu. Vui lòng thử lại sau.");
+            setError(t('error_fetching_data'));
         } finally {
             setLoading(false);
         }
@@ -98,13 +100,13 @@ const TopChartsPage = () => {
     }
 
     if (error) {
-        return <EmptyState message="Sorry :( No content available at the moment" />;
+        return <EmptyState message={t('empty_content')} />;
     }
 
     const hasNoData = popularCategories.length === 0;
 
     if (hasNoData && !loading) {
-        return <EmptyState message="Sorry :( No content available at the moment" />;
+        return <EmptyState message={t('empty_content')} />;
     }
 
     const handleToggleFavorite = async (song) => {
@@ -151,9 +153,9 @@ const TopChartsPage = () => {
         const content = (
             <>
                 <div className={styles["section-header"]}>
-                    <h2 className={styles["section-title"]}>Top {category.name}</h2>
+                    <h2 className={styles["section-title"]}>{t('top_chart_title', { name: category.name })}</h2>
                     <Link to={`/category/${category.id}`} className={styles["see-all-link"]}>
-                        Xem tất cả
+                        {t('see_all')}
                         <ChevronRight />
                     </Link>
                 </div>
@@ -165,7 +167,7 @@ const TopChartsPage = () => {
                                 id: song.id || song.songId,
                                 title: song.name || song.title,
                                 imageUrl: song.avatarUrl || song.imageUrl,
-                                artists: Array.isArray(song.artists) ? song.artists : [{ name: 'Unknown Artist' }],
+                                artists: Array.isArray(song.artists) ? song.artists : [{ name: t('unknown_artist') }],
                             }))}
                             showRank={true}
                             hideDuration={isDualColumn}
@@ -175,7 +177,7 @@ const TopChartsPage = () => {
                         />
                     </div>
                 ) : (
-                    <p className={styles["no-data"]}>Không có dữ liệu</p>
+                    <p className={styles["no-data"]}>{t('no_data')}</p>
                 )}
             </>
         );

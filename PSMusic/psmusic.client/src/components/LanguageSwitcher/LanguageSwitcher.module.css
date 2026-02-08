@@ -1,0 +1,87 @@
+.language-dropdown {
+    position: relative;
+}
+
+.icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--component-bg);
+    transition: opacity 0.2s;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.icon-button:hover {
+    opacity: 0.8;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 200px;
+    background-color: var(--component-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    padding: 8px;
+    z-index: 1000;
+    animation: dropdown-appear 0.2s ease-out;
+}
+
+@keyframes dropdown-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.dropdown-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: left;
+    font-family: inherit;
+}
+
+.dropdown-option:hover {
+    background-color: var(--component-hover-bg);
+}
+
+.dropdown-option.active {
+    font-weight: bold;
+    background-color: var(--component-hover-bg);
+    color: var(--primary-purple);
+}
+
+.check-icon {
+    color: var(--primary-purple);
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
 import { Play, Heart, MoreHorizontal } from 'lucide-react';
 import styles from './ItemTopCharts.module.css';
@@ -14,13 +15,14 @@ const handleImgError = (e) => {
 };
 
 const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
+    const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
     const { playSong } = usePlayer();
     const artists = song.artists || [];
 
     const handlePlayClick = (e) => {
         e.stopPropagation();
-        
+
         if (song.mp3Url) {
             const songData = {
                 ...song,
@@ -28,7 +30,7 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
             };
             playSong(songData);
         }
-        
+
         if (onPlay) onPlay(song);
     };
 
@@ -43,79 +45,79 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
     };
 
     return (
-        <div 
+        <div
             className={styles['item-top-charts']}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-        {/* Rank Number */}
-        {rank && (
-            <span className={`${styles['rank-number']} ${rank <= 3 ? styles[`rank-${rank}`] : ''}`}>
-            {rank}
-            </span>
-        )}
+            {/* Rank Number */}
+            {rank && (
+                <span className={`${styles['rank-number']} ${rank <= 3 ? styles[`rank-${rank}`] : ''}`}>
+                    {rank}
+                </span>
+            )}
 
-        {/* Image với Play Button */}
-        <div className={styles['image-container']}>
-            <img 
-                src={song.imageUrl} 
-                alt={song.title} 
-                className={styles['item-image']} 
-                onError={handleImgError} 
-            />
-            <div className={`${styles['play-overlay']} ${isHovered ? styles['show'] : ''}`}>
-            <button 
-                className={styles['play-button']}
-                onClick={handlePlayClick}
-                aria-label="Play"
-            >
-                <Play className={styles['play-icon']} fill="currentColor" />
-            </button>
+            {/* Image với Play Button */}
+            <div className={styles['image-container']}>
+                <img
+                    src={song.imageUrl}
+                    alt={song.title}
+                    className={styles['item-image']}
+                    onError={handleImgError}
+                />
+                <div className={`${styles['play-overlay']} ${isHovered ? styles['show'] : ''}`}>
+                    <button
+                        className={styles['play-button']}
+                        onClick={handlePlayClick}
+                        aria-label="Play"
+                    >
+                        <Play className={styles['play-icon']} fill="currentColor" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Info */}
+            <div className={styles['item-info']}>
+                <Link
+                    to={`/song/${song.id}`}
+                    className={styles['item-title']}
+                >
+                    {song.title}
+                </Link>
+                <p className={styles['item-artist']}>
+                    {artists.length > 0 ? (
+                        artists.map((artist, index) => (
+                            <React.Fragment key={artist.id || index}>
+                                <Link
+                                    to={`/artist/${artist.id}`}
+                                    className={styles['artist-link']}
+                                >
+                                    {artist.name}
+                                </Link>
+                                {index < artists.length - 1 && <span>, </span>}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        t('unknown_artist')
+                    )}
+                </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className={`${styles['action-buttons']} ${isHovered ? styles['show'] : ''}`}>
+                <button
+                    className={styles['action-btn']}
+                    onClick={handleFavoriteClick}
+                    aria-label="Like"
+                >
+                    <Heart
+                        size={20}
+                        fill={song.isFavorited ? "#ef4444" : "transparent"}
+                        color={song.isFavorited ? "#ef4444" : "currentColor"}
+                    />
+                </button>
             </div>
         </div>
-
-        {/* Info */}
-        <div className={styles['item-info']}>
-            <Link 
-                to={`/song/${song.id}`}
-                className={styles['item-title']}
-            >
-                {song.title}
-            </Link>
-            <p className={styles['item-artist']}>
-                {artists.length > 0 ? (
-                    artists.map((artist, index) => (
-                        <React.Fragment key={artist.id || index}>
-                            <Link 
-                                to={`/artist/${artist.id}`}
-                                className={styles['artist-link']}
-                            >
-                                {artist.name}
-                            </Link>
-                            {index < artists.length - 1 && <span>, </span>}
-                        </React.Fragment>
-                    ))
-                ) : (
-                    'Unknown Artist'
-                )}
-            </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className={`${styles['action-buttons']} ${isHovered ? styles['show'] : ''}`}>
-            <button 
-                className={styles['action-btn']}
-                onClick={handleFavoriteClick}
-                aria-label="Like"
-            >
-                <Heart 
-                    size={20} 
-                    fill={song.isFavorited ? "#ef4444" : "transparent"}
-                    color={song.isFavorited ? "#ef4444" : "currentColor"}
-                />
-            </button>
-        </div>
-    </div>
     );
 };
 

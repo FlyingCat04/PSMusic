@@ -5,16 +5,18 @@ import Logo from '../Logo/Logo';
 import styles from './Sidebar.module.css';
 import { useAuth } from '../../hooks/useAuth';
 import AuthModal from '../Modal/AuthModal';
+import { useTranslation } from 'react-i18next';
 
 const mainNavItems = [
-  { icon: <Disc3 />, label: 'Khám Phá', path: '/discover' },
-  { icon: <LayoutGrid />, label: 'Chủ Đề & Thể Loại', path: '/genres' },
-  { icon: <BarChart3 />, label: 'Bảng Xếp Hạng', path: '/charts' },
-  { icon: <BookHeart />, label: 'Dành cho bạn', path: '/for-you' },
-  { icon: <Heart />, label: 'Bài Hát Yêu Thích', path: '/favorites', protected: true },
+  { icon: <Disc3 />, label: 'discover', path: '/discover' },
+  { icon: <LayoutGrid />, label: 'genres', path: '/genres' },
+  { icon: <BarChart3 />, label: 'charts', path: '/charts' },
+  { icon: <BookHeart />, label: 'for_you', path: '/for-you' },
+  { icon: <Heart />, label: 'favorites', path: '/favorites', protected: true },
 ];
 
 const Sidebar = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -37,27 +39,27 @@ const Sidebar = () => {
   return (
     <aside className={styles.sidebar}>
       <Logo />
-      
+
       <nav className={styles['sidebar-nav']}>
         <ul>
           {mainNavItems.map((item, index) => (
             <li key={index}>
-              <Link 
-                to={item.path} 
+              <Link
+                to={item.path}
                 className={`${styles['nav-item']} ${isActive(item.path) ? styles.active : ''}`}
                 onClick={(e) => handleItemClick(e, item)}
               >
                 <span className={styles['nav-item-icon']}>{item.icon}</span>
-                <span className={styles['nav-item-label']}>{item.label}</span>
+                <span className={styles['nav-item-label']}>{t(item.label)}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
     </aside>
   );

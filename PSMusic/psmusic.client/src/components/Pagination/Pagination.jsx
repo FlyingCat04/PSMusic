@@ -1,7 +1,9 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./Pagination.module.css";
 
 const Pagination = ({ page, totalPages, onChange }) => {
+    const { t } = useTranslation();
     if (!totalPages || totalPages < 1) return null;
 
     const handleChange = (newPage) => {
@@ -63,7 +65,7 @@ const Pagination = ({ page, totalPages, onChange }) => {
                 disabled={page === 1}
                 onClick={() => handleChange(page - 1)}
             >
-                Trước
+                {t('previous_page')}
             </button>
 
             {pages.map((item, index) => {
@@ -98,7 +100,7 @@ const Pagination = ({ page, totalPages, onChange }) => {
                 disabled={page === totalPages}
                 onClick={() => handleChange(page + 1)}
             >
-                Sau
+                {t('next_page')}
             </button>
         </div>
     );
