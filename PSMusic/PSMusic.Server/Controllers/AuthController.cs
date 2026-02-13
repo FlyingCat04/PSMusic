@@ -22,6 +22,36 @@ namespace PSMusic.Server.Controllers
             _env = env;
         }
 
+        private void SetRefreshTokenCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Path = "/",
+                Expires = DateTime.UtcNow.AddDays(7),
+
+                Secure = Request.IsHttps,
+
+                SameSite = Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax
+            };
+
+            Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
+        }
+
+        private void RemoveRefreshTokenCookie()
+        {
+            // Khi xóa cookie, các option (Path, Secure, SameSite) phải trùng khớp với lúc tạo
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Path = "/",
+                Secure = Request.IsHttps,
+                SameSite = Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax
+            };
+
+            Response.Cookies.Delete("RefreshToken", cookieOptions);
+        }
+
         // POST api/auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] CreateUserDTO user)
@@ -35,7 +65,7 @@ namespace PSMusic.Server.Controllers
             if (result.IsSuccess) return Ok(new { result.IsSuccess, result.Message });
             else return BadRequest(new { result.IsSuccess, result.Message });
         }
-        
+
         // POST api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthReqDTO req)
@@ -43,31 +73,17 @@ namespace PSMusic.Server.Controllers
             var result = await _authService.Login(req);
             if (result.IsSuccess && result.Token != null)
             {
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Path = "/",
-                    Expires = DateTime.UtcNow.AddMinutes(10080) // 7 days
-                };
-                if(_env.IsDevelopment())
-                {
-                    cookieOptions.Secure = true;
-                    cookieOptions.SameSite = SameSiteMode.None;
-                } else
-                {
-                    cookieOptions.Secure = false;
-                    cookieOptions.SameSite = SameSiteMode.Unspecified;
-                }
                 if (result.RefreshToken != null)
                 {
-                    Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
+                    SetRefreshTokenCookie(result.RefreshToken);
                 }
 
-                if (!result.UserId.HasValue) return Unauthorized(); 
+                if (!result.UserId.HasValue) return Unauthorized();
                 var user = await _userService.GetUserById(result.UserId.Value);
-                return Ok(new { 
-                    result.IsSuccess, 
-                    result.Message, 
+                return Ok(new
+                {
+                    result.IsSuccess,
+                    result.Message,
                     result.Token,
                     User = new
                     {
@@ -96,26 +112,9 @@ namespace PSMusic.Server.Controllers
             {
                 if (!string.IsNullOrEmpty(result.RefreshToken))
                 {
-                    var cookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Path = "/",
-                        Expires = DateTimeOffset.UtcNow.AddMinutes(10080)
-                    };
-
-                    if (_env.IsDevelopment())
-                    {
-                        cookieOptions.Secure = true;
-                        cookieOptions.SameSite = SameSiteMode.None;
-                    }
-                    else
-                    {
-                        cookieOptions.Secure = false;
-                        cookieOptions.SameSite = SameSiteMode.Unspecified;
-                    }
-
-                    Response.Cookies.Append("RefreshToken", result.RefreshToken, cookieOptions);
+                    SetRefreshTokenCookie(result.RefreshToken);
                 }
+
                 if (!result.UserId.HasValue) return Unauthorized();
                 var user = await _userService.GetUserById(result.UserId.Value);
 
@@ -134,7 +133,7 @@ namespace PSMusic.Server.Controllers
                     }
                 });
             }
-            
+
             return Ok(new { result.IsSuccess, result.Message });
         }
 
@@ -168,24 +167,8 @@ namespace PSMusic.Server.Controllers
             var user = await _userService.GetUserById(int.Parse(userIdClaim));
             if (user == null) return Unauthorized();
 
-            var refreshToken = Request.Cookies["RefreshToken"];
+            RemoveRefreshTokenCookie();
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-            };
-            if (_env.IsDevelopment())
-            {
-                cookieOptions.Secure = true;
-                cookieOptions.SameSite = SameSiteMode.None;
-            }
-            else
-            {
-                cookieOptions.Secure = false;
-                cookieOptions.SameSite = SameSiteMode.Unspecified;
-            }
-
-            Response.Cookies.Delete("RefreshToken", cookieOptions);
             return Ok(new { IsSuccess = true, Message = "Đăng xuất thành công" });
         }
     }
