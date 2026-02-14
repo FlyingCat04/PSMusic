@@ -116,7 +116,9 @@ var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseCors("AllowFrontend");
 
+app.UseMiddleware<PSMusic.Server.Middlewares.ApiAuthMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -125,7 +127,6 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseOutputCache();

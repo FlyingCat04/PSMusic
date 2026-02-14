@@ -5,6 +5,7 @@ const axiosInstance = axios.create({
     withCredentials: true,
     headers: {
         "Content-Type": "application/json",
+        "X-App-Service-Key": import.meta.env.VITE_API_SIGNATURE || "this-is-secret",
     }
 });
 
