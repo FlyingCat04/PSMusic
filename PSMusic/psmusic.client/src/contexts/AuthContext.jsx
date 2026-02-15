@@ -126,7 +126,7 @@ const AuthProvider = ({ children }) => {
         setAccessToken(null);
         delete axiosInstance.defaults.headers.common["Authorization"];
         clearCache();
-        navigate("/discover");
+        navigate("/");
     }
 
     // useEffect(() => {

@@ -8,22 +8,21 @@ import AuthModal from '../Modal/AuthModal';
 import { useTranslation } from 'react-i18next';
 
 const mainNavItems = [
-  { icon: <Disc3 />, label: 'discover', path: '/discover' },
+  { icon: <Disc3 />, label: 'discover', path: '/' },
   { icon: <LayoutGrid />, label: 'genres', path: '/genres' },
   { icon: <BarChart3 />, label: 'charts', path: '/charts' },
-  { icon: <BookHeart />, label: 'for_you', path: '/for-you' },
+  // { icon: <BookHeart />, label: 'for_you', path: '/for-you' },
   { icon: <Heart />, label: 'favorites', path: '/favorites', protected: true },
 ];
 
 const Sidebar = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const isActive = (path) => {
-    if (path === '/discover') {
+    if (path === '/') {
       return location.pathname === '/' || location.pathname === '/discover';
     }
     return location.pathname === path;

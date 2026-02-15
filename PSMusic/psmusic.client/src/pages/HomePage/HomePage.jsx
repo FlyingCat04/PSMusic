@@ -14,29 +14,23 @@ import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
   const { t } = useTranslation();
-  const { getHomePageData, setHomePageData } = useDataCache();
+  const { getHomePageData, setHomePageData, setPopularCategoriesData } = useDataCache();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
   const [artists, setArtists] = useState([]);
-  const [songs, setSongs] = useState([]);
-  const [popSongs, setPopSongs] = useState([]);
-  const [youthSongs, setYouthSongs] = useState([]);
 
   // Refs để cuộn
   const artistsScrollRef = useRef(null);
-  const songsScrollRef = useRef(null);
-  const popSongsScrollRef = useRef(null);
-  const youthSongsScrollRef = useRef(null);
 
   useEffect(() => {
     const cachedData = getHomePageData();
     if (cachedData) {
       setCategories(cachedData.categories || []);
       setArtists(cachedData.artists || []);
-      setSongs(cachedData.songs || []);
-      setPopSongs(cachedData.popSongs || []);
-      setYouthSongs(cachedData.youthSongs || []);
+      // setSongs(cachedData.songs || []);
+      // setPopSongs(cachedData.popSongs || []);
+      // setYouthSongs(cachedData.youthSongs || []);
       setLoading(false);
     } else {
       fetchData();
@@ -49,28 +43,32 @@ const HomePage = () => {
       setError(null);
 
       // Lấy tất cả dữ liệu cùng lúc
-      const [homeData, popData, youthData] = await Promise.all([
+      const [homeData] = await Promise.all([
         homeService.fetchPopularData(),
-        topChartsService.getPopularSongsByCategory(1, 1, 10), // Nhạc Pop
-        topChartsService.getPopularSongsByCategory(2, 1, 10), // Nhạc Trẻ
+        // topChartsService.getPopularSongsByCategory(1, 1, 10), // Nhạc Pop
+        // topChartsService.getPopularSongsByCategory(2, 1, 10), // Nhạc Trẻ
       ]);
 
       const data = {
         categories: homeData.categories || [],
         artists: homeData.artists || [],
-        songs: homeData.songs || [],
-        popSongs: popData?.items || [],
-        youthSongs: youthData?.items || [],
+        // songs: homeData.songs || [],
+        // popSongs: popData?.items || [],
+        // youthSongs: youthData?.items || [],
       };
 
       setCategories(data.categories);
       setArtists(data.artists);
-      setSongs(data.songs);
-      setPopSongs(data.popSongs);
-      setYouthSongs(data.youthSongs);
+      // setSongs(data.songs);
+      // setPopSongs(data.popSongs);
+      // setYouthSongs(data.youthSongs);
 
       // Cache data
       setHomePageData(data);
+
+      if (data.categories && data.categories.length > 0) {
+        setPopularCategoriesData(data.categories);
+      }
     } catch (err) {
       //console.error('Error fetching home page data:', err);
       setError(t('error_fetching_data'));
@@ -79,17 +77,17 @@ const HomePage = () => {
     }
   };
 
-  const handleScroll = (ref, direction) => {
-    if (!ref.current) return;
+  // const handleScroll = (ref, direction) => {
+  //   if (!ref.current) return;
 
-    const scrollAmount = 300;
-    const newScrollPosition = ref.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
+  //   const scrollAmount = 300;
+  //   const newScrollPosition = ref.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
 
-    ref.current.scrollTo({
-      left: newScrollPosition,
-      behavior: 'smooth'
-    });
-  };
+  //   ref.current.scrollTo({
+  //     left: newScrollPosition,
+  //     behavior: 'smooth'
+  //   });
+  // };
 
   if (loading) {
     return <LoadSpinner />;
@@ -111,7 +109,7 @@ const HomePage = () => {
   //   // );
   // }
 
-  const hasNoData = categories.length === 0 && artists.length === 0 && songs.length === 0 && popSongs.length === 0 && youthSongs.length === 0;
+  const hasNoData = categories.length === 0 && artists.length === 0;
 
   if (hasNoData && !loading) {
     return <EmptyState message={t('empty_content')} />;
@@ -175,8 +173,16 @@ const HomePage = () => {
         </section>
       )}
 
+      {/* Artists Section */}
+      <section className={styles['content-section']}>
+        <div className={styles['section-header']}>
+          <h2 className={styles['section-title']}>Gợi ý dành cho bạn</h2>
+        </div>
+        <div className={styles.recommendSys}></div>
+      </section>
+
       {/* Popular Songs Section */}
-      {songs.length > 0 && (
+      {/* {songs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
             <h2 className={styles['section-title']}>{t('trending_songs')}</h2>
@@ -205,10 +211,10 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Pop Songs Section */}
-      {popSongs.length > 0 && (
+      {/* {popSongs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
             <h2 className={styles['section-title']}>{t('trending_pop')}</h2>
@@ -237,10 +243,10 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Youth Songs Section */}
-      {youthSongs.length > 0 && (
+      {/* {youthSongs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
             <h2 className={styles['section-title']}>{t('trending_youth')}</h2>
@@ -269,7 +275,7 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
     </div>
   );
 };

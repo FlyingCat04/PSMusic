@@ -13,7 +13,7 @@ import styles from './ExploreCategoriesPage.module.css';
 
 const ExploreCategoriesPage = () => {
     const { t } = useTranslation();
-    const { getExploreCategoriesData, setExploreCategoriesData } = useDataCache();
+    const { getExploreCategoriesData, setExploreCategoriesData, getPopularCategoriesData } = useDataCache();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [categories, setCategories] = useState([]);
@@ -35,9 +35,15 @@ const ExploreCategoriesPage = () => {
             setLoading(true);
             setError(null);
 
-            // Lấy danh sách popular categories
-            const categoriesRes = await exploreCategoriesService.getAllCategories(1, 100);
-            const allCategories = categoriesRes?.items || [];
+            const cachedCategories = getPopularCategoriesData();
+            let allCategories = [];
+            
+            if (cachedCategories && cachedCategories.length > 0) {
+                allCategories = cachedCategories;
+            } else {
+                const categoriesRes = await exploreCategoriesService.getAllCategories(1, 100);
+                allCategories = categoriesRes?.items || [];
+            }
 
             // Lấy IDs từ popular categories
             const featuredCategoryIds = allCategories.map(cat => cat.id);
@@ -123,7 +129,7 @@ const ExploreCategoriesPage = () => {
                             </Link>
                         </div>
                         <div className={styles['songs-grid']}>
-                            {songs.map((song) => (
+                            {songs.slice(0, 10).map((song) => (
                                 <ItemCardColumn
                                     key={song.id || song.songId}
                                     item={{

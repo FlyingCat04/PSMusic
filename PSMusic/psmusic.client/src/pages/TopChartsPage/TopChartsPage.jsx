@@ -16,7 +16,7 @@ const TopChartsPage = () => {
     const { t } = useTranslation();
     const { user } = useAuth();
     const { audioRef, setIsPlaying } = usePlayer();
-    const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData, clearCache } = useDataCache();
+    const { getTopChartsData, setTopChartsData, updateSongFavoriteStatus, topChartsData, clearCache, getPopularCategoriesData } = useDataCache();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -50,15 +50,21 @@ const TopChartsPage = () => {
             setLoading(true);
             setError(null);
 
-            // Lấy danh sách popular categories trước
-            const categoriesRes = await topChartsService.getPopularCategories(1, 10);
-            const categories = categoriesRes?.items || [];
+            const cachedCategories = getPopularCategoriesData();
+            let categories = [];
+            
+            if (cachedCategories && cachedCategories.length > 0) {
+                categories = cachedCategories;
+            } else {
+                const categoriesRes = await topChartsService.getPopularCategories(1, 10);
+                categories = categoriesRes?.items || [];
+            }
 
             // Sắp xếp: đưa Nhạc Việt (10) và Âu Mỹ (26) lên đầu
             const sortedCategories = [
                 ...categories.filter(cat => cat.id === 10 || cat.id === 26).sort((a, b) => a.id - b.id),
                 ...categories.filter(cat => cat.id !== 10 && cat.id !== 26)
-            ];
+            ].slice(0, 10);
 
             // Gọi các API còn lại song song
             const apiCalls = [

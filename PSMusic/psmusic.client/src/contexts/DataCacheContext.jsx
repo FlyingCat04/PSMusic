@@ -16,6 +16,7 @@ export const DataCacheProvider = ({ children }) => {
         topCharts: null,
         exploreCategories: null,
         favorites: null,
+        popularCategories: null,
     });
 
     const [timestamps, setTimestamps] = useState({
@@ -23,6 +24,7 @@ export const DataCacheProvider = ({ children }) => {
         topCharts: null,
         exploreCategories: null,
         favorites: null,
+        popularCategories: null,
     });
 
     const [lastFavoriteUpdate, setLastFavoriteUpdate] = useState(null);
@@ -56,6 +58,11 @@ export const DataCacheProvider = ({ children }) => {
         setTimestamps(prev => ({ ...prev, favorites: Date.now() }));
     };
 
+    const setPopularCategoriesData = (data) => {
+        setCache(prev => ({ ...prev, popularCategories: data }));
+        setTimestamps(prev => ({ ...prev, popularCategories: Date.now() }));
+    };
+
     const getHomePageData = () => {
         return isCacheValid('homePage') ? cache.homePage : null;
     };
@@ -72,13 +79,17 @@ export const DataCacheProvider = ({ children }) => {
         return isCacheValid('favorites') ? cache.favorites : null;
     };
 
+    const getPopularCategoriesData = () => {
+        return isCacheValid('popularCategories') ? cache.popularCategories : null;
+    };
+
     const clearCache = (key) => {
         if (key) {
             setCache(prev => ({ ...prev, [key]: null }));
             setTimestamps(prev => ({ ...prev, [key]: null }));
         } else {
-            setCache({ homePage: null, topCharts: null, exploreCategories: null, favorites: null });
-            setTimestamps({ homePage: null, topCharts: null, exploreCategories: null, favorites: null });
+            setCache({ homePage: null, topCharts: null, exploreCategories: null, favorites: null, popularCategories: null });
+            setTimestamps({ homePage: null, topCharts: null, exploreCategories: null, favorites: null, popularCategories: null });
         }
     };
 
@@ -122,10 +133,12 @@ export const DataCacheProvider = ({ children }) => {
         setTopChartsData,
         setExploreCategoriesData,
         setFavoritesData,
+        setPopularCategoriesData,
         getHomePageData,
         getTopChartsData,
         getExploreCategoriesData,
         getFavoritesData,
+        getPopularCategoriesData,
         clearCache,
         updateSongFavoriteStatus,
         lastFavoriteUpdate,

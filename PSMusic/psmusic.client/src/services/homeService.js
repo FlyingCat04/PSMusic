@@ -5,14 +5,14 @@ const homeService = {
         try {
             const [categoriesRes, artistsRes, songsRes] = await Promise.all([
                 axiosInstance.get("/category/popular"),
-                axiosInstance.get("/artist/popular"),
-                axiosInstance.get("/song/popular")
+                axiosInstance.get("/artist/popular")
+                // axiosInstance.get("/song/popular")
             ]);
 
             return {
                 categories: categoriesRes.data?.items || [],
-                artists: artistsRes.data?.items || [],
-                songs: songsRes.data?.items || []
+                artists: artistsRes.data?.items || []
+                // songs: songsRes.data?.items || []
             };
         } catch (error) {
             //console.error("Error fetching popular data:", error);
@@ -40,15 +40,15 @@ const homeService = {
         }
     },
 
-    async getPopularSongs() {
-        try {
-            const res = await axiosInstance.get("/song/popular");
-            return res.data?.items || [];
-        } catch (error) {
-            //console.error("Error fetching popular songs:", error);
-            throw error;
-        }
-    }
+    // async getPopularSongs() {
+    //     try {
+    //         const res = await axiosInstance.get("/song/popular");
+    //         return res.data?.items || [];
+    //     } catch (error) {
+    //         //console.error("Error fetching popular songs:", error);
+    //         throw error;
+    //     }
+    // }
 };
 
 export default homeService;

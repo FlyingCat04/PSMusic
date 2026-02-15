@@ -114,6 +114,10 @@
   max-width: 100%;
 }
 
+.recommendSys {
+    margin: 0;
+}
+
 .refresh-button {
   height: 40px;
   display: flex;
