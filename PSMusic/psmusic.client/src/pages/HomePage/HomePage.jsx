@@ -175,8 +175,16 @@ const HomePage = () => {
         </section>
       )}
 
+      {/* Artists Section */}
+      <section className={styles['content-section']}>
+        <div className={styles['section-header']}>
+          <h2 className={styles['section-title']}>Gợi ý dành cho bạn</h2>
+        </div>
+        <div className={styles.recommendSys}></div>
+      </section>
+
       {/* Popular Songs Section */}
-      {songs.length > 0 && (
+      {/* {songs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
             <h2 className={styles['section-title']}>{t('trending_songs')}</h2>
@@ -205,10 +213,10 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Pop Songs Section */}
-      {popSongs.length > 0 && (
+      {/* {popSongs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
             <h2 className={styles['section-title']}>{t('trending_pop')}</h2>
@@ -237,10 +245,10 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Youth Songs Section */}
-      {youthSongs.length > 0 && (
+      {/* {youthSongs.length > 0 && (
         <section className={styles['content-section']}>
           <div className={styles['section-header']}>
             <h2 className={styles['section-title']}>{t('trending_youth')}</h2>
@@ -269,7 +277,7 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
     </div>
   );
 };
