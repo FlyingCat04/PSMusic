@@ -7,7 +7,7 @@ namespace PSMusic.Server.Models.Entities
         [Key]
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string LrcUrl { get; set; } = string.Empty;
+        public string? LrcUrl { get; set; } = string.Empty;
         public string Mp3Url { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
