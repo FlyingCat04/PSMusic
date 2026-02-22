@@ -32,7 +32,7 @@ namespace PSMusic.Server.Controllers
 
                 Secure = Request.IsHttps,
 
-                SameSite = Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax
+                SameSite = SameSiteMode.None
             };
 
             Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
