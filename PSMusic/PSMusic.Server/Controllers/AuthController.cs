@@ -30,7 +30,7 @@ namespace PSMusic.Server.Controllers
                 Path = "/",
                 Expires = DateTime.UtcNow.AddDays(7),
 
-                Secure = Request.IsHttps,
+                Secure = true,
 
                 SameSite = SameSiteMode.None
             };
