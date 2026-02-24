@@ -10,22 +10,17 @@ import SectionHeader from "../../components/SectionHeader/SectionHeader";
 import TrackTable from "../../components/TrackTable/TrackTable";
 import axiosInstance from "../../services/axiosInstance";
 import { usePlayer } from "../../contexts/PlayerContext";
+import { useTranslation } from 'react-i18next';
 
-const TAB_TO_TYPE = {
-    "Tất cả": "all",
-    "Bài hát": "songs",
-    "Playlists": "playlists",
-    "Nghệ sĩ": "artists",
-    "Albums": "albums",
-};
-
-const TYPE_TO_TAB = {
-    all: "Tất cả",
-    songs: "Bài hát",
-    playlists: "Playlists",
-    artists: "Nghệ sĩ",
-    albums: "Albums",
-};
+// Dùng type key cố định (không phụ thuộc ngôn ngữ) để làm anchor
+// labelKey tương ứng với key đã có sẵn trong file i18n (vi.json, en.json...)
+const SEARCH_TABS = [
+    { type: "all", labelKey: "all" },
+    { type: "songs", labelKey: "songs" },
+    { type: "artists", labelKey: "artists" },
+    // { type: "playlists", labelKey: "playlists" },
+    // { type: "albums",    labelKey: "albums"    },
+];
 
 const PAGE_SIZE = 12;
 const SONG_NUMBER = 500;
@@ -71,6 +66,7 @@ const mapArtist = (item) => ({
 });
 
 const SearchResultPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [params, setParams] = useSearchParams();
 
@@ -79,7 +75,8 @@ const SearchResultPage = () => {
     const type = params.get("t") || "all";
     const pageFromUrl = parseInt(params.get("page") || "1", 10);
 
-    const [activeTab, setActiveTab] = useState(TYPE_TO_TAB[type] || "Tất cả");
+    // activeTab lưu type key ("all", "songs"...) thay vì chuỗi hiển thị
+    const [activeTab, setActiveTab] = useState(type || "all");
     const [page, setPage] = useState(pageFromUrl);
 
     //const [playingSongId, setPlayingSongId] = useState(null);
@@ -100,7 +97,7 @@ const SearchResultPage = () => {
     }, [pageFromUrl]);
 
     useEffect(() => {
-        setActiveTab(TYPE_TO_TAB[type] || "Tất cả");
+        setActiveTab(type || "all");
     }, [type]);
 
     // gọi API thật mỗi khi keyword hoặc page thay đổi
@@ -129,7 +126,7 @@ const SearchResultPage = () => {
                 });
 
                 const data = res.data || {};
-                const rawTop = data.topResult || null;  
+                const rawTop = data.topResult || null;
                 const results = data.results || [];
                 setTotalPages(data.totalPages || 1);
 
@@ -161,7 +158,7 @@ const SearchResultPage = () => {
                 setArtists(artistItems);
 
                 // tuỳ backend, nếu có totalPages hoặc total thì set chính xác
-                
+
             } catch (err) {
                 //console.error(err);
                 setError("Không tải được kết quả tìm kiếm. Vui lòng thử lại.");
@@ -197,9 +194,15 @@ const SearchResultPage = () => {
 
     // nghệ sĩ hiển thị
     const artistsForView = useMemo(
-        () => (activeTab === "Tất cả" ? artists.slice(0, 4) : artists),
+        () => (activeTab === "all" ? artists.slice(0, 4) : artists),
         [artists, activeTab]
     );
+
+    // Danh sách tab với label đã dịch, tạo trong component để t() reactive
+    const tabItems = SEARCH_TABS.map((tab) => ({
+        type: tab.type,
+        label: t(tab.labelKey),
+    }));
 
     const handlePageChange = (newPage) => {
         setPage(newPage);
@@ -208,12 +211,11 @@ const SearchResultPage = () => {
         setParams(newParams);
     };
 
-    const handleTabChange = (tabLabel) => {
-        setActiveTab(tabLabel);
-        const newType = TAB_TO_TYPE[tabLabel] || "all";
-
+    const handleTabChange = (tabType) => {
+        // tabType là type key cố định ("all", "songs"...) từ SearchTabs
+        setActiveTab(tabType);
         const newParams = Object.fromEntries(params.entries());
-        newParams.t = newType;
+        newParams.t = tabType;
         newParams.page = "1";
         setParams(newParams);
     };
@@ -245,23 +247,23 @@ const SearchResultPage = () => {
 
     return (
         <div className="content-container">
-            <h1 className={styles["sr-title-xl"]}>Kết quả tìm kiếm</h1>
+            <h1 className={styles["sr-title-xl"]}>{t('search_result_page_header')}</h1>
 
-            <SearchTabs active={activeTab} onChange={handleTabChange} />
+            <SearchTabs items={tabItems} active={activeTab} onChange={handleTabChange} />
 
 
             {!loading &&
                 !error &&
                 keyword &&
                 songs.length === 0 &&
-                !topResult && ( 
-                    <p>Không tìm thấy kết quả cho "{keyword}".</p>
+                !topResult && (
+                    <p>{t('not_found_msg')} "{keyword}".</p>
                 )}
 
             {/* TOP RESULT: kết quả khớp chính xác */}
-            {activeTab === "Tất cả" && topResult && (
+            {activeTab === "all" && topResult && (
                 <section className={styles["content-section"]}>
-                    <SectionHeader title="Top kết quả" />
+                    <SectionHeader title={t('top_result_label')} />
                     {topResult.kind === "song" ? (
                         <div className={styles["top-result-row"]}>
                             <ItemCardRow
@@ -289,19 +291,19 @@ const SearchResultPage = () => {
             )}
 
             {/* BÀI HÁT */}
-            {(activeTab === "Tất cả" || activeTab === "Bài hát") && songs.length > 0 && (
+            {(activeTab === "all" || activeTab === "songs") && songs.length > 0 && (
                 <section className={styles["content-section"]}>
                     <SectionHeader
-                        title="Bài hát"
+                        title={t('tab_songs')}
                         onMore={
-                            activeTab === "Tất cả"
-                                ? () => handleTabChange("Bài hát")
+                            activeTab === "all"
+                                ? () => handleTabChange("songs")
                                 : undefined
                         }
                     />
 
                     {/* 2 cột cho tab Tất cả */}
-                    {activeTab === "Tất cả" && (
+                    {activeTab === "all" && (
                         <div className={`${styles["sr-rows"]} ${styles["two-col"]}`}>
                             <div className={styles["sr-col"]}>
                                 {leftCol.map((s) => (
@@ -323,7 +325,7 @@ const SearchResultPage = () => {
                     )}
 
                     {/* bảng + phân trang cho tab Bài hát */}
-                    {activeTab === "Bài hát" && (
+                    {activeTab === "songs" && (
                         <div className={styles.songList}>
 
                             <TrackTable
@@ -349,13 +351,13 @@ const SearchResultPage = () => {
             )}
 
             {/* NGHỆ SĨ */}
-            {(activeTab === "Tất cả" || activeTab === "Nghệ sĩ") && artistsForView.length > 0 && (
+            {(activeTab === "all" || activeTab === "artists") && artistsForView.length > 0 && (
                 <section className={styles["content-section"]}>
                     <SectionHeader
-                        title="Nghệ sĩ"
+                        title={t('tab_artists')}
                         onMore={
-                            activeTab === "Tất cả"
-                                ? () => handleTabChange("Nghệ sĩ")
+                            activeTab === "all"
+                                ? () => handleTabChange("artists")
                                 : undefined
                         }
                     />

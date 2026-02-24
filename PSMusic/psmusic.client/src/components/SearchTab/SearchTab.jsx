@@ -1,10 +1,11 @@
 import React from "react";
 import styles from "./SearchTab.module.css";
 
+// items: [{ type: string, label: string }]
+// active: type key (ví dụ "all", "songs", "artists")
 const SearchTabs = ({
-    //items = ["Tất cả", "Bài hát", "Playlists", "Nghệ sĩ", "Albums"],
-    items = ["Tất cả", "Bài hát", "Nghệ sĩ"],
-    active = "Tất cả",
+    items = [],
+    active = "all",
     onChange,
 }) => {
     return (
@@ -13,17 +14,17 @@ const SearchTabs = ({
             role="tablist"
             aria-label="Search categories"
         >
-            {items.map((t) => (
+            {items.map(({ type, label }) => (
                 <button
-                    key={t}
+                    key={type}
                     type="button"
                     role="tab"
-                    aria-selected={active === t}
-                    className={`${styles["sr-tab"]} ${active === t ? styles["sr-tab-active"] : ""
+                    aria-selected={active === type}
+                    className={`${styles["sr-tab"]} ${active === type ? styles["sr-tab-active"] : ""
                         }`}
-                    onClick={() => onChange?.(t)}
+                    onClick={() => onChange?.(type)}
                 >
-                    {t}
+                    {label}
                 </button>
             ))}
         </div>
