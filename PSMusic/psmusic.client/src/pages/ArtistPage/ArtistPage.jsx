@@ -495,7 +495,7 @@ const ArtistPage = () => {
             {relatedArtists.length > 0 && (
                 <section className={styles.section}>
                     <SectionHeader title={t('related_artists')} />
-                    <div className={styles["result-grid"]}>
+                    <div className={styles.resultGrid}>
                         {(relatedForView || relatedArtists).map((a) => (
                             <SquareCard
                                 key={a.id}
