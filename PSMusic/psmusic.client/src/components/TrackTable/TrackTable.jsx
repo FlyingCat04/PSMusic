@@ -19,7 +19,7 @@ const TrackTable = ({
 }) => {
     const startIndex = (page - 1) * pageSize;
     const { t } = useTranslation();
-    const { playSong, currentSong, isPlaying } = usePlayer();
+    const { startNewSession, currentSong, isPlaying } = usePlayer();
     return (
         <div className={styles.tracklist}>
             {/* HEADER */}
@@ -66,7 +66,7 @@ const TrackTable = ({
                                 item={song}
                                 isDualColumn={isDualColumn}
                                 showPlayingIcon={currentSong?.id === song.id && isPlaying}
-                                onPlay={() => playSong({
+                                onPlay={() => startNewSession({
                                     ...song,
                                     audioUrl: song.mp3Url,
                                     coverUrl: song.imageUrl,

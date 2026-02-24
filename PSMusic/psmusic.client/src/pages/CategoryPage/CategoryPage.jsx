@@ -138,7 +138,7 @@ const CategoryPage = () => {
     const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
-    const { playSong, currentSong, isPlaying } = usePlayer();
+    const { startNewSession, currentSong, isPlaying } = usePlayer();
 
 
     const [category, setCategory] = useState({ id, name: "Category", imageUrl: "" });
@@ -335,7 +335,7 @@ const CategoryPage = () => {
                                 key={s.id}
                                 item={s}
                                 type="song"
-                                onPlay={() => playSong({
+                                onPlay={() => startNewSession({
                                     ...s,
                                     audioUrl: s.mp3Url,
                                     coverUrl: s.imageUrl,

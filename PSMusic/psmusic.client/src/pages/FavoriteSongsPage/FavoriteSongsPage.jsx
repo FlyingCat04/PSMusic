@@ -27,7 +27,7 @@ export default function FavoritePlaylistPage() {
   // Initialize with cached data if available
   const [songs, setSongs] = useState(initialCache || []);
   const [loading, setLoading] = useState(!initialCache);
-  const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying } =
+  const { startNewSession, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying } =
     usePlayer();
 
   useEffect(() => {
@@ -155,7 +155,7 @@ export default function FavoritePlaylistPage() {
       if (playPlaylist) {
         playPlaylist(songs, 0);
       } else {
-        playSong(songs[0]);
+        startNewSession(songs[0]);
       }
     }
   };
@@ -164,7 +164,7 @@ export default function FavoritePlaylistPage() {
     if (playPlaylist) {
       playPlaylist(songs, index);
     } else {
-      playSong(song);
+      startNewSession(song);
     }
   };
 

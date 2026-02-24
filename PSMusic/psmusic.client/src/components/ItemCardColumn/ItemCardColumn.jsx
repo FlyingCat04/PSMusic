@@ -18,7 +18,7 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
     const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
     // const { audioRef, togglePlay } = usePlayer();
-    const { playSong } = usePlayer();
+    const { startNewSession } = usePlayer();
 
     // If no item data, show skeleton
     if (!item) {
@@ -48,7 +48,7 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                 ...item,
                 audioUrl: item.mp3Url
             };
-            playSong(songData);
+            startNewSession(songData);
         }
 
         if (onPlay) onPlay(item);

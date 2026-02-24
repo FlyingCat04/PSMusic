@@ -31,7 +31,7 @@ export default function SongViewPage() {
   const [showAllOtherSongs, setShowAllOtherSongs] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const lyricsRef = useRef(null);
-  const { playSong, currentTime, currentSong, isPlaying } = usePlayer();
+  const { startNewSession, currentTime, currentSong, isPlaying } = usePlayer();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function SongViewPage() {
           <div className={styles["play-buttons"]}>
             <button
               className={styles["btn-play"]}
-              onClick={() => playSong(songDetail)}
+              onClick={() => startNewSession(songDetail)}
             >
               <Play className={styles["button-icon"]} />{t('play')}
             </button>
@@ -281,7 +281,7 @@ export default function SongViewPage() {
             songs={otherSongs}
             currentSong={currentSong}
             isPlaying={isPlaying}
-            onPlay={playSong}
+            onPlay={startNewSession}
             onTitleClick={handleTitleClick}
             onAddToPlaylist={handleAddToPlaylist}
             onViewArtist={handleViewArtist}

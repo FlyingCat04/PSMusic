@@ -74,18 +74,39 @@ export function PlayerProvider({ children }) {
     }
   }, [playerData?.audioUrl]);
 
-  const playSong = async (song) => {
-    if (queueIndex >= queue.length - 1) {
-      const res = await PlayerControlService.getNextBatch();
-      if (res.data.length > 0) {
-        setQueue(res.data);
-        setQueueIndex(0);
-      }
-    }
+  // ---------- Hàm nội bộ ----------
+  // Chỉ đặt bài hát hiện tại và trạng thái phát.
+  // KHÔNG đụng vào queue — dùng cho next/prev/repeat/playlist.
+  const playSong = (song) => {
     setCurrentSong(song);
     setHasStreamed(false);
     setIsPlayerVisible(true);
     setIsPlaying(true);
+  };
+
+  // ---------- Hàm bên ngoài (component gọi khi user click) ----------
+  // Phát bài và reset queue từ API, đặt bài đã chọn ở index 0.
+  const startNewSession = async (song) => {
+    setCurrentSong(song);
+    setHasStreamed(false);
+    setIsPlayerVisible(true);
+    setIsPlaying(true);
+
+    try {
+      const res = await PlayerControlService.getNextBatch();
+      if (res.data && res.data.length > 0) {
+        const newQueue = [song, ...res.data];
+        setQueue(newQueue);
+        setOriginalQueue(newQueue);
+      } else {
+        setQueue([song]);
+        setOriginalQueue([song]);
+      }
+    } catch {
+      setQueue([song]);
+      setOriginalQueue([song]);
+    }
+    setQueueIndex(0);
   };
 
   const togglePlay = () => {
@@ -94,7 +115,7 @@ export function PlayerProvider({ children }) {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play().catch(() => {});
+      audioRef.current.play().catch(() => { });
     }
 
     setIsPlaying((prev) => !prev);
@@ -161,7 +182,7 @@ export function PlayerProvider({ children }) {
     // Repeat One logic
     if (repeat === 2 && audioRef.current) {
       audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(() => {});
+      audioRef.current.play().catch(() => { });
       return;
     }
 
@@ -266,13 +287,13 @@ export function PlayerProvider({ children }) {
   useEffect(() => {
     if (!audioRef.current) return;
     const audio = audioRef.current;
-    
+
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
     const onLoadedMetadata = () => setDuration(audio.duration);
-    
+
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
-    
+
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
@@ -308,6 +329,7 @@ export function PlayerProvider({ children }) {
     isPlayerVisible,
 
     playSong,
+    startNewSession,   // ← dùng cho tất cả component bên ngoài
     togglePlay,
     setVolume,
     setIsPlayerVisible,

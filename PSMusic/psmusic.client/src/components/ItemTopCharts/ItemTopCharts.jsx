@@ -17,7 +17,7 @@ const handleImgError = (e) => {
 const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
     const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
-    const { playSong } = usePlayer();
+    const { startNewSession } = usePlayer();
     const artists = song.artists || [];
 
     const handlePlayClick = (e) => {
@@ -28,7 +28,7 @@ const ItemTopCharts = ({ song, rank, onPlay, onFavorite, onMenu }) => {
                 ...song,
                 audioUrl: song.mp3Url
             };
-            playSong(songData);
+            startNewSession(songData);
         }
 
         if (onPlay) onPlay(song);
