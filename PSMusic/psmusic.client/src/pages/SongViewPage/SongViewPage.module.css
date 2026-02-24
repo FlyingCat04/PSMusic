@@ -1,5 +1,6 @@
 .song-view-container {
   color: white;
+  margin-bottom: 2rem;
 }
 
 .song-header {
@@ -129,7 +130,8 @@
 
 .lyrics-header {
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   margin-bottom: 10px;
 }
 
@@ -281,7 +283,7 @@
 
 .active-lyric {
   font-size: 16px;
-  color: var(--text-primary);
+  color: var(--primary-purple);
   font-weight: 600;
 }
 
@@ -313,7 +315,7 @@
 }
 
 .btn-toggle-songs {
-  margin-top: 10px;
+  margin: 16px 0 0 16px;
   background: none;
   border: none;
   color: var(--primary-purple);

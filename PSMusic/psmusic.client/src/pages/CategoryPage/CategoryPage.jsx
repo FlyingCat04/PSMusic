@@ -104,7 +104,8 @@ const DEFAULT_SONG_IMAGE =
 const DEFAULT_ARTIST_IMAGE =
     "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
-const PAGE_SIZE = 8;
+const ARTIST_PAGE_SIZE = 10;
+const SONG_PAGE_SIZE = 12;
 
 const checkImage = (url, fallback) => (!url ? fallback : url);
 
@@ -149,10 +150,6 @@ const CategoryPage = () => {
     const [artistPage, setArtistPage] = useState(1);
     const [artistTotalPages, setArtistTotalPages] = useState(1);
 
-    const [showAllArtists, setShowAllArtists] = useState(false);
-    const [showAllSongs, setShowAllSongs] = useState(false);
-
-
     const [songPage, setSongPage] = useState(1);
     const [songTotalPages, setSongTotalPages] = useState(1);
 
@@ -195,7 +192,7 @@ const CategoryPage = () => {
         const load = async () => {
             try {
                 const res = await axiosInstance.get(`/artist/category/${id}`, {
-                    params: { id: id, page: artistPage, size: PAGE_SIZE },
+                    params: { id: id, page: artistPage, size: ARTIST_PAGE_SIZE },
                 });
 
                 const data = res.data || {};
@@ -218,7 +215,7 @@ const CategoryPage = () => {
         const load = async () => {
             try {
                 const res = await axiosInstance.get(`song/category/popular/${id}`, {
-                    params: { id: id, page: songPage, size: PAGE_SIZE },
+                    params: { id: id, page: songPage, size: SONG_PAGE_SIZE },
                 });
 
                 const data = res.data || {};
@@ -273,9 +270,6 @@ const CategoryPage = () => {
         };
     }, [category]);
 
-    const artistsPreview = useMemo(() => artists.slice(0, 4), [artists]);
-    const songsPreview = useMemo(() => songs.slice(0, 4), [songs]);
-
     const handleViewArtist = (artistId) => navigate(`/artist/${artistId}`);
     const handleViewSong = (song) => navigate(`/song/${song.id}`);
 
@@ -306,46 +300,25 @@ const CategoryPage = () => {
                 <section className={styles.section}>
                     <SectionHeader
                         title={t('featured_artists')}
-                        onMore={showAllArtists === false ? () => setShowAllArtists(true) : undefined} // mở chế độ xem đầy đủ
                     />
 
-                    {/* PREVIEW MODE */}
-                    {!showAllArtists ? (
-                        // PREVIEW
-                        <div>
-                            {artistsPreview.map(a => (
-                                <SquareCard
-                                    key={a.id}
-                                    imageUrl={a.imageUrl}
-                                    title={a.name}
-                                    circle
-                                    onClick={() => handleViewArtist(a.id)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <>
-                            <div>
-                                {artists.map(a => (
-                                    <SquareCard
-                                        key={a.id}
-                                        imageUrl={a.imageUrl}
-                                        title={a.name}
-                                        circle
-                                        onClick={() => handleViewArtist(a.id)}
-                                    />
-                                ))}
-                            </div>
-
-                            <Pagination
-                                page={artistPage}
-                                totalPages={artistTotalPages}
-                                onChange={setArtistPage}
+                    <div className={styles.artistsGrid}>
+                        {artists.map(a => (
+                            <SquareCard
+                                key={a.id}
+                                imageUrl={a.imageUrl}
+                                title={a.name}
+                                circle
+                                onClick={() => handleViewArtist(a.id)}
                             />
-                        </>
-                    )
-                    }
+                        ))}
+                    </div>
 
+                    <Pagination
+                        page={artistPage}
+                        totalPages={artistTotalPages}
+                        onChange={setArtistPage}
+                    />
                 </section>
             )}
 
@@ -354,55 +327,29 @@ const CategoryPage = () => {
                 <section className={styles.section}>
                     <SectionHeader
                         title={t('songs')}
-                        onMore={showAllSongs === false ? () => setShowAllSongs(true) : undefined}
                     />
 
-                    {/* PREVIEW MODE */}
-                    {!showAllSongs ? (
-                        // PREVIEW MODE
-                        <div className={styles.resultGrid}>
-                            {songsPreview.map((s) => (
-                                <ItemCardColumn
-                                    key={s.id}
-                                    item={s}
-                                    type="song"
-                                    onPlay={() => playSong({
-                                        ...s,
-                                        audioUrl: s.mp3Url,
-                                        coverUrl: s.imageUrl,
-                                        artist: s.artists?.map(a => a.name) || [],
-                                    })}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        // FULL LIST
-                        <>
-                            <div className={styles.resultGrid}>
-                                {songs.map((s) => (
-                                    <ItemCardColumn
-                                        key={s.id}
-                                        item={s}
-                                        type="song"
-                                        onPlay={() => playSong({
-                                            ...s,
-                                            audioUrl: s.mp3Url,
-                                            coverUrl: s.imageUrl,
-                                            artist: s.artists?.map(a => a.name) || [],
-                                        })}
-                                    />
-                                ))}
-                            </div>
-
-                            <Pagination
-                                page={songPage}
-                                totalPages={songTotalPages}
-                                onChange={setSongPage}
+                    <div className={styles.songsGrid}>
+                        {songs.map((s) => (
+                            <ItemCardColumn
+                                key={s.id}
+                                item={s}
+                                type="song"
+                                onPlay={() => playSong({
+                                    ...s,
+                                    audioUrl: s.mp3Url,
+                                    coverUrl: s.imageUrl,
+                                    artist: s.artists?.map(a => a.name) || [],
+                                })}
                             />
-                        </>
-                    )
-                    }
+                        ))}
+                    </div>
 
+                    <Pagination
+                        page={songPage}
+                        totalPages={songTotalPages}
+                        onChange={setSongPage}
+                    />
                 </section>
             )}
         </div>

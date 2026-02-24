@@ -8,22 +8,21 @@
 .result-card {
     border-radius: 8px;
     border: 1px solid var(--border);
-    padding: 10px;
+    padding: 16px 4px;
     text-align: center;
     cursor: pointer;
     transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
-    width: 240px;
+    width: 15rem;
 }
 
 .result-card:hover {
     background: var(--component-hover-bg);
     border-color: var(--primary-purple);
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-    transform: translateY(-1px);
 }
 
 .result-cover {
-    width: 60%;
+    width: 80%;
     aspect-ratio: 1 / 1;
     border-radius: 8px;
     object-fit: cover;

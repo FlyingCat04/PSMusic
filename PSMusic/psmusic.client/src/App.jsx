@@ -4,7 +4,6 @@ import ClientLayout from './layouts/ClientLayout/ClientLayout';
 import HomePage from './pages/HomePage/HomePage';
 import SongViewPage from './pages/SongViewPage/SongViewPage';
 import FavoriteSongsPage from './pages/FavoriteSongsPage/FavoriteSongsPage';
-import MusicPlayerPage from './pages/MusicPlayerPage/MusicPlayerPage';
 import AuthPage from './pages/Auth/AuthPage';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import SearchResultPage from './pages/SearchResult/SearchResultPage';
@@ -30,7 +29,6 @@ const App = () => {
                 <Route path="/song/:songId" element={<SongViewPage />} />
                 <Route path="/artist/:id" element={<ArtistPage />} />
                 <Route path="/category/:id" element={<CategoryPage />} />
-                <Route path="/player/:id" element={<MusicPlayerPage />} />
                 <Route path="/search" element={<SearchResultPage />} />
             </Route>
             <Route element={
