@@ -211,7 +211,9 @@ export default function SongViewPage() {
           >
             {lyrics.length ? (
               lyrics.map((line, index) => {
+                const isCurrentSong = currentSong && songDetail && currentSong.id === songDetail.id;
                 const isCurrent =
+                  isCurrentSong &&
                   line.time <= currentTime + 0.15 &&
                   (index === lyrics.length - 1 ||
                     lyrics[index + 1].time > currentTime);
