@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
-import { Play, Pause, Heart } from 'lucide-react';
+import { Play, Heart } from 'lucide-react';
 import styles from './ItemCardColumn.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
 
@@ -88,17 +88,23 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                 )}
 
                 {type !== 'artist' && (
-                    <button
-                        className={`${styles['play-button-overlay']} ${isHovered || isCurrentPlaying ? styles['show'] : ''}`}
-                        onClick={handlePlayClick}
-                        aria-label="Play"
-                    >
-                        {isCurrentPlaying && isPlaying ? (
-                            <Pause className={styles['play-icon']} fill="currentColor" />
-                        ) : (
+                    isCurrentPlaying && isPlaying ? (
+                        <div className={styles['cover-playing']}>
+                            <div className={styles['eq']}>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    ) : (
+                        <button
+                            className={`${styles['play-button-overlay']} ${isHovered ? styles['show'] : ''}`}
+                            onClick={handlePlayClick}
+                            aria-label="Play"
+                        >
                             <Play className={styles['play-icon']} fill="currentColor" />
-                        )}
-                    </button>
+                        </button>
+                    )
                 )}
             </div>
             {type === 'artist' ? (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Pause } from 'lucide-react';
+import { Play } from 'lucide-react';
 import styles from './ItemCardRow.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
 
@@ -51,19 +51,27 @@ const ItemCardRow = ({ song }) => {
                     className={styles['item-card-row-image']}
                     onError={handleImgError}
                 />
-                <div className={`${styles['play-overlay']} ${isHovered || (isCurrentPlaying && isPlaying) ? styles['show'] : ''}`}>
-                    <button 
-                        className={styles['play-button']}
-                        onClick={handlePlayClick}
-                        aria-label="Play"
-                    >
-                        {isCurrentPlaying && isPlaying ? (
-                            <Pause className={styles['play-icon']} fill="currentColor" />
-                        ) : (
+                {/* Hiển thị equalizer khi đang phát */}
+                {isCurrentPlaying && isPlaying ? (
+                    <div className={styles['cover-playing']}>
+                        <div className={styles['eq']}>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                ) : (
+                    /* Hiển thị play button khi hover */
+                    <div className={`${styles['play-overlay']} ${isHovered ? styles['show'] : ''}`}>
+                        <button 
+                            className={styles['play-button']}
+                            onClick={handlePlayClick}
+                            aria-label="Play"
+                        >
                             <Play className={styles['play-icon']} fill="currentColor" />
-                        )}
-                    </button>
-                </div>
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Info */}
