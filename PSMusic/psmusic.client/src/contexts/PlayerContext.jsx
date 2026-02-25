@@ -85,7 +85,7 @@ export function PlayerProvider({ children }) {
   };
 
   // ---------- Hàm bên ngoài (component gọi khi user click) ----------
-  // Phát bài và reset queue từ API, đặt bài đã chọn ở index 0.
+  // Phát bài mới và giữ lại lịch sử các bài đã nghe.
   const startNewSession = async (song) => {
     setCurrentSong(song);
     setHasStreamed(false);
@@ -93,20 +93,46 @@ export function PlayerProvider({ children }) {
     setIsPlaying(true);
 
     try {
+      // Lấy lịch sử các bài đã nghe (từ đầu đến vị trí hiện tại)
+      const history = queue.slice(0, queueIndex + 1);
+      
+      // Kiểm tra xem bài mới đã có trong lịch sử chưa
+      const songExistsInHistory = history.some(s => s.id === song.id);
+      
       const res = await PlayerControlService.getNextBatch();
-      if (res.data && res.data.length > 0) {
-        const newQueue = [song, ...res.data];
+      const apiBatch = res.data && res.data.length > 0 ? res.data : [];
+      
+      let newQueue;
+      let newIndex;
+      
+      if (songExistsInHistory) {
+        // Nếu bài đã có trong lịch sử, chỉ cần di chuyển đến vị trí đó
+        newIndex = history.findIndex(s => s.id === song.id);
+        newQueue = [...history, ...apiBatch];
+      } else {
+        // Nếu bài mới chưa có, thêm vào sau lịch sử
+        newQueue = [...history, song, ...apiBatch];
+        newIndex = history.length;
+      }
+      
+      setQueue(newQueue);
+      setOriginalQueue(newQueue);
+      setQueueIndex(newIndex);
+    } catch {
+      // Fallback nếu API thất bại
+      const history = queue.slice(0, queueIndex + 1);
+      const songExistsInHistory = history.some(s => s.id === song.id);
+      
+      if (songExistsInHistory) {
+        const newIndex = history.findIndex(s => s.id === song.id);
+        setQueueIndex(newIndex);
+      } else {
+        const newQueue = [...history, song];
         setQueue(newQueue);
         setOriginalQueue(newQueue);
-      } else {
-        setQueue([song]);
-        setOriginalQueue([song]);
+        setQueueIndex(history.length);
       }
-    } catch {
-      setQueue([song]);
-      setOriginalQueue([song]);
     }
-    setQueueIndex(0);
   };
 
   const togglePlay = () => {

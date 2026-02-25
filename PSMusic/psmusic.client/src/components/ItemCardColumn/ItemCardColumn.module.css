@@ -4,13 +4,13 @@
     transition: background-color 0.2s;
 }
 
-.item-card-column.active .item-card-column-title {
+/* .item-card-column.active .item-card-column-title {
     color: var(--primary-purple);
-}
+} */
 
-.item-card-column.active .item-card-column-image {
+/* .item-card-column.active .item-card-column-image {
     box-shadow: 0 0 0 2px var(--primary-purple);
-}
+} */
 
 .image-wrapper {
     position: relative;
