@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
-import { Play, Heart } from 'lucide-react';
+import { Play, Pause, Heart } from 'lucide-react';
 import styles from './ItemCardColumn.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
 
@@ -17,8 +17,7 @@ const handleImgError = (e) => {
 const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
     const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
-    // const { audioRef, togglePlay } = usePlayer();
-    const { playSong } = usePlayer();
+    const { playSong, currentSong, isPlaying, togglePlay } = usePlayer();
 
     // If no item data, show skeleton
     if (!item) {
@@ -35,18 +34,19 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
     const title = item.title || item.name || t('unknown_title');
     const artists = item.artists || [];
 
+    const isCurrentPlaying = currentSong?.id === item.id;
+
     const handlePlayClick = (e) => {
         e.stopPropagation();
 
-        // Set audio source and play immediately
-        // if (audioRef.current && item.mp3Url) {
-        //     audioRef.current.src = item.mp3Url;
-        //     audioRef.current.play();
-        //     togglePlay();      
-        if (item.mp3Url) {
+        if (isCurrentPlaying) {
+            togglePlay();
+        } else if (item.mp3Url || item.audioUrl) {
+            const url = item.mp3Url || item.audioUrl;
             const songData = {
                 ...item,
-                audioUrl: item.mp3Url
+                audioUrl: url,
+                mp3Url: url
             };
             playSong(songData);
         }
@@ -60,7 +60,7 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
     };
 
     return (
-        <div className={styles['item-card-column']}>
+        <div className={`${styles['item-card-column']} ${isCurrentPlaying && isPlaying ? styles['active'] : ''}`}>
             <div
                 className={styles['image-wrapper']}
                 onMouseEnter={() => setIsHovered(true)}
@@ -86,25 +86,17 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
                     />
                 )}
 
-                {/* Favorite Button - Top Right Corner - Only for songs */}
-                {/*{type !== 'artist' && (*/}
-                {/*    <button */}
-                {/*        className={`${styles['favorite-button']} ${isHovered ? styles['show'] : ''}`}*/}
-                {/*        onClick={handleFavoriteClick}*/}
-                {/*        aria-label="Add to favorites"*/}
-                {/*    >*/}
-                {/*        <Heart size={20} />*/}
-                {/*    </button>*/}
-                {/*)}*/}
-
-                {/* Play Button - Center - Only for songs */}
                 {type !== 'artist' && (
                     <button
-                        className={`${styles['play-button-overlay']} ${isHovered ? styles['show'] : ''}`}
+                        className={`${styles['play-button-overlay']} ${isHovered || isCurrentPlaying ? styles['show'] : ''}`}
                         onClick={handlePlayClick}
                         aria-label="Play"
                     >
-                        <Play className={styles['play-icon']} fill="currentColor" />
+                        {isCurrentPlaying && isPlaying ? (
+                            <Pause className={styles['play-icon']} fill="currentColor" />
+                        ) : (
+                            <Play className={styles['play-icon']} fill="currentColor" />
+                        )}
                     </button>
                 )}
             </div>

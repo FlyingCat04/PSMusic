@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { Play } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
 import { usePlayer } from "../../contexts/PlayerContext";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
@@ -131,7 +131,7 @@ const ArtistPage = () => {
     const navigate = useNavigate();
 
     //const [playingSongId, setPlayingSongId] = useState(null);
-    const { playSong, currentSong, isPlaying, playPlaylist } = usePlayer();
+    const { playSong, currentSong, isPlaying, playPlaylist, togglePlay } = usePlayer();
 
     // hero artist
     const [artist, setArtist] = useState({
@@ -363,20 +363,25 @@ const ArtistPage = () => {
         setRelatedArtistPage(newPage);
     };
 
+    // Kiểm tra bài đang phát có thuộc nghệ sĩ này không
+    const allArtistSongs = [...mainSongs, ...collabSongs];
+    const isArtistPlaying =
+        isPlaying &&
+        currentSong &&
+        allArtistSongs.some((s) => s.id === currentSong.id);
+
     const handlePlayArtist = () => {
-        if (mainSongs && mainSongs.length > 0) {
-            playPlaylist(mainSongs, 0, {
-                type: 'ARTIST_MAIN',
-                id: id,
-                page: 1
-            });
+        // Nếu bài hiện tại thuộc nghệ sĩ này (dù đang play hay pause) → toggle
+        const currentIsArtistSong = currentSong && allArtistSongs.some((s) => s.id === currentSong.id);
+        if (currentIsArtistSong) {
+            togglePlay();
+            return;
         }
-        else if (collabSongs && collabSongs.length > 0) {
-            playPlaylist(collabSongs, 0, {
-                type: 'ARTIST_COLLAB',
-                id: id,
-                page: 1
-            });
+        // Chưa phát hoặc đang phát bài khác → bắt đầu playlist từ đầu
+        if (mainSongs && mainSongs.length > 0) {
+            playPlaylist(mainSongs, 0);
+        } else if (collabSongs && collabSongs.length > 0) {
+            playPlaylist(collabSongs, 0);
         }
     };
 
@@ -415,10 +420,17 @@ const ArtistPage = () => {
                         </h1>
 
                         <div className={styles.actions}>
-                            <button className={styles.playButton} onClick={handlePlayArtist}
-                                disabled={mainSongs.length === 0 && collabSongs.length === 0}>
-                                <Play className={styles.playIcon} />
-                                {t('play')}
+                            <button
+                                className={styles.playButton}
+                                onClick={handlePlayArtist}
+                                disabled={mainSongs.length === 0 && collabSongs.length === 0}
+                            >
+                                {isArtistPlaying ? (
+                                    <Pause className={styles.playIcon} />
+                                ) : (
+                                    <Play className={styles.playIcon} />
+                                )}
+                                {isArtistPlaying ? t('pause') : t('play')}
                             </button>
                         </div>
                     </div>
@@ -440,9 +452,6 @@ const ArtistPage = () => {
                             <div className={styles.songList}>
                                 <TrackTable
                                     songs={mainSongs}
-                                    currentSong={currentSong}
-                                    isPlaying={isPlaying}
-                                    onPlay={playSong}
                                     onTitleClick={handleTitleClick}
                                     onAddToPlaylist={handleAddToPlaylist}
                                     onViewArtist={handleViewArtist}
@@ -471,9 +480,6 @@ const ArtistPage = () => {
                             <div className={styles.songList}>
                                 <TrackTable
                                     songs={collabSongs}
-                                    currentSong={currentSong}
-                                    isPlaying={isPlaying}
-                                    onPlay={playSong}
                                     onTitleClick={handleTitleClick}
                                     onAddToPlaylist={handleAddToPlaylist}
                                     onViewArtist={handleViewArtist}

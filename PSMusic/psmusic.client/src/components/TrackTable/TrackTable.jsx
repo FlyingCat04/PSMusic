@@ -19,7 +19,25 @@ const TrackTable = ({
 }) => {
     const startIndex = (page - 1) * pageSize;
     const { t } = useTranslation();
-    const { playSong, currentSong, isPlaying } = usePlayer();
+    const { playSong, currentSong, isPlaying, togglePlay } = usePlayer();
+    
+    const handlePlaySong = (song) => {
+        const songData = {
+            ...song,
+            audioUrl: song.mp3Url,
+            coverUrl: song.imageUrl,
+            artist: song.artists?.map(a => a.name) || [],
+        };
+        
+        // Check if this song is currently playing
+        if (currentSong?.id === song.id) {
+            // If it's the current song, toggle play/pause
+            togglePlay();
+        } else {
+            // If it's a different song, play it
+            playSong(songData);
+        }
+    };
     return (
         <div className={styles.tracklist}>
             {/* HEADER */}
@@ -65,13 +83,9 @@ const TrackTable = ({
                             <SongRow
                                 item={song}
                                 isDualColumn={isDualColumn}
-                                showPlayingIcon={currentSong?.id === song.id && isPlaying}
-                                onPlay={() => playSong({
-                                    ...song,
-                                    audioUrl: song.mp3Url,
-                                    coverUrl: song.imageUrl,
-                                    artist: song.artists?.map(a => a.name) || [],
-                                })}
+                                showPlayingIcon={currentSong?.id === song.id}
+                                isPlaying={isPlaying}
+                                onPlay={() => handlePlaySong(song)}
                                 onTitleClick={onTitleClick}
                                 onAddToPlaylist={onAddToPlaylist}
                                 onViewArtist={onViewArtist}

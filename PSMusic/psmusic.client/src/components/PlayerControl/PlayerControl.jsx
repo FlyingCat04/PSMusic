@@ -42,17 +42,16 @@ export default function PlayerControl() {
   const [updatingFavorite, setUpdatingFavorite] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  const songToDisplay = playerData || currentSong;
-  const isFavorited = !!playerData?.isFavorited;
-  const isRated = !!playerData?.isReviewed;
+  const activeAudioUrl = currentSong?.audioUrl || currentSong?.mp3Url || playerData?.audioUrl || playerData?.mp3Url;
+  
+  const pd = playerData || currentSong;
+  const songToDisplay = pd ? {
+    ...pd,
+    audioUrl: activeAudioUrl
+  } : null;
 
-  useEffect(() => {
-    if (!playerData?.audioUrl || !audioRef.current) return;
-
-    if (audioRef.current.src !== playerData.audioUrl) {
-      audioRef.current.src = playerData.audioUrl;
-    }
-  }, [playerData?.audioUrl]);
+  const isFavorited = !!songToDisplay?.isFavorited;
+  const isRated = !!songToDisplay?.isReviewed;
 
   // Sync favorite status from global event bus
   useEffect(() => {
@@ -75,7 +74,7 @@ export default function PlayerControl() {
   };
 
   const handlePlayPause = () => {
-    if (!audioRef.current || !playerData?.audioUrl) return;
+    if (!audioRef.current || !activeAudioUrl) return;
     togglePlay();
   };
 
