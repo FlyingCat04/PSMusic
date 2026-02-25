@@ -39,7 +39,7 @@
 
 /* SECTION */
 .section {
-    padding: 24px 24px;
+    padding: 24px 0px;
     margin-bottom: 0px;
 }
 
@@ -65,6 +65,6 @@
 .artistsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 2rem;
 }
