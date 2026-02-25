@@ -15,8 +15,7 @@ const handleImgError = (e) => {
 
 const ItemCardRow = ({ song }) => {
     const [isHovered, setIsHovered] = useState(false);
-    // const { startNewSession } = usePlayer();
-    const { playSong, currentSong, isPlaying, togglePlay, startNewSession } = usePlayer();
+    const { currentSong, isPlaying, togglePlay, startNewSession } = usePlayer();
     const artists = song.artists || [];
 
     const isCurrentPlaying = currentSong?.id === song.id;

@@ -27,8 +27,6 @@ export default function FavoritePlaylistPage() {
   // Initialize with cached data if available
   const [songs, setSongs] = useState(initialCache || []);
   const [loading, setLoading] = useState(!initialCache);
-  // const { startNewSession, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying } = usePlayer();
-  // const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying, togglePlay } = usePlayer();
   const { startNewSession, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying, togglePlay } = usePlayer();
 
   useEffect(() => {

@@ -19,8 +19,7 @@ const TrackTable = ({
 }) => {
     const startIndex = (page - 1) * pageSize;
     const { t } = useTranslation();
-    // const { startNewSession, currentSong, isPlaying } = usePlayer();
-    const { playSong, currentSong, isPlaying, togglePlay, startNewSession } = usePlayer();
+    const { currentSong, isPlaying, togglePlay, startNewSession } = usePlayer();
     
     const handlePlaySong = (song) => {
         const songData = {
@@ -35,8 +34,8 @@ const TrackTable = ({
             // If it's the current song, toggle play/pause
             togglePlay();
         } else {
-            // If it's a different song, play it
-            playSong(songData);
+            // If it's a different song
+            startNewSession(songData);
         }
     };
 
@@ -85,13 +84,6 @@ const TrackTable = ({
                             <SongRow
                                 item={song}
                                 isDualColumn={isDualColumn}
-                                // showPlayingIcon={currentSong?.id === song.id && isPlaying}
-                                // onPlay={() => startNewSession({
-                                //     ...song,
-                                //     audioUrl: song.mp3Url,
-                                //     coverUrl: song.imageUrl,
-                                //     artist: song.artists?.map(a => a.name) || [],
-                                // })}
                                 showPlayingIcon={currentSong?.id === song.id}
                                 isPlaying={isPlaying}
                                 onPlay={() => handlePlaySong(song)}

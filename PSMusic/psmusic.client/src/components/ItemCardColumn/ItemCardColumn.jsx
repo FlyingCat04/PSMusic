@@ -18,9 +18,7 @@ const ItemCardColumn = ({ item, type = 'song', onPlay, onFavorite }) => {
     const { t } = useTranslation();
     const [isHovered, setIsHovered] = useState(false);
 
-    // const { audioRef, togglePlay } = usePlayer();
-    // const { startNewSession } = usePlayer();
-    const { playSong, currentSong, isPlaying, togglePlay, startNewSession } = usePlayer();
+    const { currentSong, isPlaying, togglePlay, startNewSession } = usePlayer();
 
     // If no item data, show skeleton
     if (!item) {

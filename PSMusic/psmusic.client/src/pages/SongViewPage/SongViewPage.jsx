@@ -31,8 +31,7 @@ export default function SongViewPage() {
   const [showAllOtherSongs, setShowAllOtherSongs] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const lyricsRef = useRef(null);
-  // const { startNewSession, currentTime, currentSong, isPlaying } = usePlayer();
-  const { startNewSession, playSong, currentTime, currentSong, isPlaying, togglePlay } = usePlayer();
+  const { startNewSession, currentTime, currentSong, isPlaying, togglePlay } = usePlayer();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -155,9 +154,9 @@ export default function SongViewPage() {
       // If it's the current song, toggle play/pause
       togglePlay();
     } else {
-      // If it's a different song, play it
+      // If it's a different song, start new session with queue
       const url = songDetail.audioUrl || songDetail.mp3Url;
-      playSong({
+      startNewSession({
         ...songDetail,
         audioUrl: url,
         mp3Url: url
