@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import styles from './ItemCardRow.module.css';
 import { usePlayer } from '../../contexts/PlayerContext';
 
@@ -15,24 +15,32 @@ const handleImgError = (e) => {
 
 const ItemCardRow = ({ song }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const { startNewSession } = usePlayer();
+    // const { startNewSession } = usePlayer();
+    const { playSong, currentSong, isPlaying, togglePlay, startNewSession } = usePlayer();
     const artists = song.artists || [];
+
+    const isCurrentPlaying = currentSong?.id === song.id;
 
     const handlePlayClick = (e) => {
         e.stopPropagation();
 
-        if (song.mp3Url) {
+        // if (song.mp3Url) {
+        if (isCurrentPlaying) {
+            togglePlay();
+        } else if (song.mp3Url || song.audioUrl) {
+            const url = song.mp3Url || song.audioUrl;
             const songData = {
                 ...song,
-                audioUrl: song.mp3Url
+                audioUrl: url,
+                mp3Url: url
             };
             startNewSession(songData);
         }
     };
 
     return (
-        <div
-            className={styles['item-card-row']}
+        <div 
+            className={`${styles['item-card-row']} ${isCurrentPlaying && isPlaying ? styles['active'] : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -44,13 +52,17 @@ const ItemCardRow = ({ song }) => {
                     className={styles['item-card-row-image']}
                     onError={handleImgError}
                 />
-                <div className={`${styles['play-overlay']} ${isHovered ? styles['show'] : ''}`}>
-                    <button
+                <div className={`${styles['play-overlay']} ${isHovered || (isCurrentPlaying && isPlaying) ? styles['show'] : ''}`}>
+                    <button 
                         className={styles['play-button']}
                         onClick={handlePlayClick}
                         aria-label="Play"
                     >
-                        <Play className={styles['play-icon']} fill="currentColor" />
+                        {isCurrentPlaying && isPlaying ? (
+                            <Pause className={styles['play-icon']} fill="currentColor" />
+                        ) : (
+                            <Play className={styles['play-icon']} fill="currentColor" />
+                        )}
                     </button>
                 </div>
             </div>

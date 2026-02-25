@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Play, Download, Clock3 } from "lucide-react";
+import { Play, Pause, Download, Clock3 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import axiosInstance from "../../services/axiosInstance";
 import styles from "./FavoriteSongsPage.module.css";
@@ -27,8 +27,9 @@ export default function FavoritePlaylistPage() {
   // Initialize with cached data if available
   const [songs, setSongs] = useState(initialCache || []);
   const [loading, setLoading] = useState(!initialCache);
-  const { startNewSession, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying } =
-    usePlayer();
+  // const { startNewSession, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying } = usePlayer();
+  // const { playSong, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying, togglePlay } = usePlayer();
+  const { startNewSession, currentSong, playPlaylist, updateCurrentPlaylist, audioRef, setIsPlaying, isPlaying, togglePlay } = usePlayer();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -46,16 +47,20 @@ export default function FavoritePlaylistPage() {
         const resFavorited = await axiosInstance.get("/song/favorites");
         //console.log(resFavorited.data)
 
-        const fetchedSongs = (resFavorited.data || []).map(song => ({
+        const fetchedSongs = (resFavorited.data || []).map(song => {
+          const url = song.audioUrl || song.mp3Url;
+          return {
           ...song,
+          audioUrl: url,
           artists: song.artists
             ? song.artists.map(artist => ({
               name: artist.name,
               id: artist.id
             }))
             : [],
-          mp3Url: song.audioUrl
-        }));
+          mp3Url: url
+        };
+        });
 
         setSongs(fetchedSongs);
         setFavoritesData(fetchedSongs);
@@ -151,20 +156,64 @@ export default function FavoritePlaylistPage() {
   const currentSongCover = songs[0] || {};
 
   const handlePlayAll = () => {
-    if (songs.length > 0) {
+    if (songs.length === 0) return;
+    
+    const currentSongIsInPlaylist = currentSong && songs.some(song => song.id === currentSong.id);
+    
+    // Ensure all songs have audioUrl
+    const playlistSongs = songs.map(s => {
+      const url = s.audioUrl || s.mp3Url;
+      return {
+      ...s,
+      audioUrl: url,
+      mp3Url: url
+    };
+    });
+    
+    if (currentSongIsInPlaylist) {
+      // If a song from the playlist is the current song, just toggle play/pause
+      togglePlay();
+    } else {
+      // Otherwise, start playing the playlist from the beginning
       if (playPlaylist) {
-        playPlaylist(songs, 0);
+        playPlaylist(playlistSongs, 0);
       } else {
-        startNewSession(songs[0]);
+        // startNewSession(songs[0]);
+        playSong(playlistSongs[0]);
       }
     }
   };
 
   const handlePlaySong = (song, index) => {
-    if (playPlaylist) {
-      playPlaylist(songs, index);
+    const url = song.audioUrl || song.mp3Url;
+    // Ensure song has audioUrl
+    const songData = {
+      ...song,
+      audioUrl: url,
+      mp3Url: url
+    };
+    
+    // Check if this song is currently playing
+    if (currentSong?.id === song.id) {
+      // If it's the current song, simply toggle play/pause
+      togglePlay();
     } else {
-      startNewSession(song);
+      // startNewSession(song);
+      // If it's a different song, play it
+      if (playPlaylist) {
+        // Convert all songs to have audioUrl
+        const playlistSongs = songs.map(s => {
+          const sUrl = s.audioUrl || s.mp3Url;
+          return {
+          ...s,
+          audioUrl: sUrl,
+          mp3Url: sUrl
+        };
+        });
+        playPlaylist(playlistSongs, index);
+      } else {
+        playSong(songData);
+      }
     }
   };
 
@@ -187,8 +236,21 @@ export default function FavoritePlaylistPage() {
     updateCurrentPlaylist(newOrder);
   };
 
-  if (loading) return <LoadSpinner />;
-  if (!songs.length) return <NoFavoriteState />;
+  if (loading) return (
+    <>
+      <LoadSpinner />
+      {currentSong && <PlayerControl />}
+    </>
+  );
+  if (!songs.length) return (
+    <>
+      <NoFavoriteState />
+      {currentSong && <PlayerControl />}
+    </>
+  );
+
+  // Check if any song from the playlist is currently playing
+  const isPlaylistPlaying = currentSong && songs.some(song => song.id === currentSong.id) && isPlaying;
 
   return (
     <div className={styles["song-view-container"]}>
@@ -207,8 +269,12 @@ export default function FavoritePlaylistPage() {
 
           <div className={styles["play-buttons"]}>
             <button className={styles["btn-play"]} onClick={handlePlayAll}>
-              <Play className={styles["play-icon"]} />
-              {t('play_all')}
+              {isPlaylistPlaying ? (
+                <Pause className={styles["play-icon"]} />
+              ) : (
+                <Play className={styles["play-icon"]} />
+              )}
+              {isPlaylistPlaying ? t('pause') : t('play_all')}
             </button>
             <button
               className={styles["btn-download"]}
@@ -268,7 +334,8 @@ export default function FavoritePlaylistPage() {
                           <div className={styles["colIndex"]}>{index + 1}</div>
                           <SongRow
                             item={song}
-                            showPlayingIcon={currentSong?.id === song.id && isPlaying}
+                            showPlayingIcon={currentSong?.id === song.id}
+                            isPlaying={isPlaying}
                             onTitleClick={handleTitleClick}
                             onViewArtist={handleViewArtist}
                             onPlay={() => handlePlaySong(song, index)}

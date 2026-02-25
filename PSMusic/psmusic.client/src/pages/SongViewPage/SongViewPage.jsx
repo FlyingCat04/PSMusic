@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { Heart, Star, Play, Download } from "lucide-react";
+import { Heart, Star, Play, Pause, Download } from "lucide-react";
 import styles from "./SongViewPage.module.css";
 import PlayerControl from "../../components/PlayerControl/PlayerControl";
 import { usePlayer } from "../../contexts/PlayerContext";
@@ -31,22 +31,54 @@ export default function SongViewPage() {
   const [showAllOtherSongs, setShowAllOtherSongs] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const lyricsRef = useRef(null);
-  const { startNewSession, currentTime, currentSong, isPlaying } = usePlayer();
+  // const { startNewSession, currentTime, currentSong, isPlaying } = usePlayer();
+  const { startNewSession, playSong, currentTime, currentSong, isPlaying, togglePlay } = usePlayer();
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchSongData = async () => {
       try {
         setLoading(true);
 
         const resDetail = await axiosInstance.get(`/song/${songId}/detail`);
-
         const song = resDetail.data;
+        
+        if (!isMounted) return;
         setSongDetail(song);
 
-        const resOther = await axiosInstance.get(`/song/${song.id}/related`);
-        let related = resOther.data || [];
+        const relatedPromise = axiosInstance.get(`/song/${song.id}/related`).catch(() => ({ data: [] }));
+        const artistsPromise = axiosInstance.get(`/artist/${songId}/artists`).catch(() => ({ data: [] }));
+        
+        let lyricsPromise = Promise.resolve([]);
+        if (song.lyricUrl) {
+          lyricsPromise = fetch(song.lyricUrl)
+            .then(res => res.text())
+            .then(text => {
+              return text
+                .split("\n")
+                .map((line) => {
+                  const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+                  if (!match) return null;
+                  const minutes = parseInt(match[1], 10);
+                  const seconds = parseFloat(match[2]);
+                  return { time: minutes * 60 + seconds, text: match[3].trim() };
+                })
+                .filter(Boolean);
+            })
+            .catch(() => []);
+        }
 
+        const [resOther, resArtists, parsedLyrics] = await Promise.all([
+          relatedPromise,
+          artistsPromise,
+          lyricsPromise
+        ]);
+
+        if (!isMounted) return;
+
+        let related = resOther.data || [];
         const mappedRelated = related.map(item => ({
           id: item.id,
           title: item.title,
@@ -58,35 +90,22 @@ export default function SongViewPage() {
         }));
 
         setOtherSongs(mappedRelated);
-
-        const resArtists = await axiosInstance.get(`/artist/${songId}/artists`);
         setRelatedArtists(resArtists.data || []);
-
-        if (song.lyricUrl) {
-          const resLyric = await fetch(song.lyricUrl);
-          const text = await resLyric.text();
-
-          const parsed = text
-            .split("\n")
-            .map((line) => {
-              const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-              if (!match) return null;
-              const minutes = parseInt(match[1], 10);
-              const seconds = parseFloat(match[2]);
-              return { time: minutes * 60 + seconds, text: match[3].trim() };
-            })
-            .filter(Boolean);
-
-          setLyrics(parsed);
-        }
+        setLyrics(parsedLyrics);
       } catch (err) {
         // console.error("Lỗi khi tải dữ liệu:", err);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchSongData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [songId]);
 
   const handleDownloadSong = () => {
@@ -126,6 +145,24 @@ export default function SongViewPage() {
   const handleAddToPlaylist = (song, playlist) => {
     // TODO: Implement add to playlist
     // console.log("Add to playlist", song, playlist);
+  };
+
+  const handlePlayButtonClick = () => {
+    if (!songDetail) return;
+    
+    // Check if this song is currently playing
+    if (currentSong?.id === songDetail.id) {
+      // If it's the current song, toggle play/pause
+      togglePlay();
+    } else {
+      // If it's a different song, play it
+      const url = songDetail.audioUrl || songDetail.mp3Url;
+      playSong({
+        ...songDetail,
+        audioUrl: url,
+        mp3Url: url
+      });
+    }
   };
 
   if (loading) return <LoadSpinner />;
@@ -180,9 +217,15 @@ export default function SongViewPage() {
           <div className={styles["play-buttons"]}>
             <button
               className={styles["btn-play"]}
-              onClick={() => startNewSession(songDetail)}
+              // onClick={() => startNewSession(songDetail)}
+              onClick={handlePlayButtonClick}
             >
-              <Play className={styles["button-icon"]} />{t('play')}
+              {currentSong?.id === songDetail.id && isPlaying ? (
+                <Pause className={styles["button-icon"]} />
+              ) : (
+                <Play className={styles["button-icon"]} />
+              )}
+              {currentSong?.id === songDetail.id && isPlaying ? t('pause') : t('play')}
             </button>
 
             <button
@@ -283,7 +326,17 @@ export default function SongViewPage() {
             songs={otherSongs}
             currentSong={currentSong}
             isPlaying={isPlaying}
-            onPlay={startNewSession}
+            // onPlay={startNewSession}
+            onPlay={(song) => {
+              // Check if this song is currently playing
+              if (currentSong?.id === song.id) {
+                // If it's the current song, toggle play/pause
+                togglePlay();
+              } else {
+                // If it's a different song, play it
+                playSong(song);
+              }
+            }}
             onTitleClick={handleTitleClick}
             onAddToPlaylist={handleAddToPlaylist}
             onViewArtist={handleViewArtist}
