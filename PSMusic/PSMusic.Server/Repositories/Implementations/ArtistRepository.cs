@@ -10,7 +10,7 @@ namespace PSMusic.Server.Repositories.Implementations
     {
         private readonly DBContext _dbContext;
 
-        public ArtistRepository(DBContext dbContext) 
+        public ArtistRepository(DBContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -89,5 +89,11 @@ namespace PSMusic.Server.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<List<Artist>> GetAll()
+        {
+            return await _dbContext.Artist
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

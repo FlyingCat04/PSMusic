@@ -2,7 +2,7 @@
 
 namespace PSMusic.Server.Models.DTO.Song
 {
-    public class SearchDocument
+    public class SongDocument
     {
         public int Id { get; set; }
         public string Name { get; set; }

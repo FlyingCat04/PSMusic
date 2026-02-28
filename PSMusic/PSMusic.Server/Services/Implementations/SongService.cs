@@ -20,6 +20,7 @@ namespace PSMusic.Server.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IArtistService _artistService;
         private readonly ElasticsearchClient _elasticClient;
+        private static bool _hasIndexedArtists = false;
 
         public SongService(ISongRepository songRepository, IMapper mapper, IArtistService artistService, ElasticsearchClient elasticClient)
         {
@@ -116,21 +117,65 @@ namespace PSMusic.Server.Services.Implementations
         //    };
         //}
 
+        private async Task EnsureArtistsIndexed()
+        {
+            if (_hasIndexedArtists) return;
+
+            try
+            {
+                var countResponse = await _elasticClient.CountAsync<ArtistDocument>(c => c
+                    .Indices("artists")
+                );
+
+                if (countResponse.IsValidResponse && countResponse.Count > 0)
+                {
+                    _hasIndexedArtists = true;
+                    return;
+                }
+
+                var artists = await _artistService.GetAll();
+                if (artists == null || !artists.Any()) return;
+
+                foreach (var artist in artists)
+                {
+                    var document = new ArtistDocument
+                    {
+                        Id = artist.Id,
+                        Name = artist.Name,
+                        Type = "artist",
+                        AvatarUrl = artist.AvatarUrl ?? ""
+                    };
+
+                    await _elasticClient.IndexAsync(document, idx => idx
+                        .Index("artists")
+                        .Id(artist.Id)
+                    );
+                }
+
+                _hasIndexedArtists = true;
+            }
+            catch (Exception)
+            {
+                // Ignore
+            }
+        }
+
         public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
         {
             if (page < 1) page = 1;
             if (size < 10) size = 10;
 
-            var response = await _elasticClient.SearchAsync<SearchDocument>(s => s
-                .Indices(new[] { "songs", "artists" })
-                .IgnoreUnavailable(true)
+            await EnsureArtistsIndexed();
+
+            var songResponse = await _elasticClient.SearchAsync<SongDocument>(s => s
+                .Indices("songs")
                 .From((page - 1) * size)
                 .Size(size)
                 .Query(q => q
                     .Bool(b => b
                         .Should(
                             sh => sh.MultiMatch(m => m
-                                .Fields(new[] { "name^3", "artists.name^2", "category^1.5", "description" })
+                                .Fields(new[] { "name^3", "artists.name^2", "category^1.5" })
                                 .Query(keyword)
                                 .Fuzziness(new Fuzziness("AUTO"))
                             ),
@@ -145,44 +190,183 @@ namespace PSMusic.Server.Services.Implementations
                 )
             );
 
-            if (!response.IsValidResponse) return null;
+            var artistResponse = await _elasticClient.SearchAsync<ArtistDocument>(s => s
+                .Indices("artists")
+                .From(0)
+                .Size(size)
+                .Query(q => q
+                    .Bool(b => b
+                        .Should(
+                            sh => sh.Match(m => m
+                                .Field(f => f.Name)
+                                .Query(keyword)
+                                .Fuzziness(new Fuzziness("AUTO"))
+                            ),
+                            sh => sh.Term(t => t
+                                .Field("name.keyword")
+                                .Value(keyword)
+                                .CaseInsensitive(true)
+                                .Boost(10)
+                            )
+                        )
+                    )
+                )
+            );
 
             var searchResults = new List<SearchResultDTO>();
             SearchResultDTO? topResult = null;
 
-            foreach (var hit in response.Hits)
+            // Map Artists
+            if (artistResponse.IsValidResponse && artistResponse.Hits.Any())
             {
-                var doc = hit.Source;
-                if (doc == null) continue;
-
-                TimeSpan.TryParse(doc.Duration, out var duration);
-
-                searchResults.Add(new SearchResultDTO
+                foreach (var hit in artistResponse.Hits)
                 {
-                    Id = doc.Id,
-                    Type = hit.Index.ToLower().Contains("artist") ? "artist" : "song",
-                    Name = doc.Name,
-                    AvatarUrl = doc.AvatarUrl,
-                    Mp3Url = doc.Mp3Url,
-                    Duration = duration,
-                    Artists = doc.Artists
-                });
+                    var doc = hit.Source;
+                    if (doc == null) continue;
+
+                    var result = new SearchResultDTO
+                    {
+                        Id = doc.Id,
+                        Type = "artist",
+                        Name = doc.Name,
+                        AvatarUrl = doc.AvatarUrl,
+                        Mp3Url = null,
+                        Duration = TimeSpan.Zero,
+                        Artists = new List<PartialArtistDTO>()
+                    };
+
+                    searchResults.Add(result);
+
+                    // Check for exact match as top result
+                    if (topResult == null &&
+                        doc.Name.Equals(keyword, StringComparison.OrdinalIgnoreCase))
+                    {
+                        topResult = result;
+                    }
+                }
             }
 
-            if (searchResults.Any() &&
-                searchResults.First().Name.Equals(keyword, StringComparison.OrdinalIgnoreCase))
+            // Map Songs
+            if (songResponse.IsValidResponse && songResponse.Hits.Any())
             {
-                topResult = searchResults.First();
-                searchResults.RemoveAt(0);
+                foreach (var hit in songResponse.Hits)
+                {
+                    var doc = hit.Source;
+                    if (doc == null) continue;
+
+                    TimeSpan.TryParse(doc.Duration, out var duration);
+
+                    var result = new SearchResultDTO
+                    {
+                        Id = doc.Id,
+                        Type = "song",
+                        Name = doc.Name,
+                        AvatarUrl = doc.AvatarUrl,
+                        Mp3Url = doc.Mp3Url,
+                        Duration = duration,
+                        Artists = doc.Artists
+                    };
+
+                    searchResults.Add(result);
+
+                    // Check for exact match as top result if not found in artists
+                    if (topResult == null &&
+                        doc.Name.Equals(keyword, StringComparison.OrdinalIgnoreCase))
+                    {
+                        topResult = result;
+                    }
+                }
             }
+
+            // Remove top result from main list
+            if (topResult != null)
+            {
+                searchResults.Remove(topResult);
+            }
+
+            // Sort: Artists first, then Songs
+            searchResults = searchResults
+                .OrderBy(r => r.Type == "artist" ? 0 : 1)
+                .ToList();
+
+            long totalSongs = songResponse.IsValidResponse ? songResponse.Total : 0;
+            long totalArtists = artistResponse.IsValidResponse ? artistResponse.Total : 0;
 
             return new SearchResponseDTO
             {
                 Results = searchResults,
                 TopResult = topResult,
-                TotalPages = response.Total > 0 ? (int)Math.Ceiling((double)response.Total / size) : 0
+                TotalPages = (int)Math.Ceiling((double)(totalSongs + totalArtists) / size)
             };
         }
+
+        //public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
+        //{
+        //    if (page < 1) page = 1;
+        //    if (size < 10) size = 10;
+
+        //    var response = await _elasticClient.SearchAsync<SongDocument>(s => s
+        //        .Indices(new[] { "songs", "artists" })
+        //        .IgnoreUnavailable(true)
+        //        .From((page - 1) * size)
+        //        .Size(size)
+        //        .Query(q => q
+        //            .Bool(b => b
+        //                .Should(
+        //                    sh => sh.MultiMatch(m => m
+        //                        .Fields(new[] { "name^3", "artists.name^2", "category^1.5", "description" })
+        //                        .Query(keyword)
+        //                        .Fuzziness(new Fuzziness("AUTO"))
+        //                    ),
+        //                    sh => sh.Term(t => t
+        //                        .Field("name.keyword")
+        //                        .Value(keyword)
+        //                        .CaseInsensitive(true)
+        //                        .Boost(10)
+        //                    )
+        //                )
+        //            )
+        //        )
+        //    );
+
+        //    if (!response.IsValidResponse) return null;
+
+        //    var searchResults = new List<SearchResultDTO>();
+        //    SearchResultDTO? topResult = null;
+
+        //    foreach (var hit in response.Hits)
+        //    {
+        //        var doc = hit.Source;
+        //        if (doc == null) continue;
+
+        //        TimeSpan.TryParse(doc.Duration, out var duration);
+
+        //        searchResults.Add(new SearchResultDTO
+        //        {
+        //            Id = doc.Id,
+        //            Type = hit.Index.ToLower().Contains("artist") ? "artist" : "song",
+        //            Name = doc.Name,
+        //            AvatarUrl = doc.AvatarUrl,
+        //            Mp3Url = doc.Mp3Url,
+        //            Duration = duration,
+        //            Artists = doc.Artists
+        //        });
+        //    }
+
+        //    if (searchResults.Any() &&
+        //        searchResults.First().Name.Equals(keyword, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        topResult = searchResults.First();
+        //        searchResults.RemoveAt(0);
+        //    }
+
+        //    return new SearchResponseDTO
+        //    {
+        //        Results = searchResults,
+        //        TopResult = topResult,
+        //        TotalPages = response.Total > 0 ? (int)Math.Ceiling((double)response.Total / size) : 0
+        //    };
+        //}
 
         //public async Task<SearchResponseDTO?> SearchAll(string keyword, int page, int size)
         //{
