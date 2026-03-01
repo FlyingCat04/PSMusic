@@ -149,5 +149,7 @@
   "search_result_page_header": "検索結果",
   "not_found_msg": "の結果は見つかりませんでした ",
   "top_result_label": "トップ結果",
-  "rcm_for_you": "あなたへのおすすめ"
+  "rcm_for_you": "あなたへのおすすめ",
+  "tab_artists": "アーティスト",
+  "tab_songs": "曲"
 }
