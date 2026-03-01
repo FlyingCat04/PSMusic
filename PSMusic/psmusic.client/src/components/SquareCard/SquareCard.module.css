@@ -5,6 +5,7 @@
     text-align: center;
     cursor: pointer;
     transition: background-color 0.2s;
+    max-width: 220px;
 }
 
 .result-card:hover {
