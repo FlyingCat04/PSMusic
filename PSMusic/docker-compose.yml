@@ -19,6 +19,8 @@ services:
       - Jwt__Issuer=PSMusic
       - Jwt__Audience=PSMusicUsers
       - Jwt__ExpiryMinutes=60
+      - ApiSecurity__HeaderName=X-App-Service-Key
+      - ApiSecurity__SecretValue=9iJgh09KNOIH0amhawia98kjljGUYIA098OH290POJK
     restart: unless-stopped
     networks:
       - app-network
@@ -32,6 +34,8 @@ services:
       dockerfile: Dockerfile
       args:
         - VITE_API_BASE_URL=http://localhost:7215/api
+        - VITE_ABSTRACT_API_KEY=291db2b15a07464cb936e147e1d4245d
+        - VITE_API_SIGNATURE=9iJgh09KNOIH0amhawia98kjljGUYIA098OH290POJK
     ports:
       - "5173:80"
     depends_on:
