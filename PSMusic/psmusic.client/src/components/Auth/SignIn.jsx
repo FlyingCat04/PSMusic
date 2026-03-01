@@ -180,7 +180,7 @@ function SignInForm({ activeType }) {
               className={styles.eyeButton}
               onClick={togglePasswordVisibility}
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
             </button>
           </div>
           {error && (<small style={{ color: "red", marginTop: "4px", fontSize: "12px" }}>{error}</small>)}

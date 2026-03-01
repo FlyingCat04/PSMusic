@@ -149,5 +149,7 @@
   "search_result_page_header": "Search results",
   "not_found_msg": "No results found for ",
   "top_result_label": "Top result",
-  "rcm_for_you": "Recommends for you"
+  "rcm_for_you": "Recommends for you",
+  "tab_artists": "Artists",
+  "tab_songs": "Songs"
 }
