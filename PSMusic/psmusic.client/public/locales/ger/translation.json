@@ -149,5 +149,7 @@
   "search_result_page_header": "Suchergebnisse",
   "not_found_msg": "Keine Ergebnisse gefunden für ",
   "top_result_label": "Top-Ergebnis",
-  "rcm_for_you": "Empfehlungen für dich"
+  "rcm_for_you": "Empfehlungen für dich",
+  "tab_artists": "Künstler",
+  "tab_songs": "Lieder"
 }

@@ -154,26 +154,24 @@ const HomePage = () => {
               <ChevronRight />
             </Link>
           </div>
-          <div className={styles['scrollable-container']}>
-            <div className={styles['songs-grid-column-scrollable']} ref={artistsScrollRef}>
-              {artists.map((artist) => (
-                <ItemCardColumn
-                  key={artist.id || artist.artistId}
-                  item={{
-                    id: artist.id || artist.artistId,
-                    title: artist.name,
-                    artist: artist.bio || 'Nghệ sĩ',
-                    imageUrl: artist.avatarUrl || ''
-                  }}
-                  type="artist"
-                />
-              ))}
-            </div>
+          <div className={styles['artist-grid']}>
+            {artists.slice(0, 10).map((artist) => (
+              <ItemCardColumn
+                key={artist.id || artist.artistId}
+                item={{
+                  id: artist.id || artist.artistId,
+                  title: artist.name,
+                  artist: artist.bio || 'Nghệ sĩ',
+                  imageUrl: artist.avatarUrl || ''
+                }}
+                type="artist"
+              />
+            ))}
           </div>
         </section>
       )}
 
-      {/* Artists Section */}
+      {/* Recommend Section */}
       <section className={styles['content-section']}>
         <div className={styles['section-header']}>
           <h2 className={styles['section-title']}>{t('rcm_for_you')}</h2>

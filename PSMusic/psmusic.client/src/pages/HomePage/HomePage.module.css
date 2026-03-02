@@ -1,11 +1,11 @@
 .recommendSys {
-    margin-bottom: 32px;
+  margin-bottom: 32px;
 }
 
 .home-main-content {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .content-section {
@@ -14,16 +14,16 @@
   max-width: 100%;
 }
 
-.featured-section {
+/* .featured-section {
   position: relative;
-}
-
+} */
+/* 
 .featured-cards-container {
   display: flex;
   gap: 24px;
-}
+} */
 
-.featured-card {
+/* .featured-card {
   background-color: var(--component-bg);
   border-radius: 8px;
   padding: 16px;
@@ -69,9 +69,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+} */
 
-.carousel-arrow {
+/* .carousel-arrow {
   position: absolute;
   right: -16px;
   top: 50%;
@@ -89,7 +89,7 @@
 
 .carousel-arrow:hover {
   opacity: 0.8;
-}
+} */
 
 .section-header {
   display: flex;
@@ -113,11 +113,7 @@
   width: 100%;
   max-width: 100%;
 }
-
-.recommendSys {
-    margin: 0;
-}
-
+/* 
 .refresh-button {
   height: 40px;
   display: flex;
@@ -134,23 +130,23 @@
 
 .refresh-button:hover {
   opacity: 0.9;
-}
+} */
 
-.refresh-icon {
+/* .refresh-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 20px;
   width: 20px;
-}
+} */
 
-.songs-grid-row {
+/* .songs-grid-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px 24px;
   width: 100%;
   max-width: 100%;
-}
+} */
 
 .see-all-link {
   font-size: 14px;
@@ -179,13 +175,16 @@
   max-width: 100%;
 }
 
-/* Scrollable container styles */
-.scrollable-container {
-  position: relative;
+.artist-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 24px;
   width: 100%;
+  max-width: 100%;
 }
 
-.songs-grid-row-scrollable {
+/* .songs-grid-row-scrollable {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 8px 24px;
@@ -209,28 +208,9 @@
   background-color: rgba(155, 155, 155, 0.5);
   border-radius: 20px;
   border: transparent;
-}
+} */
 
-.songs-grid-column-scrollable {
-  display: flex;
-  gap: 24px;
-  width: 100%;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  padding-bottom: 8px;
-}
-
-.songs-grid-column-scrollable > * {
-  flex: 0 0 calc(20% - 19.2px);
-  min-width: 150px;
-}
-
-.songs-grid-column-scrollable::-webkit-scrollbar {
-  display: none;
-}
-
-.scroll-arrow {
+/* .scroll-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -265,7 +245,7 @@
 .scroll-arrow svg {
   width: 24px;
   height: 24px;
-}
+} */
 
 @media (max-width: 1024px) {  
   .genre-grid {
@@ -273,14 +253,14 @@
     gap: 16px;
   }
   
-  .songs-grid-column {
+  /* .songs-grid-column {
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-  }
+  } */
 
-  .songs-grid-column-scrollable > * {
-    flex: 0 0 calc(25% - 18px);
-    min-width: 150px;
+  .artist-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
   }
   
   .songs-grid-row {
@@ -288,17 +268,17 @@
     gap: 8px 16px;
   }
 
-  .songs-grid-row-scrollable {
+  /* .songs-grid-row-scrollable {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
+  } */
 
-  .scroll-arrow-left {
+  /* .scroll-arrow-left {
     left: -15px;
   }
 
   .scroll-arrow-right {
     right: -15px;
-  }
+  } */
 }
 
 @media (max-width: 768px) {
@@ -307,14 +287,14 @@
     gap: 12px;
   }
   
-  .songs-grid-column {
+  /* .songs-grid-column {
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-  }
+  } */
 
-  .songs-grid-column-scrollable > * {
-    flex: 0 0 calc(33.333% - 16px);
-    min-width: 140px;
+  .artist-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
   
   .songs-grid-row {
@@ -322,11 +302,11 @@
     gap: 8px;
   }
 
-  .songs-grid-row-scrollable {
+  /* .songs-grid-row-scrollable {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
+  } */
 
-  .scroll-arrow {
+  /* .scroll-arrow {
     width: 36px;
     height: 36px;
   }
@@ -342,7 +322,7 @@
 
   .scroll-arrow-right {
     right: -10px;
-  }
+  } */
 }
 
 @media (max-width: 480px) {
@@ -351,21 +331,21 @@
     gap: 8px;
   }
   
-  .songs-grid-column {
+  /* .songs-grid-column {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  } */
+
+  .artist-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
 
-  .songs-grid-column-scrollable > * {
-    flex: 0 0 calc(50% - 12px);
-    min-width: 120px;
-  }
-
-  .songs-grid-row-scrollable {
+  /* .songs-grid-row-scrollable {
     grid-template-columns: 1fr;
-  }
+  } */
 
-  .scroll-arrow {
+  /* .scroll-arrow {
     width: 32px;
     height: 32px;
   }
@@ -381,5 +361,5 @@
 
   .scroll-arrow-right {
     right: 0;
-  }
+  } */
 }

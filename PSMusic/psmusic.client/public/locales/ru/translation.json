@@ -149,5 +149,7 @@
   "search_result_page_header": "Результаты поиска",
   "not_found_msg": "Результаты не найдены для ",
   "top_result_label": "Лучший результат",
-  "rcm_for_you": "Рекомендации для вас"
+  "rcm_for_you": "Рекомендации для вас",
+  "tab_artists": "Исполнители",
+  "tab_songs": "Песни"
 }

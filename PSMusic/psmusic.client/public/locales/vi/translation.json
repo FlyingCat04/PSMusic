@@ -149,5 +149,7 @@
   "search_result_page_header": "Kết quả tìm kiếm",
   "not_found_msg": "Không tìm thấy kết quả cho ",
   "top_result_label": "Top kết quả",
-  "rcm_for_you": "Gợi ý dành cho bạn"
+  "rcm_for_you": "Gợi ý dành cho bạn",
+  "tab_artists": "Nghệ sĩ",
+  "tab_songs": "Bài hát"
 }

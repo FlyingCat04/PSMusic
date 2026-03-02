@@ -9,5 +9,6 @@ namespace PSMusic.Server.Repositories.Interfaces
         IQueryable<Artist> GetArtistsWithStreamsLast7Days();
         Task<IEnumerable<Artist>?> GetArtistsByMainCategory(int categoryId);
         Task<List<Artist>> GetArtistsBySongId(int songId);
+        Task<List<Artist>> GetAll();
     }
 }
