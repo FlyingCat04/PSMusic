@@ -4,7 +4,7 @@ const homeService = {
     async fetchPopularData() {
         try {
             const [categoriesRes, artistsRes, songsRes] = await Promise.all([
-                axiosInstance.get("/category/popular"),
+                axiosInstance.get("/category/popular", { params: { page: 1, size: 50 } }),
                 axiosInstance.get("/artist/popular")
                 // axiosInstance.get("/song/popular")
             ]);
@@ -22,7 +22,7 @@ const homeService = {
 
     async getPopularCategories() {
         try {
-            const res = await axiosInstance.get("/category/popular");
+            const res = await axiosInstance.get("/category/popular", { params: { page: 1, size: 50 } });
             return res.data?.items || [];
         } catch (error) {
             //console.error("Error fetching popular categories:", error);
