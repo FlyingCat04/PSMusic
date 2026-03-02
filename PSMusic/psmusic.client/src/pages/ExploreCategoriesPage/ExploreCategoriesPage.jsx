@@ -45,10 +45,13 @@ const ExploreCategoriesPage = () => {
                 allCategories = categoriesRes?.items || [];
             }
 
-            // Lấy IDs từ popular categories
-            const featuredCategoryIds = allCategories.map(cat => cat.id);
+            // Lấy 42 categories để hiển thị
+            const displayCategories = allCategories.slice(0, 42);
 
-            // Lấy songs cho các category phổ biến
+            // Chỉ lấy songs cho 6 categories đầu tiên
+            const featuredCategoryIds = displayCategories.slice(0, 6).map(cat => cat.id);
+
+            // Lấy songs cho 6 categories đầu tiên
             const songPromises = featuredCategoryIds.map(id =>
                 exploreCategoriesService.getSongsByCategory(id, 1, 10)
             );
@@ -61,7 +64,7 @@ const ExploreCategoriesPage = () => {
             });
 
             const data = {
-                categories: allCategories,
+                categories: displayCategories,
                 categorySongs: songsMap,
             };
 
@@ -99,7 +102,7 @@ const ExploreCategoriesPage = () => {
             {categories.length > 0 && (
                 <section className={styles['content-section']}>
                     <div className={styles['category-grid']}>
-                        {categories.slice(0, 12).map((category) => (
+                        {categories.map((category) => (
                             <GenreCard
                                 key={category.id}
                                 genre={{
@@ -115,7 +118,7 @@ const ExploreCategoriesPage = () => {
             )}
 
             {/* Category Songs Sections */}
-            {categories.map((category) => {
+            {categories.slice(0, 6).map((category) => {
                 const songs = categorySongs[category.id] || [];
                 if (songs.length === 0) return null;
 
