@@ -54,10 +54,15 @@ function SignUpForm({ activeType }) {
 
         const emailValidation = await emailValidationService.validateEmail(email);
 
+        if (!emailValidation.isSMTPValid) {
+            setLoading(false);
+            setError(emailValidation.message || t('error_smtp'));
+            return;
+        }
 
         if (!emailValidation.isFormatValid) {
             setLoading(false);
-            setError(emailValidation.message || t('error_email_format'))
+            setError(emailValidation.message || t('error_email_format'));
             return;
         }
 
