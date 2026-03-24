@@ -519,15 +519,24 @@ namespace PSMusic.Server.Services.Implementations
 
         public async Task<PagedResult<SongSearchDetailDTO>?> GetPopularSongWithCategory(int id, int? userId, int page, int size)
         {
-            var results = await _songRepository.GetPopularSongWithCategory(id);
-            if (results == null) return null;
+            if (page < 1) page = 1;
+            if (size < 1) size = 10;
+
+            var query = _songRepository.GetPopularSongWithCategoryQuery(id);
+            var totalItems = await query.CountAsync();
+
+            var results = await query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync();
 
             var songs = results.Select(s => {
                 var dto = _mapper.Map<SongSearchDetailDTO>(s);
                 dto.IsFavorited = userId.HasValue && s.Favorites.Any(f => f.UserId == userId.Value && f.IsFavorite);
                 return dto;
-            });
-            return songs.Paginate(page, size);
+            }).ToList();
+
+            return new PagedResult<SongSearchDetailDTO>(songs, page, size, totalItems);
         }
 
         public async Task<SongDetail2DTO?> GetSongDetail(int songId, int userId)

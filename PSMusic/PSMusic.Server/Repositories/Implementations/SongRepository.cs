@@ -142,19 +142,21 @@ namespace PSMusic.Server.Repositories.Implementations
 
         public async Task<IEnumerable<Song>?> GetPopularSongWithCategory(int id)
         {
-            return await _dbContext.Song
-                .Where(s => !string.IsNullOrEmpty(s.LrcUrl))
+            return await GetPopularSongWithCategoryQuery(id).ToListAsync();
+        }
+
+        public IQueryable<Song> GetPopularSongWithCategoryQuery(int id)
+        {
+            return _dbContext.Song
+                .AsNoTracking()
+                // .Where(s => !string.IsNullOrEmpty(s.LrcUrl))
                 .Where(s => s.SongCategories.Any(sc => sc.CategoryId == id))
-                .Where(s => _dbContext.Stream
-                    .Any(st => st.SongId == s.Id))
                 .Include(s => s.SongArtists)
                     .ThenInclude(sa => sa.Artist)
                 .Include(s => s.Favorites)
                 .Include(s => s.SongCategories)
                     .ThenInclude(sc => sc.Category)
-                .OrderByDescending(s => _dbContext.Stream
-                    .Count(st => st.SongId == s.Id))
-                .ToListAsync();
+                .OrderByDescending(s => _dbContext.Stream.Count(st => st.SongId == s.Id));
         }
         public async Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId)
         {
@@ -355,7 +357,7 @@ namespace PSMusic.Server.Repositories.Implementations
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

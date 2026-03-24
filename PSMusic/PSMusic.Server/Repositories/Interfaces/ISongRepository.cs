@@ -12,6 +12,7 @@ namespace PSMusic.Server.Repositories.Interfaces
         Task<IEnumerable<NextBatchSongDTO>> GetRandomSongsAsync(int count);
         Task<IEnumerable<Song>?> GetByArtistId(int id);
         Task<IEnumerable<Song>?> GetPopularSongWithCategory(int id);
+        IQueryable<Song> GetPopularSongWithCategoryQuery(int id);
         Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId);
         Task<List<Song>> GetRelatedSongs(int songId);
         Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id, int userId);
