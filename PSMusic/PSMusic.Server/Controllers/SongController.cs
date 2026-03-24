@@ -54,12 +54,6 @@ namespace PSMusic.Server.Controllers
         public async Task<IActionResult> GetNextBatch(int size = 10)
         {
             var randomSongs = await _songService.GetBatch(size);
-            foreach (var s in randomSongs)
-            {
-                s.Likes = await _songService.GetFavoriteCount(s.Id);
-                s.SingerUrl = s.CoverUrl ?? string.Empty;
-            }
-
             return Ok(randomSongs);
         }
 

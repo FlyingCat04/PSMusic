@@ -9,7 +9,7 @@ namespace PSMusic.Server.Repositories.Interfaces
         Task<Song?> GetById(int id);
         Task<IEnumerable<Song>?> Search(string keyword);
         IQueryable<Song> GetSongsWithStreamsLast7Days();
-        Task<IEnumerable<Song>> GetRandomSongsAsync(int count);
+        Task<IEnumerable<NextBatchSongDTO>> GetRandomSongsAsync(int count);
         Task<IEnumerable<Song>?> GetByArtistId(int id);
         Task<IEnumerable<Song>?> GetPopularSongWithCategory(int id);
         Task<SongDetail2DTO?> GetSongDetail_DTO(int songId, int userId);

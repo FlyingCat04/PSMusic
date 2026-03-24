@@ -87,14 +87,41 @@ namespace PSMusic.Server.Repositories.Implementations
                     .Count(st => st.SongId == s.Id && st.StreamedAt >= week));
         }
 
-        public async Task<IEnumerable<Song>> GetRandomSongsAsync(int count)
+        public async Task<IEnumerable<NextBatchSongDTO>> GetRandomSongsAsync(int count)
         {
-            return await _dbContext.Song
-                .Include(s => s.SongArtists)
-                    .ThenInclude(sa => sa.Artist)
+            var items = await _dbContext.Song
+                .AsNoTracking()
+                .Where(s => !string.IsNullOrEmpty(s.LrcUrl))
                 .OrderBy(s => EF.Functions.Random())
                 .Take(count)
+                .Select(s => new
+                {
+                    s.Id,
+                    s.Name,
+                    s.AvatarUrl,
+                    s.Mp3Url,
+                    s.LrcUrl,
+                    s.Duration,
+                    ArtistNames = s.SongArtists
+                        .OrderBy(sa => sa.Id)
+                        .Select(sa => sa.Artist.Name)
+                        .ToList(),
+                    Likes = s.Favorites.Count(f => f.IsFavorite)
+                })
                 .ToListAsync();
+
+            return items.Select(s => new NextBatchSongDTO
+            {
+                Id = s.Id,
+                Title = s.Name,
+                ArtistNames = s.ArtistNames,
+                CoverUrl = s.AvatarUrl ?? string.Empty,
+                SingerUrl = s.AvatarUrl ?? string.Empty,
+                Likes = s.Likes,
+                AudioUrl = s.Mp3Url ?? string.Empty,
+                LyricUrl = s.LrcUrl ?? string.Empty,
+                Duration = s.Duration.HasValue ? s.Duration.Value.ToString(@"mm\:ss") : "00:00"
+            }).ToList();
         }
 
         public async Task<IEnumerable<Song>?> GetByArtistId(int id)
@@ -183,6 +210,45 @@ namespace PSMusic.Server.Repositories.Implementations
 
         public async Task<SongPlayerDTO?> GetSongForPlayer_DTO(int id, int userId)
         {
+            if (userId <= 0)
+            {
+                var anonymousItem = await _dbContext.Song
+                    .AsNoTracking()
+                    .Where(s => s.Id == id)
+                    .Select(s => new
+                    {
+                        s.Id,
+                        Title = s.Name,
+                        CoverUrl = s.AvatarUrl ?? "",
+                        AudioUrl = s.Mp3Url ?? "",
+                        LyricUrl = s.LrcUrl ?? "",
+                        Artist = string.Join(", ", s.SongArtists.Select(sa => sa.Artist.Name)),
+                        SingerUrl = s.AvatarUrl ?? "",
+                        Likes = s.Favorites.Count(f => f.IsFavorite),
+                        Reviews = s.Ratings.Count(),
+                        Duration = s.Duration
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (anonymousItem == null) return null;
+
+                return new SongPlayerDTO
+                {
+                    Id = anonymousItem.Id,
+                    Title = anonymousItem.Title,
+                    CoverUrl = anonymousItem.CoverUrl,
+                    AudioUrl = anonymousItem.AudioUrl,
+                    LyricUrl = anonymousItem.LyricUrl,
+                    Artist = anonymousItem.Artist,
+                    SingerUrl = anonymousItem.SingerUrl,
+                    Likes = anonymousItem.Likes,
+                    Reviews = anonymousItem.Reviews,
+                    IsFavorited = false,
+                    IsReviewed = false,
+                    Duration = anonymousItem.Duration.HasValue ? anonymousItem.Duration.Value.ToString(@"mm\:ss") : "00:00"
+                };
+            }
+
             var item = await _dbContext.Song
                 .AsNoTracking()
                 .Where(s => s.Id == id)

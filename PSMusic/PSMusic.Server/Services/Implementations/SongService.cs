@@ -440,8 +440,7 @@ namespace PSMusic.Server.Services.Implementations
 
         public async Task<IEnumerable<NextBatchSongDTO>> GetBatch(int size)
         {
-            var results = await _songRepository.GetRandomSongsAsync(size);
-            return _mapper.Map<IEnumerable<NextBatchSongDTO>>(results);
+            return await _songRepository.GetRandomSongsAsync(size);
         }
 
         public async Task<IEnumerable<SongDTO>?> GetByArtistId(int id)
