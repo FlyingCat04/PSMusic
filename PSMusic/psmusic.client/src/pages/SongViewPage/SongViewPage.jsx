@@ -271,7 +271,7 @@ export default function SongViewPage() {
                 );
               })
             ) : (
-              <p>{t('loading_lyrics')}</p>
+              <p>{t('no_lyrics_yet')}</p>
             )}
           </div>
 
@@ -306,53 +306,62 @@ export default function SongViewPage() {
         </div>
       </div>
 
-      <div className={styles["other-songs-section"]}>
-        <h2>
-          {t('other_songs_by')} {
-            relatedArtists.length > 0
-              ? relatedArtists.map(a => a.name).join(", ")
-              : songDetail.artist
-          }
-        </h2>
+      {otherSongs.length > 0 && (
+        <div className={styles["other-songs-section"]}>
+          <h2>
+            {t('other_songs_by')} {
+              relatedArtists.length > 0
+                ? relatedArtists.map(a => a.name).join(", ")
+                : songDetail.artist
+            }
+          </h2>
 
-        <div
-          className={`${styles["song-list-wrapper"]} ${showAllOtherSongs
-            ? styles["songs-expanded"]
-            : styles["songs-collapsed"]
-            }`}
-        >
-          <TrackTable
-            songs={otherSongs}
-            currentSong={currentSong}
-            isPlaying={isPlaying}
-            // onPlay={startNewSession}
-            onPlay={(song) => {
-              // Check if this song is currently playing
-              if (currentSong?.id === song.id) {
-                // If it's the current song, toggle play/pause
-                togglePlay();
-              } else {
-                // If it's a different song, play it
-                playSong(song);
-              }
-            }}
-            onTitleClick={handleTitleClick}
-            onAddToPlaylist={handleAddToPlaylist}
-            onViewArtist={handleViewArtist}
-            page={1}
-            pageSize={otherSongs.length} // Show all in table, let CSS wrapper handle visibility
-          />
-        </div>
-
-        {otherSongs.length > 4 && (
-          <button
-            className={styles["btn-toggle-songs"]}
-            onClick={() => setShowAllOtherSongs(!showAllOtherSongs)}
+          <div
+            className={`${styles["song-list-wrapper"]} ${showAllOtherSongs
+              ? styles["songs-expanded"]
+              : styles["songs-collapsed"]
+              }`}
           >
-            {showAllOtherSongs ? t('show_less') : t('view_more')}
-          </button>
-        )}
-      </div>
+            <TrackTable
+              songs={otherSongs}
+              currentSong={currentSong}
+              isPlaying={isPlaying}
+              // onPlay={startNewSession}
+              onPlay={(song) => {
+                // Check if this song is currently playing
+                if (currentSong?.id === song.id) {
+                  // If it's the current song, toggle play/pause
+                  togglePlay();
+                } else {
+                  // If it's a different song, play it
+                  playSong(song);
+                }
+              }}
+              onTitleClick={handleTitleClick}
+              onAddToPlaylist={handleAddToPlaylist}
+              onViewArtist={handleViewArtist}
+              page={1}
+              pageSize={otherSongs.length} // Show all in table, let CSS wrapper handle visibility
+            />
+          </div>
+
+          {otherSongs.length > 4 && (
+            <button
+              className={styles["btn-toggle-songs"]}
+              onClick={() => setShowAllOtherSongs(!showAllOtherSongs)}
+            >
+              {showAllOtherSongs ? t('show_less') : t('view_more')}
+            </button>
+          )}
+        </div>
+      )}
+
+      <section className={styles['content-section']}>
+        <div className={styles['section-header']}>
+          <h2 className={styles['section-title']}>{t('rcm_for_you')}</h2>
+        </div>
+        <div className={styles.recommendSongDetails}></div>
+      </section>
 
       {currentSong && <PlayerControl />}
     </div>

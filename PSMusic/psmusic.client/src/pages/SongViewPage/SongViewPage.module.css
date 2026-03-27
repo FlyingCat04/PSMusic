@@ -179,8 +179,8 @@
 }
 
 .artist-avatar {
-  width: 68px;
-  height: 68px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -195,8 +195,8 @@
 }
 
 .artist-name {
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 550;
 }
 
 .artist-name:hover {
@@ -339,4 +339,28 @@
 
 .songs-expanded {
   max-height: 3000px;
+}
+
+.content-section {
+  margin: 40px 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.recommendSongDetails {
+  margin-bottom: 32px;
 }

@@ -352,6 +352,13 @@ const CategoryPage = () => {
                     />
                 </section>
             )}
+
+            <section className={styles['content-section']}>
+                <div className={styles['section-header']}>
+                    <h2 className={styles['section-title']}>{t('rcm_for_you')}</h2>
+                </div>
+                <div className={styles.recommendCategoryDetails}></div>
+            </section>
         </div>
     );
 };

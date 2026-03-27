@@ -68,3 +68,27 @@
     gap: 8px;
     margin-bottom: 2rem;
 }
+
+.content-section {
+  margin: 40px 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.recommendCategoryDetails {
+  margin-bottom: 32px;
+}
