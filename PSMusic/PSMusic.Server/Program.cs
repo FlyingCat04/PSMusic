@@ -9,6 +9,7 @@ using PSMusic.Server.Repositories.Implementations;
 using PSMusic.Server.Repositories.Interfaces;
 using PSMusic.Server.Services.Implementations;
 using PSMusic.Server.Services.Interfaces;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +58,17 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Token = token;
             }
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            var userIdStr = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(userIdStr) && int.TryParse(userIdStr, out var userId))
+            {
+                var tracker = context.HttpContext.RequestServices.GetService<IActiveUserTracker>();
+                tracker?.MarkActive(userId);
+            }
+
             return Task.CompletedTask;
         }
     };
@@ -111,6 +123,7 @@ builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<ISongService, SongService>();
 builder.Services.AddScoped<IArtistService, ArtistService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddSingleton<IActiveUserTracker, ActiveUserTracker>();
 
 var app = builder.Build();
 

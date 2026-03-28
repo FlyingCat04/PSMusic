@@ -13,6 +13,7 @@ const AuthContext = createContext({
 });
 
 const AuthProvider = ({ children }) => {
+    const HEARTBEAT_INTERVAL_MS = 45000;
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [accessToken, setAccessToken] = useState(null);
@@ -89,6 +90,35 @@ const AuthProvider = ({ children }) => {
             delete axiosInstance.defaults.headers.common["Authorization"];
         }
     }, [accessToken]);
+
+    useEffect(() => {
+        if (!accessToken || !user?.id) return;
+
+        const sendHeartbeat = async () => {
+            if (document.visibilityState !== "visible") return;
+            try {
+                await axiosInstance.post("/stats/heartbeat");
+            } catch (error) {
+                // ignore heartbeat error
+            }
+        };
+
+        sendHeartbeat();
+        const intervalId = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL_MS);
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                sendHeartbeat();
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        return () => {
+            clearInterval(intervalId);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
+    }, [accessToken, user?.id]);
 
     // const checkAuth = async () => {
     //     try {
